@@ -3,9 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:telegram_copy/core/usecases/usecase.dart';
-import 'package:telegram_copy/feature/auth/domain/params/send_otp_params.dart';
-import 'package:telegram_copy/feature/auth/domain/params/verify_otp_params.dart';
+import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/send_otp_params.dart';
+import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/verify_otp_params.dart';
+import 'package:telegram_copy/feature/auth/domain/params/login_params.dart';
+import 'package:telegram_copy/feature/auth/domain/params/register_params.dart';
 import 'package:telegram_copy/feature/auth/domain/usecases/log_out_usecase.dart';
+import 'package:telegram_copy/feature/auth/domain/usecases/login_via_email_usecase.dart';
+import 'package:telegram_copy/feature/auth/domain/usecases/register_via_email_usecase.dart';
 import 'package:telegram_copy/feature/auth/domain/usecases/sent_otp_usecase.dart';
 import 'package:telegram_copy/feature/auth/domain/usecases/verify_otp_usecase.dart';
 
@@ -18,14 +22,23 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
   final SendOtpUsecase _sendOtpUsecase;
   final VerifyOtpUsecase _verifyOtpUsecase;
   final LogOutUsecase _logOutUsecase;
+  final LoginViaEmailUsecase _loginViaEmailUsecase;
+  final RegisterViaEmailUsecase _registerViaEmailUsecase;
 
-  AuthBloc(this._sendOtpUsecase, this._verifyOtpUsecase, this._logOutUsecase)
-    : super(const AuthBlocState.initial()) {
+  AuthBloc(
+    this._sendOtpUsecase,
+    this._verifyOtpUsecase,
+    this._logOutUsecase,
+    this._loginViaEmailUsecase,
+    this._registerViaEmailUsecase,
+  ) : super(const AuthBlocState.initial()) {
     on<CheckAuthStatus>(_onCheckAuthStatus);
     on<SendOtp>(_onSendOtp);
     on<ResendOtp>(_onResendOtp);
     on<VerifyOtp>(_onVerifyOtp);
     on<LogOut>(_onLogOut);
+    on<LoginViaEmail>(_onLoginViaEmail);
+    on<RegisterViaEmail>(_onRegisterViaEmail);
   }
 
   Future<void> _onCheckAuthStatus(
@@ -36,7 +49,7 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
 
     final User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
-      emit(const AuthBlocState.otpVerified());
+      emit(AuthBlocState.authenticated(userId: currentUser.uid));
     } else {
       emit(const AuthBlocState.unauthenticated());
     }
@@ -96,5 +109,33 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
 
     await _logOutUsecase(const NoParams());
     emit(const AuthBlocState.unauthenticated());
+  }
+
+  Future<void> _onLoginViaEmail(
+    LoginViaEmail event,
+    Emitter<AuthBlocState> emit,
+  ) async {
+    emit(const AuthBlocState.loading());
+
+    final result = await _loginViaEmailUsecase(event.params);
+
+    result.fold(
+      (failure) => emit(AuthBlocState.failure(message: failure.message)),
+      (userId) => emit(AuthBlocState.authenticated(userId: userId)),
+    );
+  }
+
+  Future<void> _onRegisterViaEmail(
+    RegisterViaEmail event,
+    Emitter<AuthBlocState> emit,
+  ) async {
+    emit(const AuthBlocState.loading());
+
+    final result = await _registerViaEmailUsecase(event.params);
+
+    result.fold(
+      (failure) => emit(AuthBlocState.failure(message: failure.message)),
+      (userId) => emit(AuthBlocState.authenticated(userId: userId)),
+    );
   }
 }

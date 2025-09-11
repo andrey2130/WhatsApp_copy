@@ -16,7 +16,7 @@ class AppTheme {
   static const Color dividerLight = Color(0xFFE1E1E1);
   static const Color dividerDark = Color(0xFF2B2B2B);
 
-  static ThemeData get lightTheme {
+  static ThemeData lightTheme(BuildContext context) {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
@@ -87,12 +87,12 @@ class AppTheme {
           horizontal: 16,
           vertical: 12,
         ),
-        hintStyle: AppTextStyle.getInputTextfield().copyWith(
-          color: textSecondaryLight,
-        ),
-        labelStyle: AppTextStyle.getInputTextfield().copyWith(
-          color: textSecondaryLight,
-        ),
+        hintStyle: AppTextStyle.getInputTextfield(
+          context,
+        ).copyWith(color: textSecondaryLight),
+        labelStyle: AppTextStyle.getInputTextfield(
+          context,
+        ).copyWith(color: textSecondaryLight),
       ),
       textTheme: const TextTheme(
         displayLarge: TextStyle(
@@ -175,7 +175,7 @@ class AppTheme {
     );
   }
 
-  static ThemeData get darkTheme {
+  static ThemeData darkTheme(BuildContext context) {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
@@ -246,12 +246,12 @@ class AppTheme {
           horizontal: 16,
           vertical: 12,
         ),
-        hintStyle: AppTextStyle.getInputTextfield().copyWith(
-          color: textSecondaryDark,
-        ),
-        labelStyle: AppTextStyle.getInputTextfield().copyWith(
-          color: textSecondaryDark,
-        ),
+        hintStyle: AppTextStyle.getInputTextfield(
+          context,
+        ).copyWith(color: textSecondaryDark),
+        labelStyle: AppTextStyle.getInputTextfield(
+          context,
+        ).copyWith(color: textSecondaryDark),
       ),
       textTheme: const TextTheme(
         displayLarge: TextStyle(

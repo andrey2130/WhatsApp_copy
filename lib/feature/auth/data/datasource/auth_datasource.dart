@@ -2,8 +2,10 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:injectable/injectable.dart';
 import 'package:telegram_copy/core/error/failure.dart';
-import 'package:telegram_copy/feature/auth/domain/params/send_otp_params.dart';
-import 'package:telegram_copy/feature/auth/domain/params/verify_otp_params.dart';
+import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/send_otp_params.dart';
+import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/verify_otp_params.dart';
+import 'package:telegram_copy/feature/auth/domain/params/login_params.dart';
+import 'package:telegram_copy/feature/auth/domain/params/register_params.dart';
 
 class ConfirmationResult {
   final String verificationId;
@@ -13,6 +15,8 @@ class ConfirmationResult {
 }
 
 abstract class AuthDatasource {
+  Future<String> registerViaEmail({required RegisterParams params});
+  Future<String> loginViaEmail({required LoginParams params});
   Future<String> sendOtp({required SendOtpParams params});
   Future<void> verifyOtp({required VerifyOtpParams params});
   Future<void> logOut();
@@ -78,6 +82,54 @@ class AuthDatasourceImpl implements AuthDatasource {
   Future<void> logOut() async {
     try {
       await _firebaseAuth.signOut();
+    } catch (e) {
+      throw Failure(message: e.toString());
+    }
+  }
+
+  @override
+  Future<String> loginViaEmail({required LoginParams params}) async {
+    try {
+      final credential = await _firebaseAuth.signInWithEmailAndPassword(
+        email: params.email,
+        password: params.password,
+      );
+      return credential.user?.uid ?? '';
+    } on FirebaseAuthException catch (e) {
+      String message;
+      switch (e.code) {
+        case 'user-not-found':
+          message = 'No user found with this email address.';
+          break;
+        case 'wrong-password':
+          message = 'Incorrect password.';
+          break;
+        case 'invalid-email':
+          message = 'Invalid email address.';
+          break;
+        case 'user-disabled':
+          message = 'This account has been disabled.';
+          break;
+        case 'too-many-requests':
+          message = 'Too many failed attempts. Please try again later.';
+          break;
+        default:
+          message = 'Login failed: ${e.message}';
+      }
+      throw Failure(message: message);
+    } catch (e) {
+      throw Failure(message: 'An unexpected error occurred: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<String> registerViaEmail({required RegisterParams params}) async {
+    try {
+      final credential = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: params.email,
+        password: params.password,
+      );
+      return credential.user?.uid ?? '';
     } catch (e) {
       throw Failure(message: e.toString());
     }

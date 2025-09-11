@@ -6,8 +6,8 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:telegram_copy/core/app_route/app_router.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
-import 'package:telegram_copy/core/widgets/app_bar.dart';
-import 'package:telegram_copy/feature/auth/domain/params/send_otp_params.dart';
+import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
+import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/send_otp_params.dart';
 import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -38,6 +38,12 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   @override
+  void dispose() {
+    _phoneTextEditingController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -54,7 +60,6 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                 );
               } else if (state is OtpVerified) {
-                // Navigate to main app screen
                 context.go('/');
               } else if (state is Failure) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -109,7 +114,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       SizedBox(height: 44.h),
                       _phoneNumberField(),
                       SizedBox(height: 16.h),
-                      _syncContacts(),
+                      _signInViaEmail(),
                     ],
                   ),
                 );
@@ -178,26 +183,20 @@ class _AuthScreenState extends State<AuthScreen> {
             borderRadius: BorderRadius.zero,
           ),
           hintText: 'Your phone number',
-          hintStyle: AppTextStyle.getInputTextfield(),
+          hintStyle: AppTextStyle.getInputTextfield(context),
         ),
       ),
     );
   }
 
-  Widget _syncContacts() {
+  Widget _signInViaEmail() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text("Sync Contacts", style: AppTextStyle.getRegularBlack()),
-          Switch.adaptive(
-            activeThumbColor: AppColors.primaryGreen,
-            thumbColor: WidgetStateProperty.all(AppColors.thumbColor),
-            value: true,
-            onChanged: (value) {},
-          ),
-        ],
+      child: TextButton(
+        onPressed: () {
+          context.push('/email_auth');
+        },
+        child: Text("Sign in via email", style: AppTextStyle.getRegularBlack()),
       ),
     );
   }

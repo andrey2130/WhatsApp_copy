@@ -5,7 +5,9 @@ part 'login_params.g.dart';
 
 @freezed
 abstract class LoginParams with _$LoginParams {
-  const factory LoginParams({required String phoneNumber, required String otpCode}) = _LoginParams;
+  const factory LoginParams({required String email, required String password}) =
+      _LoginParams;
 
-  factory LoginParams.fromJson(Map<String, dynamic> json) => _$LoginParamsFromJson(json);
+  factory LoginParams.fromJson(Map<String, dynamic> json) =>
+      _$LoginParamsFromJson(json);
 }

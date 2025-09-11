@@ -2,8 +2,10 @@ import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:telegram_copy/core/error/failure.dart';
 import 'package:telegram_copy/feature/auth/data/datasource/auth_datasource.dart';
-import 'package:telegram_copy/feature/auth/domain/params/send_otp_params.dart';
-import 'package:telegram_copy/feature/auth/domain/params/verify_otp_params.dart';
+import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/send_otp_params.dart';
+import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/verify_otp_params.dart';
+import 'package:telegram_copy/feature/auth/domain/params/login_params.dart';
+import 'package:telegram_copy/feature/auth/domain/params/register_params.dart';
 import 'package:telegram_copy/feature/auth/domain/repo/auth_repo.dart';
 
 @Injectable(as: AuthRepo)
@@ -19,22 +21,48 @@ class AuthRepoImpl implements AuthRepo {
   }
 
   @override
-  Future<Either<Failure, String>> sendOtp({required SendOtpParams params}) async {
-   try {
-    final result = await _authDatasource.sendOtp(params: params);
-    return Right(result);
-   }
-    catch (e) {
-    return Left(Failure(message: e.toString()));
-   }
-   
+  Future<Either<Failure, String>> sendOtp({
+    required SendOtpParams params,
+  }) async {
+    try {
+      final result = await _authDatasource.sendOtp(params: params);
+      return Right(result);
+    } catch (e) {
+      return Left(Failure(message: e.toString()));
+    }
   }
 
   @override
-  Future<Either<Failure, void>> verifyOtp({required VerifyOtpParams params}) async {
+  Future<Either<Failure, void>> verifyOtp({
+    required VerifyOtpParams params,
+  }) async {
     try {
       await _authDatasource.verifyOtp(params: params);
       return Right(null);
+    } catch (e) {
+      return Left(Failure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> loginViaEmail({
+    required LoginParams params,
+  }) async {
+    try {
+      final result = await _authDatasource.loginViaEmail(params: params);
+      return Right(result);
+    } catch (e) {
+      return Left(Failure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> registerViaEmail({
+    required RegisterParams params,
+  }) async {
+    try {
+      final result = await _authDatasource.registerViaEmail(params: params);
+      return Right(result);
     } catch (e) {
       return Left(Failure(message: e.toString()));
     }

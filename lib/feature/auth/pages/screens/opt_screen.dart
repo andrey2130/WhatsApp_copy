@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
-import 'package:telegram_copy/core/widgets/app_bar.dart';
-import 'package:telegram_copy/feature/auth/domain/params/verify_otp_params.dart';
+import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
+import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/verify_otp_params.dart';
 import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
 
 class OptScreen extends StatefulWidget {
@@ -33,13 +33,13 @@ class _OptScreenState extends State<OptScreen> {
           listener: (context, state) {
             state.when(
               initial: () {},
+              authenticated: (userId) {},
               loading: () {
                 Center(child: CircularProgressIndicator.adaptive());
               },
               otpSent: (phoneNumber, verificationId) {},
               otpVerified: () {
-                // Temporarily disabled for design development
-                // context.go('/home');
+                context.go('/home');
               },
               unauthenticated: () {},
               failure: (message) {
@@ -114,7 +114,7 @@ class _OptScreenState extends State<OptScreen> {
                 selectedColor: AppColors.primaryBlue,
                 borderWidth: 0.5,
               ),
-              textStyle: AppTextStyle.getInputTextfield().copyWith(
+              textStyle: AppTextStyle.getInputTextfield(context).copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
               ),

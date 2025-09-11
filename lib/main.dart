@@ -32,8 +32,8 @@ class MyApp extends StatelessWidget {
         designSize: const Size(375, 812),
         child: MaterialApp.router(
           routerConfig: appRouter,
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
+          theme: AppTheme.lightTheme(context),
+          darkTheme: AppTheme.darkTheme(context),
           themeMode: ThemeMode.system,
           debugShowCheckedModeBanner: false,
         ),

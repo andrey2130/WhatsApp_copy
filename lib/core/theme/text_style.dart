@@ -24,7 +24,7 @@ static TextStyle getRegularBlack() {
     );
   }
 
-  static TextStyle getInputTextfield() {
+  static TextStyle getInputTextfield(BuildContext context) {
     return const TextStyle(
       fontSize: 16,
       color: Color(0xFF3C3C43),

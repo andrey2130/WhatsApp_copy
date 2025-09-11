@@ -8,6 +8,11 @@ sealed class AuthBlocEvent with _$AuthBlocEvent {
       VerifyOtp;
   const factory AuthBlocEvent.resendOtp({required SendOtpParams params}) =
       ResendOtp;
+
+  const factory AuthBlocEvent.loginViaEmail({required LoginParams params}) =
+      LoginViaEmail;
+  const factory AuthBlocEvent.registerViaEmail({required RegisterParams params}) =
+      RegisterViaEmail;
   const factory AuthBlocEvent.checkAuthStatus() = CheckAuthStatus;
   const factory AuthBlocEvent.logOut() = LogOut;
 }
