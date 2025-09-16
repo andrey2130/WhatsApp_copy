@@ -42,11 +42,7 @@ class _OptScreenState extends State<OptScreen> {
                 context.go('/home');
               },
               unauthenticated: () {},
-              failure: (message) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text('Something went wrong')));
-              },
+              failure: (message) {},
             );
           },
           child: _buildOtpContent(),
@@ -108,16 +104,17 @@ class _OptScreenState extends State<OptScreen> {
                 fieldWidth: 40,
                 activeFillColor: Colors.white,
                 inactiveFillColor: Colors.white,
+
                 selectedFillColor: Colors.white,
                 activeColor: AppColors.primaryGreen,
+                inactiveColor: Colors.white,
 
                 selectedColor: AppColors.primaryBlue,
                 borderWidth: 0.5,
               ),
-              textStyle: AppTextStyle.getInputTextfield(context).copyWith(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
+              textStyle: AppTextStyle.getInputTextfield(
+                context,
+              ).copyWith(fontSize: 18, fontWeight: FontWeight.w500),
               enableActiveFill: true,
               onCompleted: (value) {
                 if (value.length == 6) {

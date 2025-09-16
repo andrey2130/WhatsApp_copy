@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:telegram_copy/feature/auth/pages/screens/auth_screen.dart';
+import 'package:telegram_copy/feature/auth/pages/screens/sign_via_phone.dart';
 import 'package:telegram_copy/feature/auth/pages/screens/sign_in_screen.dart';
 import 'package:telegram_copy/feature/auth/pages/screens/opt_screen.dart';
 import 'package:telegram_copy/feature/auth/pages/screens/register_screen.dart';
@@ -34,7 +34,10 @@ final GoRouter appRouter = GoRouter(
     return null;
   },
   routes: [
-    GoRoute(path: '/', builder: (context, state) => const AuthScreen()),
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const SignInViaPhoneScreen(),
+    ),
     GoRoute(
       path: '/opt',
       builder: (context, state) {

@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 import 'package:telegram_copy/core/error/failure.dart';
 import 'package:telegram_copy/feature/auth/data/datasource/auth_datasource.dart';
 import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/send_otp_params.dart';
@@ -7,6 +8,7 @@ import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/verify_o
 import 'package:telegram_copy/feature/auth/domain/params/login_params.dart';
 import 'package:telegram_copy/feature/auth/domain/params/register_params.dart';
 import 'package:telegram_copy/feature/auth/domain/repo/auth_repo.dart';
+import 'package:telegram_copy/injections.dart';
 
 @Injectable(as: AuthRepo)
 class AuthRepoImpl implements AuthRepo {
@@ -28,6 +30,7 @@ class AuthRepoImpl implements AuthRepo {
       final result = await _authDatasource.sendOtp(params: params);
       return Right(result);
     } catch (e) {
+      getIt<Talker>().handle(e);
       return Left(Failure(message: e.toString()));
     }
   }
@@ -40,6 +43,7 @@ class AuthRepoImpl implements AuthRepo {
       await _authDatasource.verifyOtp(params: params);
       return Right(null);
     } catch (e) {
+      getIt<Talker>().handle(e);
       return Left(Failure(message: e.toString()));
     }
   }
@@ -52,6 +56,7 @@ class AuthRepoImpl implements AuthRepo {
       final result = await _authDatasource.loginViaEmail(params: params);
       return Right(result);
     } catch (e) {
+      getIt<Talker>().handle(e);
       return Left(Failure(message: e.toString()));
     }
   }
@@ -64,6 +69,7 @@ class AuthRepoImpl implements AuthRepo {
       final result = await _authDatasource.registerViaEmail(params: params);
       return Right(result);
     } catch (e) {
+      getIt<Talker>().handle(e);
       return Left(Failure(message: e.toString()));
     }
   }

@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 import 'package:telegram_copy/core/app_route/app_router.dart';
 import 'package:telegram_copy/core/theme/app_theme.dart';
@@ -10,10 +13,19 @@ import 'package:telegram_copy/firebase_options.dart';
 import 'package:telegram_copy/injections.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  configureDependencies();
-  runApp(const MyApp());
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      configureDependencies();
+      runApp(const MyApp());
+    },
+    (error, stackTrace) {
+      getIt<Talker>().handle(error);
+    },
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -30,12 +42,15 @@ class MyApp extends StatelessWidget {
       ],
       child: ScreenUtilInit(
         designSize: const Size(375, 812),
-        child: MaterialApp.router(
-          routerConfig: appRouter,
-          theme: AppTheme.lightTheme(context),
-          darkTheme: AppTheme.darkTheme(context),
-          themeMode: ThemeMode.system,
-          debugShowCheckedModeBanner: false,
+        child: TalkerWrapper(
+          talker: getIt<Talker>(),
+          child: MaterialApp.router(
+            routerConfig: appRouter,
+            theme: AppTheme.lightTheme(context),
+            darkTheme: AppTheme.darkTheme(context),
+            themeMode: ThemeMode.system,
+            debugShowCheckedModeBanner: false,
+          ),
         ),
       ),
     );

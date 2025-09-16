@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:intl_phone_field/phone_number.dart';
 import 'package:telegram_copy/core/app_route/app_router.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
@@ -10,24 +11,45 @@ import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
 import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/send_otp_params.dart';
 import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
 
-class AuthScreen extends StatefulWidget {
-  const AuthScreen({super.key});
+class SignInViaPhoneScreen extends StatefulWidget {
+  const SignInViaPhoneScreen({super.key});
 
   @override
-  State<AuthScreen> createState() => _AuthScreenState();
+  State<SignInViaPhoneScreen> createState() => _SignInViaPhoneScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> {
+class _SignInViaPhoneScreenState extends State<SignInViaPhoneScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _phoneTextEditingController =
       TextEditingController();
   String _phoneNumber = '';
+  bool _isPhoneValid = false;
 
   bool _validatePhoneNumber() {
     if (_phoneNumber.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please enter your phone number'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return false;
+    }
+
+    if (!_phoneNumber.startsWith('+')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Phone number must include country code'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return false;
+    }
+
+    if (_phoneNumber.length < 10) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter complete phone number'),
           backgroundColor: Colors.red,
         ),
       );
@@ -82,30 +104,25 @@ class _AuthScreenState extends State<AuthScreen> {
                   child: Column(
                     children: [
                       CustomAppBar(
-                        leftWidget: TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            "Cancel",
-                            style: AppTextStyle.getButtonText(),
-                          ),
-                        ),
-
                         rightWidget: TextButton(
-                          onPressed: () {
-                            if (_validatePhoneNumber()) {
-                              context.read<AuthBloc>().add(
-                                SendOtp(
-                                  params: SendOtpParams(
-                                    phoneNumber: _phoneNumber,
-                                  ),
-                                ),
-                              );
-                            }
-                          },
+                          onPressed: _isPhoneValid
+                              ? () {
+                                  if (_validatePhoneNumber()) {
+                                    context.read<AuthBloc>().add(
+                                      SendOtp(
+                                        params: SendOtpParams(
+                                          phoneNumber: _phoneNumber,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }
+                              : null,
                           child: Text(
-                            "Next",
+                            "Done",
                             style: AppTextStyle.getButtonText().copyWith(
                               fontWeight: FontWeight.w600,
+                              color: _isPhoneValid ? null : Colors.grey,
                             ),
                           ),
                         ),
@@ -132,9 +149,6 @@ class _AuthScreenState extends State<AuthScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 29.h),
-          Text("Your Phone", style: AppTextStyle.getHeader()),
-          SizedBox(height: 17.h),
           Text(
             "Please confirm your country code and enter your phone number.",
             style: AppTextStyle.getSubtitle(),
@@ -152,8 +166,34 @@ class _AuthScreenState extends State<AuthScreen> {
         controller: _phoneTextEditingController,
         initialCountryCode: 'UA',
         autovalidateMode: AutovalidateMode.onUserInteraction,
+        disableLengthCheck: false,
+        invalidNumberMessage: 'Please enter a valid phone number',
         onChanged: (phone) {
-          _phoneNumber = phone.completeNumber;
+          setState(() {
+            _phoneNumber = phone.completeNumber;
+            try {
+              _isPhoneValid = phone.isValidNumber();
+            } catch (e) {
+              _isPhoneValid = false;
+            }
+          });
+        },
+        onCountryChanged: (country) {
+          setState(() {
+            _isPhoneValid = false;
+            if (_phoneTextEditingController.text.isNotEmpty) {
+              try {
+                final phone = PhoneNumber(
+                  countryISOCode: country.code,
+                  countryCode: country.dialCode,
+                  number: _phoneTextEditingController.text,
+                );
+                _isPhoneValid = phone.isValidNumber();
+              } catch (e) {
+                _isPhoneValid = false;
+              }
+            }
+          });
         },
         validator: (value) {
           if (value == null || value.number.isEmpty) {

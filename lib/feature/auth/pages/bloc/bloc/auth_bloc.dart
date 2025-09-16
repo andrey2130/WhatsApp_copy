@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 import 'package:telegram_copy/core/usecases/usecase.dart';
 import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/send_otp_params.dart';
 import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/verify_otp_params.dart';
@@ -12,6 +13,7 @@ import 'package:telegram_copy/feature/auth/domain/usecases/login_via_email_useca
 import 'package:telegram_copy/feature/auth/domain/usecases/register_via_email_usecase.dart';
 import 'package:telegram_copy/feature/auth/domain/usecases/sent_otp_usecase.dart';
 import 'package:telegram_copy/feature/auth/domain/usecases/verify_otp_usecase.dart';
+import 'package:telegram_copy/injections.dart';
 
 part 'auth_bloc_event.dart';
 part 'auth_bloc_state.dart';
@@ -61,7 +63,10 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
     final result = await _sendOtpUsecase(event.params);
 
     result.fold(
-      (failure) => emit(AuthBlocState.failure(message: failure.message)),
+      (failure) {
+        emit(AuthBlocState.failure(message: failure.message));
+        getIt<Talker>().handle(failure.message);
+      },
       (verificationId) => emit(
         AuthBlocState.otpSent(
           phoneNumber: event.params.phoneNumber,
@@ -80,7 +85,10 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
     final result = await _sendOtpUsecase(event.params);
 
     result.fold(
-      (failure) => emit(AuthBlocState.failure(message: failure.message)),
+      (failure) {
+        emit(AuthBlocState.failure(message: failure.message));
+        getIt<Talker>().handle(failure.message);
+      },
       (verificationId) => emit(
         AuthBlocState.otpSent(
           phoneNumber: event.params.phoneNumber,
@@ -98,10 +106,10 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
 
     final result = await _verifyOtpUsecase(event.params);
 
-    result.fold(
-      (failure) => emit(AuthBlocState.failure(message: failure.message)),
-      (_) => emit(const AuthBlocState.otpVerified()),
-    );
+    result.fold((failure) {
+      emit(AuthBlocState.failure(message: failure.message));
+      getIt<Talker>().handle(failure.message);
+    }, (_) => emit(const AuthBlocState.otpVerified()));
   }
 
   Future<void> _onLogOut(LogOut event, Emitter<AuthBlocState> emit) async {
@@ -119,10 +127,10 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
 
     final result = await _loginViaEmailUsecase(event.params);
 
-    result.fold(
-      (failure) => emit(AuthBlocState.failure(message: failure.message)),
-      (userId) => emit(AuthBlocState.authenticated(userId: userId)),
-    );
+    result.fold((failure) {
+      emit(AuthBlocState.failure(message: failure.message));
+      getIt<Talker>().handle(failure.message);
+    }, (userId) => emit(AuthBlocState.authenticated(userId: userId)));
   }
 
   Future<void> _onRegisterViaEmail(
@@ -133,9 +141,9 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
 
     final result = await _registerViaEmailUsecase(event.params);
 
-    result.fold(
-      (failure) => emit(AuthBlocState.failure(message: failure.message)),
-      (userId) => emit(AuthBlocState.authenticated(userId: userId)),
-    );
+    result.fold((failure) {
+      emit(AuthBlocState.failure(message: failure.message));
+      getIt<Talker>().handle(failure.message);
+    }, (userId) => emit(AuthBlocState.authenticated(userId: userId)));
   }
 }

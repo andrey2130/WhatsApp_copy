@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:injectable/injectable.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 import 'package:telegram_copy/core/error/failure.dart';
 import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/send_otp_params.dart';
 import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/verify_otp_params.dart';
 import 'package:telegram_copy/feature/auth/domain/params/login_params.dart';
 import 'package:telegram_copy/feature/auth/domain/params/register_params.dart';
+import 'package:telegram_copy/injections.dart';
 
 class ConfirmationResult {
   final String verificationId;
@@ -38,29 +40,37 @@ class AuthDatasourceImpl implements AuthDatasource {
         phoneNumber: params.phoneNumber,
         verificationCompleted: (PhoneAuthCredential credential) {
           // Auto-verification completed, sign in automatically
-          _firebaseAuth.signInWithCredential(credential);
-          completer.complete(ConfirmationResult('auto_verified', null));
+          if (!completer.isCompleted) {
+            _firebaseAuth.signInWithCredential(credential);
+            completer.complete(ConfirmationResult('auto_verified', null));
+          }
         },
         verificationFailed: (FirebaseAuthException e) {
-          completer.completeError(
-            Failure(message: e.message ?? 'Verification failed'),
-          );
+          if (!completer.isCompleted) {
+            getIt<Talker>().error('Phone verification failed: ${e.message}');
+            completer.completeError(
+              Failure(message: e.message ?? 'Verification failed'),
+            );
+          }
         },
         codeSent: (String verificationId, int? resendToken) {
-          completer.complete(ConfirmationResult(verificationId, resendToken));
+          if (!completer.isCompleted) {
+            getIt<Talker>().info('OTP code sent successfully');
+            completer.complete(ConfirmationResult(verificationId, resendToken));
+          }
         },
         codeAutoRetrievalTimeout: (String verificationId) {
-          completer.complete(ConfirmationResult(verificationId, null));
+          if (!completer.isCompleted) {
+            completer.complete(ConfirmationResult(verificationId, null));
+          }
         },
       );
 
       final result = await completer.future;
       return result.verificationId;
     } catch (e) {
-      if (e is Failure) {
-        rethrow;
-      }
-      throw Failure(message: e.toString());
+      getIt<Talker>().handle(e);
+      rethrow;
     }
   }
 
@@ -73,8 +83,9 @@ class AuthDatasourceImpl implements AuthDatasource {
       );
 
       await _firebaseAuth.signInWithCredential(credential);
-    } catch (e) {
-      throw Failure(message: e.toString());
+    } catch (e, stackTrace) {
+      getIt<Talker>().handle(e, stackTrace);
+      rethrow;
     }
   }
 
@@ -82,8 +93,8 @@ class AuthDatasourceImpl implements AuthDatasource {
   Future<void> logOut() async {
     try {
       await _firebaseAuth.signOut();
-    } catch (e) {
-      throw Failure(message: e.toString());
+    } catch (e, stackTrace) {
+      getIt<Talker>().handle(e, stackTrace);
     }
   }
 
@@ -118,7 +129,8 @@ class AuthDatasourceImpl implements AuthDatasource {
       }
       throw Failure(message: message);
     } catch (e) {
-      throw Failure(message: 'An unexpected error occurred: ${e.toString()}');
+      getIt<Talker>().handle(e);
+      rethrow;
     }
   }
 
@@ -131,7 +143,8 @@ class AuthDatasourceImpl implements AuthDatasource {
       );
       return credential.user?.uid ?? '';
     } catch (e) {
-      throw Failure(message: e.toString());
+      getIt<Talker>().handle(e);
+      rethrow;
     }
   }
 }
