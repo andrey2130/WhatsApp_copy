@@ -32,11 +32,14 @@ extension GetItInjectableX on _i174.GetIt {
     _i526.EnvironmentFilter? environmentFilter,
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
-    gh.factory<_i274.AuthDatasource>(
-      () => _i274.AuthDatasourceImpl(firebaseAuth: gh<_i59.FirebaseAuth>()),
-    );
     gh.factory<_i574.UserDataSource>(
       () => _i574.UserDataSourceImpl(gh<_i974.FirebaseFirestore>()),
+    );
+    gh.factory<_i274.AuthDatasource>(
+      () => _i274.AuthDatasourceImpl(
+        firebaseAuth: gh<_i59.FirebaseAuth>(),
+        userDataSource: gh<_i574.UserDataSource>(),
+      ),
     );
     gh.factory<_i583.AuthRepo>(
       () => _i939.AuthRepoImpl(authDatasource: gh<_i274.AuthDatasource>()),

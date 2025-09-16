@@ -5,8 +5,10 @@ import 'package:talker_flutter/talker_flutter.dart';
 import 'package:telegram_copy/core/error/failure.dart';
 import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/send_otp_params.dart';
 import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/verify_otp_params.dart';
+import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/login_via_phone_params.dart';
 import 'package:telegram_copy/feature/auth/domain/params/login_params.dart';
 import 'package:telegram_copy/feature/auth/domain/params/register_params.dart';
+import 'package:telegram_copy/feature/auth/data/datasource/user_datasource.dart';
 import 'package:telegram_copy/injections.dart';
 
 class ConfirmationResult {
@@ -27,9 +29,13 @@ abstract class AuthDatasource {
 @Injectable(as: AuthDatasource)
 class AuthDatasourceImpl implements AuthDatasource {
   final FirebaseAuth _firebaseAuth;
+  final UserDataSource _userDataSource;
 
-  AuthDatasourceImpl({required FirebaseAuth firebaseAuth})
-    : _firebaseAuth = firebaseAuth;
+  AuthDatasourceImpl({
+    required FirebaseAuth firebaseAuth,
+    required UserDataSource userDataSource,
+  }) : _firebaseAuth = firebaseAuth,
+       _userDataSource = userDataSource;
 
   @override
   Future<String> sendOtp({required SendOtpParams params}) async {
@@ -82,7 +88,20 @@ class AuthDatasourceImpl implements AuthDatasource {
         smsCode: params.otpCode,
       );
 
-      await _firebaseAuth.signInWithCredential(credential);
+      final userCredential = await _firebaseAuth.signInWithCredential(
+        credential,
+      );
+      final user = userCredential.user;
+
+      if (user != null) {
+        await _userDataSource.saveUserData(
+          user,
+          LoginViaPhoneParams(
+            phoneNumber: params.phoneNumber,
+            otpCode: params.otpCode,
+          ),
+        );
+      }
     } catch (e, stackTrace) {
       getIt<Talker>().handle(e, stackTrace);
       rethrow;
@@ -141,7 +160,16 @@ class AuthDatasourceImpl implements AuthDatasource {
         email: params.email,
         password: params.password,
       );
-      return credential.user?.uid ?? '';
+
+      final user = credential.user;
+      if (user != null) {
+        await _userDataSource.saveUserDataEmail(
+          user,
+          LoginParams(email: params.email, password: params.password),
+        );
+      }
+
+      return user?.uid ?? '';
     } catch (e) {
       getIt<Talker>().handle(e);
       rethrow;
