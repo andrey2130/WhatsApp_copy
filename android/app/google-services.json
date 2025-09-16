@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "563247270392",
-    "project_id": "telegram-copy-a52c1",
-    "storage_bucket": "telegram-copy-a52c1.firebasestorage.app"
+    "project_number": "719390481809",
+    "project_id": "chat-77f97",
+    "storage_bucket": "chat-77f97.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:563247270392:android:7093ecbda0b49f6928ee0d",
+        "mobilesdk_app_id": "1:719390481809:android:097e9e2d46173df5ea8e30",
         "android_client_info": {
           "package_name": "com.example.telegram_copy"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCj9RnfZ-jwY4_qbIlJAkGSAUPRi_kyYzw"
+          "current_key": "AIzaSyDIUKZejg-5DfR_n1iz-rT-iOuD83M4uqE"
         }
       ],
       "services": {

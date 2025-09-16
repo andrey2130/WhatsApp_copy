@@ -50,19 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCj9RnfZ-jwY4_qbIlJAkGSAUPRi_kyYzw',
-    appId: '1:563247270392:android:7093ecbda0b49f6928ee0d',
-    messagingSenderId: '563247270392',
-    projectId: 'telegram-copy-a52c1',
-    storageBucket: 'telegram-copy-a52c1.firebasestorage.app',
+    apiKey: 'AIzaSyDIUKZejg-5DfR_n1iz-rT-iOuD83M4uqE',
+    appId: '1:719390481809:android:097e9e2d46173df5ea8e30',
+    messagingSenderId: '719390481809',
+    projectId: 'chat-77f97',
+    storageBucket: 'chat-77f97.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAa_WHri1ODIDCfxWjUr_mGZ3NY_Rm0XhM',
-    appId: '1:563247270392:ios:1c0b010f18c074fc28ee0d',
-    messagingSenderId: '563247270392',
-    projectId: 'telegram-copy-a52c1',
-    storageBucket: 'telegram-copy-a52c1.firebasestorage.app',
+    apiKey: 'AIzaSyBkjT_-Oz7XpkhjRd4X2wcmIKzCQ5L-Gmg',
+    appId: '1:719390481809:ios:80c523c4ef7255daea8e30',
+    messagingSenderId: '719390481809',
+    projectId: 'chat-77f97',
+    storageBucket: 'chat-77f97.firebasestorage.app',
     iosBundleId: 'com.example.telegramCopy',
   );
+
 }

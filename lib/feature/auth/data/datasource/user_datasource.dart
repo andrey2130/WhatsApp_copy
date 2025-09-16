@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:injectable/injectable.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/login_via_phone_params.dart';
 import 'package:telegram_copy/feature/auth/domain/params/login_params.dart';
+import 'package:telegram_copy/injections.dart';
 
 abstract class UserDataSource {
   Future<void> saveUserDataEmail(User user, LoginParams params);
@@ -19,7 +21,6 @@ class UserDataSourceImpl implements UserDataSource {
   @override
   Future<void> saveUserDataEmail(User user, LoginParams params) async {
     try {
-      print('Saving user data to Firestore for user: ${user.uid}');
       await _firestore.collection('users').doc(user.uid).set({
         'uid': user.uid,
         'email': params.email,
@@ -27,8 +28,9 @@ class UserDataSourceImpl implements UserDataSource {
       });
       print('User data saved successfully to Firestore');
     } catch (e) {
-      print('Error saving user data: $e');
-      rethrow;
+      print('Failed to save user data to Firestore: $e');
+      getIt<Talker>().handle(e);
+      // Don't rethrow to allow auth to continue even if Firestore fails
     }
   }
 
@@ -40,9 +42,11 @@ class UserDataSourceImpl implements UserDataSource {
         'phoneNumber': params.phoneNumber,
         'createdAt': FieldValue.serverTimestamp(),
       });
+      print('User data saved successfully to Firestore');
     } catch (e) {
-      print('Error saving user data: $e');
-      rethrow;
+      print('Failed to save user data to Firestore: $e');
+      getIt<Talker>().handle(e);
+      // Don't rethrow to allow auth to continue even if Firestore fails
     }
   }
 
@@ -55,7 +59,7 @@ class UserDataSourceImpl implements UserDataSource {
           .get();
       return docSnapshot.data();
     } catch (e) {
-      print('Error getting user data: $e');
+      getIt<Talker>().handle(e);
       rethrow;
     }
   }

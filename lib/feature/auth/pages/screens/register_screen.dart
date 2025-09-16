@@ -193,6 +193,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           hintText: 'Enter your email',
           controller: emailController,
           labelText: 'Email',
+          keyboardType: TextInputType.emailAddress,
           isPassword: false,
         ),
         SizedBox(height: 20),
