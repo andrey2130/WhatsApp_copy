@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "563247270392",
+    "project_id": "telegram-copy-a52c1",
+    "storage_bucket": "telegram-copy-a52c1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:563247270392:android:7093ecbda0b49f6928ee0d",
+        "android_client_info": {
+          "package_name": "com.example.telegram_copy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCj9RnfZ-jwY4_qbIlJAkGSAUPRi_kyYzw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
