@@ -28,8 +28,9 @@ class CustomTextField extends StatelessWidget {
   final BorderSide? borderSide;
   final BorderSide? focusedBorderSide;
   final TextStyle? hintStyle;
+  final Widget? prefixIcon;
   final Widget? sufixIcon;
-
+  final double? radius;
   const CustomTextField({
     super.key,
     required this.controller,
@@ -54,7 +55,9 @@ class CustomTextField extends StatelessWidget {
     this.borderSide,
     this.focusedBorderSide,
     this.hintStyle,
+    this.prefixIcon,
     this.sufixIcon,
+    this.radius = 8.0,
   });
 
   @override
@@ -81,6 +84,7 @@ class CustomTextField extends StatelessWidget {
                 Common.getInputDecoration(
                   context,
                   hintText ?? '',
+                  prefixIcon: prefixIcon ?? SizedBox.shrink(),
                   suffixIcon: sufixIcon ?? _buildSuffixIcon(),
                 ).copyWith(
                   filled: backgroundColor != null,
@@ -88,13 +92,13 @@ class CustomTextField extends StatelessWidget {
                   enabledBorder: OutlineInputBorder(
                     borderSide:
                         borderSide ?? BorderSide(color: Colors.grey.shade300),
-                    borderRadius: BorderRadius.circular(8.r),
+                    borderRadius: BorderRadius.circular(radius!.r),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide:
                         focusedBorderSide ??
                         const BorderSide(color: AppColors.primaryBlue),
-                    borderRadius: BorderRadius.circular(8.r),
+                    borderRadius: BorderRadius.circular(radius!.r),
                   ),
 
                   // Floating-label settings
@@ -107,7 +111,7 @@ class CustomTextField extends StatelessWidget {
                   // Optional inline hint when empty
                   hintText: hintText,
                   hintStyle: hintStyle,
-
+                  prefixIcon: prefixIcon ?? SizedBox.shrink(),
                   contentPadding: EdgeInsets.symmetric(
                     vertical: 8.h,
                     horizontal: 16.w,

@@ -9,6 +9,7 @@ import 'package:talker_flutter/talker_flutter.dart';
 import 'package:telegram_copy/core/app_route/app_router.dart';
 import 'package:telegram_copy/core/theme/app_theme.dart';
 import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/bloc/chat_list_bloc.dart';
 import 'package:telegram_copy/firebase_options.dart';
 import 'package:telegram_copy/injections.dart';
 
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
           create: (context) =>
               getIt<AuthBloc>()..add(const AuthBlocEvent.checkAuthStatus()),
         ),
+        BlocProvider(create: (context) => getIt<ChatListBloc>()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(375, 812),

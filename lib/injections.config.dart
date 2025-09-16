@@ -24,6 +24,7 @@ import 'feature/auth/domain/usecases/register_via_email_usecase.dart' as _i836;
 import 'feature/auth/domain/usecases/sent_otp_usecase.dart' as _i688;
 import 'feature/auth/domain/usecases/verify_otp_usecase.dart' as _i234;
 import 'feature/auth/pages/bloc/bloc/auth_bloc.dart' as _i147;
+import 'feature/chat_list/presentation/bloc/chat_list_bloc.dart' as _i206;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -32,6 +33,7 @@ extension GetItInjectableX on _i174.GetIt {
     _i526.EnvironmentFilter? environmentFilter,
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
+    gh.factory<_i206.ChatListBloc>(() => _i206.ChatListBloc());
     gh.factory<_i574.UserDataSource>(
       () => _i574.UserDataSourceImpl(gh<_i974.FirebaseFirestore>()),
     );

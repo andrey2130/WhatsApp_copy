@@ -4,7 +4,7 @@ import 'package:telegram_copy/feature/auth/pages/screens/sign_via_phone.dart';
 import 'package:telegram_copy/feature/auth/pages/screens/sign_in_screen.dart';
 import 'package:telegram_copy/feature/auth/pages/screens/opt_screen.dart';
 import 'package:telegram_copy/feature/auth/pages/screens/register_screen.dart';
-import 'package:telegram_copy/feature/home/home_screen.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/pages/chat_list_screen.dart';
 
 class OtpRouteData {
   final String phoneNumber;

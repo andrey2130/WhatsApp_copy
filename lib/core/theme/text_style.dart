@@ -8,14 +8,33 @@ class AppTextStyle {
       fontFamily: 'SF Pro Text',
     );
   }
-static TextStyle getRegularBlack() {
-  return const TextStyle(
-    fontSize: 17,
-    fontWeight: FontWeight.w400,
-    fontFamily: 'SF Pro Text',
 
-  );
-}
+  static TextStyle getBoldGreen() {
+    return const TextStyle(
+      fontSize: 24,
+      fontWeight: FontWeight.bold,
+      fontFamily: 'SF Pro Text',
+      color: Color(0xFF34C759),
+    );
+  }
+
+  static TextStyle getFilterText() {
+    return const TextStyle(
+      fontSize: 13,
+      fontWeight: FontWeight.w500,
+      fontFamily: 'SF Pro Text',
+      color: Colors.black45,
+    );
+  }
+
+  static TextStyle getRegularBlack() {
+    return const TextStyle(
+      fontSize: 17,
+      fontWeight: FontWeight.w400,
+      fontFamily: 'SF Pro Text',
+    );
+  }
+
   static TextStyle getSubtitle() {
     return const TextStyle(
       fontSize: 16,
