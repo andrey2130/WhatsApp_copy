@@ -4,8 +4,8 @@ import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
 import 'package:telegram_copy/core/utils/widgets/user_list_item.dart';
 
-class ChatListWidgets extends StatelessWidget {
-  const ChatListWidgets({super.key});
+class SuggestUser extends StatelessWidget {
+  const SuggestUser({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,31 +22,10 @@ class ChatListWidgets extends StatelessWidget {
       ),
       title: Text('John Doe', style: AppTextStyle.getRegularBlack()),
       subtitle: Text(
-        'Typing...',
+        'About User',
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
         style: AppTextStyle.getFilterText(),
-      ),
-      meta: Text(
-        '12:00',
-        style: AppTextStyle.getFilterText().copyWith(
-          fontWeight: FontWeight.w600,
-          color: const Color(0xFF959595),
-        ),
-      ),
-      badge: Container(
-        width: 18.w,
-        height: 16.h,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: AppColors.primaryGreen,
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        child: Text(
-          '1',
-          textAlign: TextAlign.center,
-          style: AppTextStyle.getFilterText(),
-        ),
       ),
     );
   }

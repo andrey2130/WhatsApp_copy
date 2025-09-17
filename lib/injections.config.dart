@@ -25,6 +25,11 @@ import 'feature/auth/domain/usecases/sent_otp_usecase.dart' as _i688;
 import 'feature/auth/domain/usecases/verify_otp_usecase.dart' as _i234;
 import 'feature/auth/pages/bloc/bloc/auth_bloc.dart' as _i147;
 import 'feature/chat_list/presentation/bloc/chat_list_bloc.dart' as _i206;
+import 'feature/settings/data/datasource/settings_datasource.dart' as _i1000;
+import 'feature/settings/data/repo/settings_repo_impl.dart' as _i757;
+import 'feature/settings/domain/repo/settings_repo.dart' as _i920;
+import 'feature/settings/domain/usecases/get_user_data_usecase.dart' as _i481;
+import 'feature/settings/presentation/bloc/settings_bloc.dart' as _i293;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -34,8 +39,16 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     gh.factory<_i206.ChatListBloc>(() => _i206.ChatListBloc());
+    gh.factory<_i1000.SettingsDatasource>(
+      () => _i1000.SettingsDatasourceImpl(gh<_i974.FirebaseFirestore>()),
+    );
     gh.factory<_i574.UserDataSource>(
       () => _i574.UserDataSourceImpl(gh<_i974.FirebaseFirestore>()),
+    );
+    gh.factory<_i920.SettingsRepo>(
+      () => _i757.SettingsRepoImpl(
+        settingsDatasource: gh<_i1000.SettingsDatasource>(),
+      ),
     );
     gh.factory<_i274.AuthDatasource>(
       () => _i274.AuthDatasourceImpl(
@@ -43,8 +56,16 @@ extension GetItInjectableX on _i174.GetIt {
         userDataSource: gh<_i574.UserDataSource>(),
       ),
     );
+    gh.factory<_i481.GetUserDataUsecase>(
+      () => _i481.GetUserDataUsecase(settingsRepo: gh<_i920.SettingsRepo>()),
+    );
     gh.factory<_i583.AuthRepo>(
       () => _i939.AuthRepoImpl(authDatasource: gh<_i274.AuthDatasource>()),
+    );
+    gh.factory<_i293.SettingsBloc>(
+      () => _i293.SettingsBloc(
+        getUserDataUsecase: gh<_i481.GetUserDataUsecase>(),
+      ),
     );
     gh.factory<_i655.LogOutUsecase>(
       () => _i655.LogOutUsecase(authRepo: gh<_i583.AuthRepo>()),

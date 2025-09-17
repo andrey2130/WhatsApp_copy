@@ -5,6 +5,8 @@ import 'package:telegram_copy/feature/auth/pages/screens/sign_in_screen.dart';
 import 'package:telegram_copy/feature/auth/pages/screens/opt_screen.dart';
 import 'package:telegram_copy/feature/auth/pages/screens/register_screen.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/pages/chat_list_screen.dart';
+import 'package:telegram_copy/feature/settings/presentation/pages/setting_screen.dart';
+import 'package:telegram_copy/feature/settings/presentation/pages/user_setting_screen.dart';
 
 class OtpRouteData {
   final String phoneNumber;
@@ -48,7 +50,7 @@ final GoRouter appRouter = GoRouter(
         );
       },
     ),
-    GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
+    GoRoute(path: '/home', builder: (context, state) => const ChatListScreen()),
     GoRoute(
       path: '/email_auth',
       builder: (context, state) => const EmailAuthScreen(),
@@ -56,6 +58,14 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/register',
       builder: (context, state) => const RegisterScreen(),
+    ),
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) => const SettingScreen(),
+    ),
+    GoRoute(
+      path: '/settings/user',
+      builder: (context, state) => const UserSettingScreen(),
     ),
   ],
   onException: (context, state, router) {

@@ -10,6 +10,7 @@ import 'package:telegram_copy/core/app_route/app_router.dart';
 import 'package:telegram_copy/core/theme/app_theme.dart';
 import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/bloc/chat_list_bloc.dart';
+import 'package:telegram_copy/feature/settings/presentation/bloc/settings_bloc.dart';
 import 'package:telegram_copy/firebase_options.dart';
 import 'package:telegram_copy/injections.dart';
 
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
               getIt<AuthBloc>()..add(const AuthBlocEvent.checkAuthStatus()),
         ),
         BlocProvider(create: (context) => getIt<ChatListBloc>()),
+        BlocProvider(create: (context) => getIt<SettingsBloc>()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(375, 812),
