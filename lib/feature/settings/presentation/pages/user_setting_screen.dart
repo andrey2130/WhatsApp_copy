@@ -68,7 +68,7 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
               icon: Icons.person_outline,
               title: 'Name',
               value: user.name.isNotEmpty ? user.name : 'No name set',
-              onTap: () {},
+              onTap: () => context.push('/settings/user/change_name'),
             ),
             _buildProfileSection(
               icon: Icons.info_outline,
@@ -118,12 +118,7 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: AppTextStyle.getRegularBlack().copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  Text(title, style: AppTextStyle.getRegularBlack()),
                   SizedBox(height: 2.h),
                   Text(
                     value,

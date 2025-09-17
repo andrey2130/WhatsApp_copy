@@ -76,7 +76,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     title: Text(
                       context.read<SettingsBloc>().state.maybeWhen(
                         orElse: () => '',
-                        success: (user) => user.email ?? '',
+                        success: (user) => user.name,
                       ),
                       style: AppTextStyle.getRegularBlack(),
                     ),

@@ -31,6 +31,7 @@ class CustomTextField extends StatelessWidget {
   final Widget? prefixIcon;
   final Widget? sufixIcon;
   final double? radius;
+  final Color? floatingLabelColor;
   const CustomTextField({
     super.key,
     required this.controller,
@@ -58,6 +59,7 @@ class CustomTextField extends StatelessWidget {
     this.prefixIcon,
     this.sufixIcon,
     this.radius = 8.0,
+    this.floatingLabelColor,
   });
 
   @override
@@ -84,7 +86,7 @@ class CustomTextField extends StatelessWidget {
                 Common.getInputDecoration(
                   context,
                   hintText ?? '',
-                  prefixIcon: prefixIcon ?? SizedBox.shrink(),
+                  prefixIcon: prefixIcon,
                   suffixIcon: sufixIcon ?? _buildSuffixIcon(),
                 ).copyWith(
                   filled: backgroundColor != null,
@@ -104,14 +106,15 @@ class CustomTextField extends StatelessWidget {
                   // Floating-label settings
                   labelText: labelText,
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  floatingLabelStyle: AppTextStyle.getInputTextfield(
-                    context,
-                  ).copyWith(color: AppColors.primaryBlue),
+                  floatingLabelStyle: AppTextStyle.getInputTextfield(context)
+                      .copyWith(
+                        color: floatingLabelColor ?? AppColors.primaryBlue,
+                      ),
 
                   // Optional inline hint when empty
                   hintText: hintText,
                   hintStyle: hintStyle,
-                  prefixIcon: prefixIcon ?? SizedBox.shrink(),
+                  prefixIcon: prefixIcon,
                   contentPadding: EdgeInsets.symmetric(
                     vertical: 8.h,
                     horizontal: 16.w,

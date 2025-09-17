@@ -8,6 +8,7 @@ import 'package:telegram_copy/injections.dart';
 
 abstract class SettingsDatasource {
   Future<UserParams> getUserData();
+  Future<void> updateUserName({required String name});
 }
 
 @Injectable(as: SettingsDatasource)
@@ -53,6 +54,21 @@ class SettingsDatasourceImpl implements SettingsDatasource {
       };
 
       return UserParams.fromJson(safe);
+    } catch (e, st) {
+      getIt<Talker>().handle(e, st);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> updateUserName({required String name}) async {
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) {
+        throw StateError('User not found');
+      }
+      await _firestore.collection('users').doc(uid).update({'name': name});
+      getIt<Talker>().info('User name updated: $name');
     } catch (e, st) {
       getIt<Talker>().handle(e, st);
       rethrow;
