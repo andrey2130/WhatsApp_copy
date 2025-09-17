@@ -29,6 +29,7 @@ import 'feature/settings/data/datasource/settings_datasource.dart' as _i1000;
 import 'feature/settings/data/repo/settings_repo_impl.dart' as _i757;
 import 'feature/settings/domain/repo/settings_repo.dart' as _i920;
 import 'feature/settings/domain/usecases/get_user_data_usecase.dart' as _i481;
+import 'feature/settings/domain/usecases/update_about_usecase.dart' as _i816;
 import 'feature/settings/domain/usecases/update_user_name_usecase.dart'
     as _i577;
 import 'feature/settings/presentation/bloc/settings_bloc.dart' as _i293;
@@ -64,6 +65,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i577.UpdateUserNameUsecase>(
       () => _i577.UpdateUserNameUsecase(settingsRepo: gh<_i920.SettingsRepo>()),
     );
+    gh.factory<_i816.UpdateAboutUsecase>(
+      () => _i816.UpdateAboutUsecase(settingsRepo: gh<_i920.SettingsRepo>()),
+    );
     gh.factory<_i583.AuthRepo>(
       () => _i939.AuthRepoImpl(authDatasource: gh<_i274.AuthDatasource>()),
     );
@@ -71,6 +75,7 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i293.SettingsBloc(
         getUserDataUsecase: gh<_i481.GetUserDataUsecase>(),
         updateUserNameUsecase: gh<_i577.UpdateUserNameUsecase>(),
+        updateAboutUsecase: gh<_i816.UpdateAboutUsecase>(),
       ),
     );
     gh.factory<_i655.LogOutUsecase>(

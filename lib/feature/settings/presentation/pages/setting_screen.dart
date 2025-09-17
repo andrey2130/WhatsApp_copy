@@ -60,17 +60,20 @@ class _SettingScreenState extends State<SettingScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: UserListItem(
                     onTap: () => context.push('/settings/user'),
-                    leading: Container(
-                      width: 50.r,
-                      height: 50.r,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(27.5.r),
-                        border: Border.all(color: AppColors.borderColor),
-                      ),
-                      child: Icon(
-                        Icons.person,
-                        color: Colors.black,
-                        size: 24.r,
+                    leading: Hero(
+                      tag: 'user_avatar',
+                      child: Container(
+                        width: 50.r,
+                        height: 50.r,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(27.5.r),
+                          border: Border.all(color: AppColors.borderColor),
+                        ),
+                        child: Icon(
+                          Icons.person,
+                          color: Colors.black,
+                          size: 24.r,
+                        ),
                       ),
                     ),
                     title: Text(

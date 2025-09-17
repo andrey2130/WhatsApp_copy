@@ -36,4 +36,15 @@ class SettingsRepoImpl implements SettingsRepo {
       return Left(Failure(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> updateAbout({required String about}) async {
+    try {
+      await _settingsDatasource.updateAbout(about: about);
+      return Right(null);
+    } catch (e) {
+      getIt<Talker>().handle(e);
+      return Left(Failure(message: e.toString()));
+    }
+  }
 }

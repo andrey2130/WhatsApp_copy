@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
@@ -76,7 +76,7 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
               value: user.bio.isNotEmpty
                   ? user.bio
                   : 'Hey there! I am using Telegram.',
-              onTap: () {},
+              onTap: () => context.push('/settings/user/about'),
             ),
             _buildProfileSection(
               icon: Icons.phone_outlined,
@@ -138,9 +138,12 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
 }
 
 Widget _buildAvatar() {
-  return CircleAvatar(
-    radius: 80.r,
-    backgroundColor: Colors.grey[300],
-    child: Icon(Icons.person, size: 80.r, color: Colors.white),
+  return Hero(
+    tag: 'user_avatar',
+    child: CircleAvatar(
+      radius: 80.r,
+      backgroundColor: Colors.grey[300],
+      child: Icon(Icons.person, size: 80.r, color: Colors.white),
+    ),
   );
 }

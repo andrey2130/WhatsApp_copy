@@ -55,12 +55,13 @@ extension SettingsEventPatterns on SettingsEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( LoadRequested value)?  loadRequested,TResult Function( UpdateUserName value)?  updateUserName,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( LoadRequested value)?  loadRequested,TResult Function( UpdateUserName value)?  updateUserName,TResult Function( UpdateAbout value)?  updateAbout,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case LoadRequested() when loadRequested != null:
 return loadRequested(_that);case UpdateUserName() when updateUserName != null:
-return updateUserName(_that);case _:
+return updateUserName(_that);case UpdateAbout() when updateAbout != null:
+return updateAbout(_that);case _:
   return orElse();
 
 }
@@ -78,12 +79,13 @@ return updateUserName(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( LoadRequested value)  loadRequested,required TResult Function( UpdateUserName value)  updateUserName,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( LoadRequested value)  loadRequested,required TResult Function( UpdateUserName value)  updateUserName,required TResult Function( UpdateAbout value)  updateAbout,}){
 final _that = this;
 switch (_that) {
 case LoadRequested():
 return loadRequested(_that);case UpdateUserName():
-return updateUserName(_that);case _:
+return updateUserName(_that);case UpdateAbout():
+return updateAbout(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -100,12 +102,13 @@ return updateUserName(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( LoadRequested value)?  loadRequested,TResult? Function( UpdateUserName value)?  updateUserName,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( LoadRequested value)?  loadRequested,TResult? Function( UpdateUserName value)?  updateUserName,TResult? Function( UpdateAbout value)?  updateAbout,}){
 final _that = this;
 switch (_that) {
 case LoadRequested() when loadRequested != null:
 return loadRequested(_that);case UpdateUserName() when updateUserName != null:
-return updateUserName(_that);case _:
+return updateUserName(_that);case UpdateAbout() when updateAbout != null:
+return updateAbout(_that);case _:
   return null;
 
 }
@@ -122,11 +125,12 @@ return updateUserName(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loadRequested,TResult Function( String name)?  updateUserName,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loadRequested,TResult Function( String name)?  updateUserName,TResult Function( String about)?  updateAbout,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case LoadRequested() when loadRequested != null:
 return loadRequested();case UpdateUserName() when updateUserName != null:
-return updateUserName(_that.name);case _:
+return updateUserName(_that.name);case UpdateAbout() when updateAbout != null:
+return updateAbout(_that.about);case _:
   return orElse();
 
 }
@@ -144,11 +148,12 @@ return updateUserName(_that.name);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loadRequested,required TResult Function( String name)  updateUserName,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loadRequested,required TResult Function( String name)  updateUserName,required TResult Function( String about)  updateAbout,}) {final _that = this;
 switch (_that) {
 case LoadRequested():
 return loadRequested();case UpdateUserName():
-return updateUserName(_that.name);case _:
+return updateUserName(_that.name);case UpdateAbout():
+return updateAbout(_that.about);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -165,11 +170,12 @@ return updateUserName(_that.name);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loadRequested,TResult? Function( String name)?  updateUserName,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loadRequested,TResult? Function( String name)?  updateUserName,TResult? Function( String about)?  updateAbout,}) {final _that = this;
 switch (_that) {
 case LoadRequested() when loadRequested != null:
 return loadRequested();case UpdateUserName() when updateUserName != null:
-return updateUserName(_that.name);case _:
+return updateUserName(_that.name);case UpdateAbout() when updateAbout != null:
+return updateAbout(_that.about);case _:
   return null;
 
 }
@@ -268,6 +274,72 @@ class _$UpdateUserNameCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') $Res call({Object? name = null,}) {
   return _then(UpdateUserName(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class UpdateAbout implements SettingsEvent {
+  const UpdateAbout({required this.about});
+  
+
+ final  String about;
+
+/// Create a copy of SettingsEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$UpdateAboutCopyWith<UpdateAbout> get copyWith => _$UpdateAboutCopyWithImpl<UpdateAbout>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdateAbout&&(identical(other.about, about) || other.about == about));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,about);
+
+@override
+String toString() {
+  return 'SettingsEvent.updateAbout(about: $about)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $UpdateAboutCopyWith<$Res> implements $SettingsEventCopyWith<$Res> {
+  factory $UpdateAboutCopyWith(UpdateAbout value, $Res Function(UpdateAbout) _then) = _$UpdateAboutCopyWithImpl;
+@useResult
+$Res call({
+ String about
+});
+
+
+
+
+}
+/// @nodoc
+class _$UpdateAboutCopyWithImpl<$Res>
+    implements $UpdateAboutCopyWith<$Res> {
+  _$UpdateAboutCopyWithImpl(this._self, this._then);
+
+  final UpdateAbout _self;
+  final $Res Function(UpdateAbout) _then;
+
+/// Create a copy of SettingsEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? about = null,}) {
+  return _then(UpdateAbout(
+about: null == about ? _self.about : about // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

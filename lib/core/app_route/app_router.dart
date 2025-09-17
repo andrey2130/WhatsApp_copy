@@ -5,6 +5,7 @@ import 'package:telegram_copy/feature/auth/pages/screens/sign_in_screen.dart';
 import 'package:telegram_copy/feature/auth/pages/screens/opt_screen.dart';
 import 'package:telegram_copy/feature/auth/pages/screens/register_screen.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/pages/chat_list_screen.dart';
+import 'package:telegram_copy/feature/settings/presentation/pages/about_screen.dart';
 import 'package:telegram_copy/feature/settings/presentation/pages/change_user_name.dart';
 import 'package:telegram_copy/feature/settings/presentation/pages/setting_screen.dart';
 import 'package:telegram_copy/feature/settings/presentation/pages/user_setting_screen.dart';
@@ -71,6 +72,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/settings/user/change_name',
       builder: (context, state) => const ChangeUserName(),
+    ),
+    GoRoute(
+      path: '/settings/user/about',
+      builder: (context, state) => const AboutScreen(),
     ),
   ],
   onException: (context, state, router) {
