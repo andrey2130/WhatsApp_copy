@@ -44,7 +44,12 @@ class _SettingScreenState extends State<SettingScreen> {
                     onPressed: () => context.pop(),
                     icon: Icon(Icons.arrow_back),
                   ),
-                  left2Widget: Text('Setting'),
+                  left2Widget: Text(
+                    'Setting',
+                    style: AppTextStyle.getRegularBlack().copyWith(
+                      fontSize: 20,
+                    ),
+                  ),
                   right3Widget: IconButton(
                     onPressed: () => {},
                     icon: Icon(Icons.search),
