@@ -99,6 +99,7 @@ class AuthDatasourceImpl implements AuthDatasource {
           LoginViaPhoneParams(
             phoneNumber: params.phoneNumber,
             otpCode: params.otpCode,
+            bio: 'Hey there! I am using WhatsApp.',
           ),
         );
       }
@@ -165,7 +166,13 @@ class AuthDatasourceImpl implements AuthDatasource {
       if (user != null) {
         await _userDataSource.saveUserDataEmail(
           user,
-          LoginParams(email: params.email, password: params.password),
+          RegisterParams(
+            bio: 'Hey there! I am using WhatsApp.',
+            name: params.name,
+            email: params.email,
+            password: params.password,
+            confirmPassword: params.confirmPassword,
+          ),
         );
       }
 

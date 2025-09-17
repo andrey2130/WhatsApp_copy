@@ -32,7 +32,7 @@ class SettingsDatasourceImpl implements SettingsDatasource {
           uid: uid,
           email: FirebaseAuth.instance.currentUser?.email,
           name: '',
-          bio: '',
+          bio: 'Hey there! I am using WhatsApp.',
           photoUrl: '',
           phoneNumber: FirebaseAuth.instance.currentUser?.phoneNumber,
           links: const <String>[],
@@ -44,7 +44,7 @@ class SettingsDatasourceImpl implements SettingsDatasource {
         'uid': data['uid'] ?? uid,
         'email': data['email'] ?? FirebaseAuth.instance.currentUser?.email,
         'name': data['name'] ?? '',
-        'bio': data['bio'] ?? '',
+        'bio': data['bio'] ?? 'Hey there! I am using WhatsApp.',
         'photoUrl': data['photoUrl'] ?? '',
         'phoneNumber':
             data['phoneNumber'] ??

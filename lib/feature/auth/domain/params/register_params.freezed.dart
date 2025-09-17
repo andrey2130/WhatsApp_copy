@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$RegisterParams {
 
- String get email; String get password; String get confirmPassword;
+ String get name; String get email; String get password; String get confirmPassword; String get bio;
 /// Create a copy of RegisterParams
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $RegisterParamsCopyWith<RegisterParams> get copyWith => _$RegisterParamsCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RegisterParams&&(identical(other.email, email) || other.email == email)&&(identical(other.password, password) || other.password == password)&&(identical(other.confirmPassword, confirmPassword) || other.confirmPassword == confirmPassword));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RegisterParams&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.password, password) || other.password == password)&&(identical(other.confirmPassword, confirmPassword) || other.confirmPassword == confirmPassword)&&(identical(other.bio, bio) || other.bio == bio));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,email,password,confirmPassword);
+int get hashCode => Object.hash(runtimeType,name,email,password,confirmPassword,bio);
 
 @override
 String toString() {
-  return 'RegisterParams(email: $email, password: $password, confirmPassword: $confirmPassword)';
+  return 'RegisterParams(name: $name, email: $email, password: $password, confirmPassword: $confirmPassword, bio: $bio)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $RegisterParamsCopyWith<$Res>  {
   factory $RegisterParamsCopyWith(RegisterParams value, $Res Function(RegisterParams) _then) = _$RegisterParamsCopyWithImpl;
 @useResult
 $Res call({
- String email, String password, String confirmPassword
+ String name, String email, String password, String confirmPassword, String bio
 });
 
 
@@ -65,11 +65,13 @@ class _$RegisterParamsCopyWithImpl<$Res>
 
 /// Create a copy of RegisterParams
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? email = null,Object? password = null,Object? confirmPassword = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? email = null,Object? password = null,Object? confirmPassword = null,Object? bio = null,}) {
   return _then(_self.copyWith(
-email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,password: null == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
 as String,confirmPassword: null == confirmPassword ? _self.confirmPassword : confirmPassword // ignore: cast_nullable_to_non_nullable
+as String,bio: null == bio ? _self.bio : bio // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -155,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String email,  String password,  String confirmPassword)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  String email,  String password,  String confirmPassword,  String bio)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RegisterParams() when $default != null:
-return $default(_that.email,_that.password,_that.confirmPassword);case _:
+return $default(_that.name,_that.email,_that.password,_that.confirmPassword,_that.bio);case _:
   return orElse();
 
 }
@@ -176,10 +178,10 @@ return $default(_that.email,_that.password,_that.confirmPassword);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String email,  String password,  String confirmPassword)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String email,  String password,  String confirmPassword,  String bio)  $default,) {final _that = this;
 switch (_that) {
 case _RegisterParams():
-return $default(_that.email,_that.password,_that.confirmPassword);case _:
+return $default(_that.name,_that.email,_that.password,_that.confirmPassword,_that.bio);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +198,10 @@ return $default(_that.email,_that.password,_that.confirmPassword);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String email,  String password,  String confirmPassword)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  String email,  String password,  String confirmPassword,  String bio)?  $default,) {final _that = this;
 switch (_that) {
 case _RegisterParams() when $default != null:
-return $default(_that.email,_that.password,_that.confirmPassword);case _:
+return $default(_that.name,_that.email,_that.password,_that.confirmPassword,_that.bio);case _:
   return null;
 
 }
@@ -211,12 +213,14 @@ return $default(_that.email,_that.password,_that.confirmPassword);case _:
 @JsonSerializable()
 
 class _RegisterParams implements RegisterParams {
-  const _RegisterParams({required this.email, required this.password, required this.confirmPassword});
+  const _RegisterParams({required this.name, required this.email, required this.password, required this.confirmPassword, this.bio = ''});
   factory _RegisterParams.fromJson(Map<String, dynamic> json) => _$RegisterParamsFromJson(json);
 
+@override final  String name;
 @override final  String email;
 @override final  String password;
 @override final  String confirmPassword;
+@override@JsonKey() final  String bio;
 
 /// Create a copy of RegisterParams
 /// with the given fields replaced by the non-null parameter values.
@@ -231,16 +235,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RegisterParams&&(identical(other.email, email) || other.email == email)&&(identical(other.password, password) || other.password == password)&&(identical(other.confirmPassword, confirmPassword) || other.confirmPassword == confirmPassword));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RegisterParams&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.password, password) || other.password == password)&&(identical(other.confirmPassword, confirmPassword) || other.confirmPassword == confirmPassword)&&(identical(other.bio, bio) || other.bio == bio));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,email,password,confirmPassword);
+int get hashCode => Object.hash(runtimeType,name,email,password,confirmPassword,bio);
 
 @override
 String toString() {
-  return 'RegisterParams(email: $email, password: $password, confirmPassword: $confirmPassword)';
+  return 'RegisterParams(name: $name, email: $email, password: $password, confirmPassword: $confirmPassword, bio: $bio)';
 }
 
 
@@ -251,7 +255,7 @@ abstract mixin class _$RegisterParamsCopyWith<$Res> implements $RegisterParamsCo
   factory _$RegisterParamsCopyWith(_RegisterParams value, $Res Function(_RegisterParams) _then) = __$RegisterParamsCopyWithImpl;
 @override @useResult
 $Res call({
- String email, String password, String confirmPassword
+ String name, String email, String password, String confirmPassword, String bio
 });
 
 
@@ -268,11 +272,13 @@ class __$RegisterParamsCopyWithImpl<$Res>
 
 /// Create a copy of RegisterParams
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? email = null,Object? password = null,Object? confirmPassword = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? email = null,Object? password = null,Object? confirmPassword = null,Object? bio = null,}) {
   return _then(_RegisterParams(
-email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,password: null == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
 as String,confirmPassword: null == confirmPassword ? _self.confirmPassword : confirmPassword // ignore: cast_nullable_to_non_nullable
+as String,bio: null == bio ? _self.bio : bio // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

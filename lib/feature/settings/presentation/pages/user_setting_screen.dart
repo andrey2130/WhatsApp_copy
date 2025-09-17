@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
+import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
 import 'package:telegram_copy/feature/settings/presentation/bloc/settings_bloc.dart';
 
 class UserSettingScreen extends StatefulWidget {
@@ -92,6 +93,12 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
               value: 'Add links',
               valueColor: AppColors.primaryGreen,
               onTap: () {},
+            ),
+            _buildProfileSection(
+              icon: Icons.logout_outlined,
+              title: 'Logout',
+              value: 'Logout',
+              onTap: () => context.read<AuthBloc>().add(const LogOut()),
             ),
           ],
         ),

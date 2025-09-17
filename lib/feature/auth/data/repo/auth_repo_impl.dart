@@ -67,6 +67,7 @@ class AuthRepoImpl implements AuthRepo {
   }) async {
     try {
       final result = await _authDatasource.registerViaEmail(params: params);
+      getIt<Talker>().info('User registered: $result');
       return Right(result);
     } catch (e) {
       getIt<Talker>().handle(e);

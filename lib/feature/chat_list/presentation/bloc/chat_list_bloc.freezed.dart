@@ -55,12 +55,13 @@ extension ChatListEventPatterns on ChatListEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Started value)?  started,TResult Function( FilterChanged value)?  filterChanged,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( Started value)?  started,TResult Function( FilterChanged value)?  filterChanged,TResult Function( LoadUsers value)?  loadUsers,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _Started() when started != null:
+case Started() when started != null:
 return started(_that);case FilterChanged() when filterChanged != null:
-return filterChanged(_that);case _:
+return filterChanged(_that);case LoadUsers() when loadUsers != null:
+return loadUsers(_that);case _:
   return orElse();
 
 }
@@ -78,12 +79,13 @@ return filterChanged(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Started value)  started,required TResult Function( FilterChanged value)  filterChanged,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( Started value)  started,required TResult Function( FilterChanged value)  filterChanged,required TResult Function( LoadUsers value)  loadUsers,}){
 final _that = this;
 switch (_that) {
-case _Started():
+case Started():
 return started(_that);case FilterChanged():
-return filterChanged(_that);case _:
+return filterChanged(_that);case LoadUsers():
+return loadUsers(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -100,12 +102,13 @@ return filterChanged(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Started value)?  started,TResult? Function( FilterChanged value)?  filterChanged,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( Started value)?  started,TResult? Function( FilterChanged value)?  filterChanged,TResult? Function( LoadUsers value)?  loadUsers,}){
 final _that = this;
 switch (_that) {
-case _Started() when started != null:
+case Started() when started != null:
 return started(_that);case FilterChanged() when filterChanged != null:
-return filterChanged(_that);case _:
+return filterChanged(_that);case LoadUsers() when loadUsers != null:
+return loadUsers(_that);case _:
   return null;
 
 }
@@ -122,11 +125,12 @@ return filterChanged(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  started,TResult Function( String filter)?  filterChanged,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  started,TResult Function( String filter)?  filterChanged,TResult Function()?  loadUsers,required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _Started() when started != null:
+case Started() when started != null:
 return started();case FilterChanged() when filterChanged != null:
-return filterChanged(_that.filter);case _:
+return filterChanged(_that.filter);case LoadUsers() when loadUsers != null:
+return loadUsers();case _:
   return orElse();
 
 }
@@ -144,11 +148,12 @@ return filterChanged(_that.filter);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  started,required TResult Function( String filter)  filterChanged,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  started,required TResult Function( String filter)  filterChanged,required TResult Function()  loadUsers,}) {final _that = this;
 switch (_that) {
-case _Started():
+case Started():
 return started();case FilterChanged():
-return filterChanged(_that.filter);case _:
+return filterChanged(_that.filter);case LoadUsers():
+return loadUsers();case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -165,11 +170,12 @@ return filterChanged(_that.filter);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  started,TResult? Function( String filter)?  filterChanged,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  started,TResult? Function( String filter)?  filterChanged,TResult? Function()?  loadUsers,}) {final _that = this;
 switch (_that) {
-case _Started() when started != null:
+case Started() when started != null:
 return started();case FilterChanged() when filterChanged != null:
-return filterChanged(_that.filter);case _:
+return filterChanged(_that.filter);case LoadUsers() when loadUsers != null:
+return loadUsers();case _:
   return null;
 
 }
@@ -180,8 +186,8 @@ return filterChanged(_that.filter);case _:
 /// @nodoc
 
 
-class _Started implements ChatListEvent {
-  const _Started();
+class Started implements ChatListEvent {
+  const Started();
   
 
 
@@ -191,7 +197,7 @@ class _Started implements ChatListEvent {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Started);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Started);
 }
 
 
@@ -276,6 +282,38 @@ as String,
 }
 
 /// @nodoc
+
+
+class LoadUsers implements ChatListEvent {
+  const LoadUsers();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoadUsers);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'ChatListEvent.loadUsers()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
 mixin _$ChatListState {
 
 
@@ -319,12 +357,15 @@ extension ChatListStatePatterns on ChatListState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( _Loaded value)?  loaded,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( Initial value)?  initial,TResult Function( Loading value)?  loading,TResult Function( Loaded value)?  loaded,TResult Function( Error value)?  error,TResult Function( Success value)?  success,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _Initial() when initial != null:
-return initial(_that);case _Loaded() when loaded != null:
-return loaded(_that);case _:
+case Initial() when initial != null:
+return initial(_that);case Loading() when loading != null:
+return loading(_that);case Loaded() when loaded != null:
+return loaded(_that);case Error() when error != null:
+return error(_that);case Success() when success != null:
+return success(_that);case _:
   return orElse();
 
 }
@@ -342,12 +383,15 @@ return loaded(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( _Loaded value)  loaded,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( Initial value)  initial,required TResult Function( Loading value)  loading,required TResult Function( Loaded value)  loaded,required TResult Function( Error value)  error,required TResult Function( Success value)  success,}){
 final _that = this;
 switch (_that) {
-case _Initial():
-return initial(_that);case _Loaded():
-return loaded(_that);case _:
+case Initial():
+return initial(_that);case Loading():
+return loading(_that);case Loaded():
+return loaded(_that);case Error():
+return error(_that);case Success():
+return success(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -364,12 +408,15 @@ return loaded(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( _Loaded value)?  loaded,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( Initial value)?  initial,TResult? Function( Loading value)?  loading,TResult? Function( Loaded value)?  loaded,TResult? Function( Error value)?  error,TResult? Function( Success value)?  success,}){
 final _that = this;
 switch (_that) {
-case _Initial() when initial != null:
-return initial(_that);case _Loaded() when loaded != null:
-return loaded(_that);case _:
+case Initial() when initial != null:
+return initial(_that);case Loading() when loading != null:
+return loading(_that);case Loaded() when loaded != null:
+return loaded(_that);case Error() when error != null:
+return error(_that);case Success() when success != null:
+return success(_that);case _:
   return null;
 
 }
@@ -386,11 +433,14 @@ return loaded(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function( String selectedFilter)?  loaded,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( String selectedFilter)?  loaded,TResult Function( String message)?  error,TResult Function( List<UserParams> users)?  success,required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _Initial() when initial != null:
-return initial();case _Loaded() when loaded != null:
-return loaded(_that.selectedFilter);case _:
+case Initial() when initial != null:
+return initial();case Loading() when loading != null:
+return loading();case Loaded() when loaded != null:
+return loaded(_that.selectedFilter);case Error() when error != null:
+return error(_that.message);case Success() when success != null:
+return success(_that.users);case _:
   return orElse();
 
 }
@@ -408,11 +458,14 @@ return loaded(_that.selectedFilter);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function( String selectedFilter)  loaded,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( String selectedFilter)  loaded,required TResult Function( String message)  error,required TResult Function( List<UserParams> users)  success,}) {final _that = this;
 switch (_that) {
-case _Initial():
-return initial();case _Loaded():
-return loaded(_that.selectedFilter);case _:
+case Initial():
+return initial();case Loading():
+return loading();case Loaded():
+return loaded(_that.selectedFilter);case Error():
+return error(_that.message);case Success():
+return success(_that.users);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -429,11 +482,14 @@ return loaded(_that.selectedFilter);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function( String selectedFilter)?  loaded,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( String selectedFilter)?  loaded,TResult? Function( String message)?  error,TResult? Function( List<UserParams> users)?  success,}) {final _that = this;
 switch (_that) {
-case _Initial() when initial != null:
-return initial();case _Loaded() when loaded != null:
-return loaded(_that.selectedFilter);case _:
+case Initial() when initial != null:
+return initial();case Loading() when loading != null:
+return loading();case Loaded() when loaded != null:
+return loaded(_that.selectedFilter);case Error() when error != null:
+return error(_that.message);case Success() when success != null:
+return success(_that.users);case _:
   return null;
 
 }
@@ -444,8 +500,8 @@ return loaded(_that.selectedFilter);case _:
 /// @nodoc
 
 
-class _Initial implements ChatListState {
-  const _Initial();
+class Initial implements ChatListState {
+  const Initial();
   
 
 
@@ -455,7 +511,7 @@ class _Initial implements ChatListState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Initial);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Initial);
 }
 
 
@@ -476,8 +532,40 @@ String toString() {
 /// @nodoc
 
 
-class _Loaded implements ChatListState {
-  const _Loaded({required this.selectedFilter});
+class Loading implements ChatListState {
+  const Loading();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Loading);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'ChatListState.loading()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class Loaded implements ChatListState {
+  const Loaded({required this.selectedFilter});
   
 
  final  String selectedFilter;
@@ -486,13 +574,13 @@ class _Loaded implements ChatListState {
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$LoadedCopyWith<_Loaded> get copyWith => __$LoadedCopyWithImpl<_Loaded>(this, _$identity);
+$LoadedCopyWith<Loaded> get copyWith => _$LoadedCopyWithImpl<Loaded>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loaded&&(identical(other.selectedFilter, selectedFilter) || other.selectedFilter == selectedFilter));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Loaded&&(identical(other.selectedFilter, selectedFilter) || other.selectedFilter == selectedFilter));
 }
 
 
@@ -508,8 +596,8 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class _$LoadedCopyWith<$Res> implements $ChatListStateCopyWith<$Res> {
-  factory _$LoadedCopyWith(_Loaded value, $Res Function(_Loaded) _then) = __$LoadedCopyWithImpl;
+abstract mixin class $LoadedCopyWith<$Res> implements $ChatListStateCopyWith<$Res> {
+  factory $LoadedCopyWith(Loaded value, $Res Function(Loaded) _then) = _$LoadedCopyWithImpl;
 @useResult
 $Res call({
  String selectedFilter
@@ -520,19 +608,157 @@ $Res call({
 
 }
 /// @nodoc
-class __$LoadedCopyWithImpl<$Res>
-    implements _$LoadedCopyWith<$Res> {
-  __$LoadedCopyWithImpl(this._self, this._then);
+class _$LoadedCopyWithImpl<$Res>
+    implements $LoadedCopyWith<$Res> {
+  _$LoadedCopyWithImpl(this._self, this._then);
 
-  final _Loaded _self;
-  final $Res Function(_Loaded) _then;
+  final Loaded _self;
+  final $Res Function(Loaded) _then;
 
 /// Create a copy of ChatListState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? selectedFilter = null,}) {
-  return _then(_Loaded(
+  return _then(Loaded(
 selectedFilter: null == selectedFilter ? _self.selectedFilter : selectedFilter // ignore: cast_nullable_to_non_nullable
 as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class Error implements ChatListState {
+  const Error({required this.message});
+  
+
+ final  String message;
+
+/// Create a copy of ChatListState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ErrorCopyWith<Error> get copyWith => _$ErrorCopyWithImpl<Error>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Error&&(identical(other.message, message) || other.message == message));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,message);
+
+@override
+String toString() {
+  return 'ChatListState.error(message: $message)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ErrorCopyWith<$Res> implements $ChatListStateCopyWith<$Res> {
+  factory $ErrorCopyWith(Error value, $Res Function(Error) _then) = _$ErrorCopyWithImpl;
+@useResult
+$Res call({
+ String message
+});
+
+
+
+
+}
+/// @nodoc
+class _$ErrorCopyWithImpl<$Res>
+    implements $ErrorCopyWith<$Res> {
+  _$ErrorCopyWithImpl(this._self, this._then);
+
+  final Error _self;
+  final $Res Function(Error) _then;
+
+/// Create a copy of ChatListState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+  return _then(Error(
+message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class Success implements ChatListState {
+  const Success({required final  List<UserParams> users}): _users = users;
+  
+
+ final  List<UserParams> _users;
+ List<UserParams> get users {
+  if (_users is EqualUnmodifiableListView) return _users;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_users);
+}
+
+
+/// Create a copy of ChatListState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SuccessCopyWith<Success> get copyWith => _$SuccessCopyWithImpl<Success>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Success&&const DeepCollectionEquality().equals(other._users, _users));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_users));
+
+@override
+String toString() {
+  return 'ChatListState.success(users: $users)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SuccessCopyWith<$Res> implements $ChatListStateCopyWith<$Res> {
+  factory $SuccessCopyWith(Success value, $Res Function(Success) _then) = _$SuccessCopyWithImpl;
+@useResult
+$Res call({
+ List<UserParams> users
+});
+
+
+
+
+}
+/// @nodoc
+class _$SuccessCopyWithImpl<$Res>
+    implements $SuccessCopyWith<$Res> {
+  _$SuccessCopyWithImpl(this._self, this._then);
+
+  final Success _self;
+  final $Res Function(Success) _then;
+
+/// Create a copy of ChatListState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? users = null,}) {
+  return _then(Success(
+users: null == users ? _self._users : users // ignore: cast_nullable_to_non_nullable
+as List<UserParams>,
   ));
 }
 

@@ -10,6 +10,7 @@ _LoginViaPhoneParams _$LoginViaPhoneParamsFromJson(Map<String, dynamic> json) =>
     _LoginViaPhoneParams(
       phoneNumber: json['phoneNumber'] as String,
       otpCode: json['otpCode'] as String,
+      bio: json['bio'] as String? ?? 'Hey there! I am using WhatsApp.',
     );
 
 Map<String, dynamic> _$LoginViaPhoneParamsToJson(
@@ -17,4 +18,5 @@ Map<String, dynamic> _$LoginViaPhoneParamsToJson(
 ) => <String, dynamic>{
   'phoneNumber': instance.phoneNumber,
   'otpCode': instance.otpCode,
+  'bio': instance.bio,
 };

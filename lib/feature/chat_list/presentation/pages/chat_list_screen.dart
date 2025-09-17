@@ -22,6 +22,18 @@ class ChatListScreen extends StatefulWidget {
 class _ChatListScreenState extends State<ChatListScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  bool _hasLoadedUsers = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_hasLoadedUsers) {
+        context.read<ChatListBloc>().add(const ChatListEvent.loadUsers());
+        _hasLoadedUsers = true;
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -43,71 +55,85 @@ class _ChatListScreenState extends State<ChatListScreen> {
 }
 
 Widget _buildIosBody(
+  BuildContext context,
   TextEditingController searchController,
   ScrollController scrollController,
 ) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 8),
-    child: CustomScrollView(
-      controller: scrollController,
-      slivers: [
-        SliverToBoxAdapter(
-          child: CustomAppBar(
-            leftWidget: Text('WhatsApp', style: AppTextStyle.getBoldGreen()),
-            rightWidget: IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.camera_alt_outlined),
-            ),
-            right2Widget: IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.search),
-            ),
-            right3Widget: IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.more_vert),
+  return RefreshIndicator.adaptive(
+    onRefresh: () async {
+      context.read<ChatListBloc>().add(const ChatListEvent.loadUsers());
+    },
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: CustomScrollView(
+        controller: scrollController,
+        slivers: [
+          SliverToBoxAdapter(
+            child: CustomAppBar(
+              leftWidget: Text('WhatsApp', style: AppTextStyle.getBoldGreen()),
+              rightWidget: IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.camera_alt_outlined),
+              ),
+              right2Widget: IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.search),
+              ),
+              right3Widget: IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.more_vert),
+              ),
             ),
           ),
-        ),
-        SliverToBoxAdapter(
-          child: CustomTextField(
-            radius: 26,
-            prefixIcon: Icon(Icons.search),
-            controller: searchController,
-            hintText: 'Search...',
+          SliverToBoxAdapter(
+            child: CustomTextField(
+              radius: 26,
+              prefixIcon: Icon(Icons.search),
+              controller: searchController,
+              hintText: 'Search...',
+            ),
           ),
-        ),
-        SliverToBoxAdapter(child: SizedBox(height: 12)),
-        SliverToBoxAdapter(
-          child: BlocBuilder<ChatListBloc, ChatListState>(
+          SliverToBoxAdapter(child: SizedBox(height: 12)),
+          SliverToBoxAdapter(
+            child: BlocBuilder<ChatListBloc, ChatListState>(
+              builder: (context, state) {
+                return state.maybeWhen(
+                  loaded: (selectedFilter) =>
+                      FilterWidgets(selectedFilter: selectedFilter),
+                  orElse: () => FilterWidgets(selectedFilter: 'All'),
+                );
+              },
+            ),
+          ),
+          SliverList.builder(
+            itemCount: 4,
+            itemBuilder: (context, index) => const ChatListWidgets(),
+          ),
+          SliverToBoxAdapter(child: SizedBox(height: 12)),
+          SliverToBoxAdapter(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Start chatting',
+                style: AppTextStyle.getRegularBlack(),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(child: SizedBox(height: 12)),
+          BlocBuilder<ChatListBloc, ChatListState>(
             builder: (context, state) {
-              return state.maybeWhen(
-                loaded: (selectedFilter) =>
-                    FilterWidgets(selectedFilter: selectedFilter),
-                orElse: () => FilterWidgets(selectedFilter: 'All'),
+              final userCount = state.maybeWhen(
+                success: (users) => users.length,
+                orElse: () => 0,
+              );
+              return SliverList.builder(
+                itemCount: userCount,
+                itemBuilder: (context, index) => SuggestUser(index: index),
               );
             },
           ),
-        ),
-        SliverList.builder(
-          itemCount: 4,
-          itemBuilder: (context, index) => const ChatListWidgets(),
-        ),
-        SliverToBoxAdapter(child: SizedBox(height: 12)),
-        SliverToBoxAdapter(
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Start chatting',
-              style: AppTextStyle.getRegularBlack(),
-            ),
-          ),
-        ),
-        SliverToBoxAdapter(child: SizedBox(height: 12)),
-        SliverList.builder(
-          itemCount: 4,
-          itemBuilder: (context, index) => const SuggestUser(),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }
@@ -119,77 +145,90 @@ Widget _buildAndroidBody(
 ) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8),
-    child: CustomScrollView(
-      controller: scrollController,
-      slivers: [
-        SliverToBoxAdapter(
-          child: CustomAppBar(
-            leftWidget: Text('WhatsApp', style: AppTextStyle.getBoldGreen()),
-            rightWidget: IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.camera_alt_outlined),
+    child: RefreshIndicator.adaptive(
+      onRefresh: () async {
+        context.read<ChatListBloc>().add(const ChatListEvent.loadUsers());
+      },
+      child: CustomScrollView(
+        controller: scrollController,
+        slivers: [
+          SliverToBoxAdapter(
+            child: CustomAppBar(
+              leftWidget: Text('WhatsApp', style: AppTextStyle.getBoldGreen()),
+              rightWidget: IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.camera_alt_outlined),
+              ),
+              right2Widget: IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.search),
+              ),
+              right3Widget: ChatListMoreMenu(
+                onSelected: (action) {
+                  switch (action) {
+                    case ChatListMoreAction.settings:
+                      context.push('/settings');
+                      break;
+                    case ChatListMoreAction.newGroup:
+                      break;
+                    case ChatListMoreAction.newBroadcast:
+                      break;
+                    case ChatListMoreAction.linkedDevices:
+                      break;
+                  }
+                },
+              ),
             ),
-            right2Widget: IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.search),
+          ),
+          SliverToBoxAdapter(
+            child: CustomTextField(
+              radius: 26,
+              prefixIcon: Icon(Icons.search),
+              controller: searchController,
+              hintText: 'Search...',
             ),
-            right3Widget: ChatListMoreMenu(
-              onSelected: (action) {
-                switch (action) {
-                  case ChatListMoreAction.settings:
-                    context.push('/settings');
-                    break;
-                  case ChatListMoreAction.newGroup:
-                    break;
-                  case ChatListMoreAction.newBroadcast:
-                    break;
-                  case ChatListMoreAction.linkedDevices:
-                    break;
-                }
+          ),
+          SliverToBoxAdapter(child: SizedBox(height: 12)),
+          SliverToBoxAdapter(
+            child: BlocBuilder<ChatListBloc, ChatListState>(
+              builder: (context, state) {
+                return state.maybeWhen(
+                  loaded: (selectedFilter) =>
+                      FilterWidgets(selectedFilter: selectedFilter),
+                  orElse: () => FilterWidgets(selectedFilter: 'All'),
+                );
               },
             ),
           ),
-        ),
-        SliverToBoxAdapter(
-          child: CustomTextField(
-            radius: 26,
-            prefixIcon: Icon(Icons.search),
-            controller: searchController,
-            hintText: 'Search...',
+          SliverList.builder(
+            itemCount: 4,
+            itemBuilder: (context, index) => const ChatListWidgets(),
           ),
-        ),
-        SliverToBoxAdapter(child: SizedBox(height: 12)),
-        SliverToBoxAdapter(
-          child: BlocBuilder<ChatListBloc, ChatListState>(
+          SliverToBoxAdapter(child: SizedBox(height: 12)),
+          SliverToBoxAdapter(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Start chatting',
+                style: AppTextStyle.getRegularBlack(),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(child: SizedBox(height: 12)),
+          BlocBuilder<ChatListBloc, ChatListState>(
             builder: (context, state) {
-              return state.maybeWhen(
-                loaded: (selectedFilter) =>
-                    FilterWidgets(selectedFilter: selectedFilter),
-                orElse: () => FilterWidgets(selectedFilter: 'All'),
+              final userCount = state.maybeWhen(
+                success: (users) => users.length,
+                orElse: () => 0,
+              );
+              return SliverList.builder(
+                itemCount: userCount,
+                itemBuilder: (context, index) => SuggestUser(index: index),
               );
             },
           ),
-        ),
-        SliverList.builder(
-          itemCount: 4,
-          itemBuilder: (context, index) => const ChatListWidgets(),
-        ),
-        SliverToBoxAdapter(child: SizedBox(height: 12)),
-        SliverToBoxAdapter(
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Start chatting',
-              style: AppTextStyle.getRegularBlack(),
-            ),
-          ),
-        ),
-        SliverToBoxAdapter(child: SizedBox(height: 12)),
-        SliverList.builder(
-          itemCount: 4,
-          itemBuilder: (context, index) => const SuggestUser(),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }

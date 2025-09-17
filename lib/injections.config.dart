@@ -24,6 +24,10 @@ import 'feature/auth/domain/usecases/register_via_email_usecase.dart' as _i836;
 import 'feature/auth/domain/usecases/sent_otp_usecase.dart' as _i688;
 import 'feature/auth/domain/usecases/verify_otp_usecase.dart' as _i234;
 import 'feature/auth/pages/bloc/bloc/auth_bloc.dart' as _i147;
+import 'feature/chat_list/data/datasource/chat_list_datasource.dart' as _i449;
+import 'feature/chat_list/data/repo/chat_list_repo_impl.dart' as _i622;
+import 'feature/chat_list/domain/repo/chat_list_repo.dart' as _i778;
+import 'feature/chat_list/domain/usecases/get_all_users_usecase.dart' as _i820;
 import 'feature/chat_list/presentation/bloc/chat_list_bloc.dart' as _i206;
 import 'feature/settings/data/datasource/settings_datasource.dart' as _i1000;
 import 'feature/settings/data/repo/settings_repo_impl.dart' as _i757;
@@ -41,12 +45,14 @@ extension GetItInjectableX on _i174.GetIt {
     _i526.EnvironmentFilter? environmentFilter,
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
-    gh.factory<_i206.ChatListBloc>(() => _i206.ChatListBloc());
     gh.factory<_i1000.SettingsDatasource>(
       () => _i1000.SettingsDatasourceImpl(gh<_i974.FirebaseFirestore>()),
     );
     gh.factory<_i574.UserDataSource>(
       () => _i574.UserDataSourceImpl(gh<_i974.FirebaseFirestore>()),
+    );
+    gh.factory<_i449.ChatListDatasource>(
+      () => _i449.ChatListDatasourceImpl(gh<_i974.FirebaseFirestore>()),
     );
     gh.factory<_i920.SettingsRepo>(
       () => _i757.SettingsRepoImpl(
@@ -59,6 +65,14 @@ extension GetItInjectableX on _i174.GetIt {
         userDataSource: gh<_i574.UserDataSource>(),
       ),
     );
+    gh.factory<_i778.ChatListRepo>(
+      () => _i622.ChatListRepoImpl(
+        chatListDatasource: gh<_i449.ChatListDatasource>(),
+      ),
+    );
+    gh.factory<_i820.GetAllUsersUsecase>(
+      () => _i820.GetAllUsersUsecase(chatListRepo: gh<_i778.ChatListRepo>()),
+    );
     gh.factory<_i481.GetUserDataUsecase>(
       () => _i481.GetUserDataUsecase(settingsRepo: gh<_i920.SettingsRepo>()),
     );
@@ -70,6 +84,11 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i583.AuthRepo>(
       () => _i939.AuthRepoImpl(authDatasource: gh<_i274.AuthDatasource>()),
+    );
+    gh.factory<_i206.ChatListBloc>(
+      () => _i206.ChatListBloc(
+        getAllUsersUsecase: gh<_i820.GetAllUsersUsecase>(),
+      ),
     );
     gh.factory<_i293.SettingsBloc>(
       () => _i293.SettingsBloc(
