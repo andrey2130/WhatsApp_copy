@@ -53,7 +53,7 @@ class FilterWidgets extends StatelessWidget {
             child: GestureDetector(
               onTap: () {
                 context.read<ChatListBloc>().add(
-                  ChatListEvent.filterChanged(filter['name'] as String),
+                  ChatListEvent.filterChanged(filter: filter['name'] as String),
                 );
               },
               child: Container(

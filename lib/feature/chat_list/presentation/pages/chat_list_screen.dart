@@ -7,6 +7,7 @@ import 'package:telegram_copy/core/theme/text_style.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_textfield.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/bloc/chat_list_bloc.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/bloc/users/users_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/chat_list_widgets.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/filter_widgets.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/suggest_user.dart';
@@ -29,7 +30,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_hasLoadedUsers) {
-        context.read<ChatListBloc>().add(const ChatListEvent.loadUsers());
+        context.read<UsersBloc>().add(const UsersEvent.load());
         _hasLoadedUsers = true;
       }
     });
@@ -62,7 +63,9 @@ Widget _buildIosBody(
 ) {
   return RefreshIndicator.adaptive(
     onRefresh: () async {
-      context.read<ChatListBloc>().add(const ChatListEvent.loadUsers());
+      context.read<ChatListBloc>().add(
+        const ChatListEvent.loadAllConversations(),
+      );
     },
     child: CustomScrollView(
       controller: scrollController,
@@ -110,8 +113,8 @@ Widget _buildIosBody(
             child: BlocBuilder<ChatListBloc, ChatListState>(
               builder: (context, state) {
                 return state.maybeWhen(
-                  loaded: (selectedFilter) =>
-                      FilterWidgets(selectedFilter: selectedFilter),
+                  filterChanged: (filter) =>
+                      FilterWidgets(selectedFilter: 'All'),
                   orElse: () => FilterWidgets(selectedFilter: 'All'),
                 );
               },
@@ -143,7 +146,7 @@ Widget _buildIosBody(
         const SliverPadding(padding: EdgeInsets.only(top: 12)),
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
-          sliver: BlocBuilder<ChatListBloc, ChatListState>(
+          sliver: BlocBuilder<UsersBloc, UsersState>(
             builder: (context, state) {
               final userCount = state.maybeWhen(
                 success: (users) => users.length,
@@ -172,7 +175,7 @@ Widget _buildAndroidBody(
     padding: const EdgeInsets.symmetric(horizontal: 8),
     child: RefreshIndicator.adaptive(
       onRefresh: () async {
-        context.read<ChatListBloc>().add(const ChatListEvent.loadUsers());
+        context.read<UsersBloc>().add(const UsersEvent.load());
       },
       child: CustomScrollView(
         controller: scrollController,
@@ -219,8 +222,7 @@ Widget _buildAndroidBody(
             child: BlocBuilder<ChatListBloc, ChatListState>(
               builder: (context, state) {
                 return state.maybeWhen(
-                  loaded: (selectedFilter) =>
-                      FilterWidgets(selectedFilter: selectedFilter),
+                  filterChanged: (filter) => FilterWidgets(selectedFilter: ''),
                   orElse: () => FilterWidgets(selectedFilter: 'All'),
                 );
               },
@@ -243,7 +245,7 @@ Widget _buildAndroidBody(
             ),
           ),
           const SliverPadding(padding: EdgeInsets.only(top: 12)),
-          BlocBuilder<ChatListBloc, ChatListState>(
+          BlocBuilder<UsersBloc, UsersState>(
             builder: (context, state) {
               final userCount = state.maybeWhen(
                 success: (users) => users.length,
