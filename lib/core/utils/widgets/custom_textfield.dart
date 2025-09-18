@@ -30,6 +30,7 @@ class CustomTextField extends StatelessWidget {
   final TextStyle? hintStyle;
   final Widget? prefixIcon;
   final Widget? sufixIcon;
+  final Widget? sufix2Icon;
   final double? radius;
   final Color? floatingLabelColor;
   const CustomTextField({
@@ -58,6 +59,7 @@ class CustomTextField extends StatelessWidget {
     this.hintStyle,
     this.prefixIcon,
     this.sufixIcon,
+    this.sufix2Icon,
     this.radius = 8.0,
     this.floatingLabelColor,
   });

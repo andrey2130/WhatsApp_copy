@@ -38,10 +38,6 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
     LoadUsers event,
     Emitter<ChatListState> emit,
   ) async {
-    if (state is Loading || state is Success) {
-      return;
-    }
-
     emit(const ChatListState.loading());
     try {
       final users = await _getAllUsersUsecase(GetUsersParams());

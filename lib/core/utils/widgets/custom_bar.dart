@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget {
   final Widget? leftWidget;
+  final Widget? avatarWidget;
   final Widget? left2Widget;
   final Widget? centerWidget;
   final Widget? rightWidget;
@@ -11,6 +12,7 @@ class CustomAppBar extends StatelessWidget {
   const CustomAppBar({
     super.key,
     this.leftWidget,
+    this.avatarWidget,
     this.left2Widget,
     this.centerWidget,
     this.rightWidget,
@@ -26,7 +28,14 @@ class CustomAppBar extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             leftWidget ?? const SizedBox.shrink(),
-            if (left2Widget != null) left2Widget!,
+            if (avatarWidget != null) ...[
+              const SizedBox(width: 8),
+              avatarWidget!,
+            ],
+            if (left2Widget != null) ...[
+              const SizedBox(width: 8),
+              left2Widget!,
+            ],
           ],
         ),
         Expanded(child: Center(child: centerWidget ?? const SizedBox.shrink())),
