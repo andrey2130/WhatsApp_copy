@@ -6,6 +6,7 @@ part 'create_message_params.g.dart';
 @freezed
 abstract class CreateMessageParams with _$CreateMessageParams {
   const factory CreateMessageParams({
+    required String id,
     required String content,
     required String conversationId,
     required String senderId,

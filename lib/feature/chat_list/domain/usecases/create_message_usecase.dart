@@ -15,6 +15,7 @@ class CreateMessageUsecase
   @override
   Future<MessageParams> call(CreateMessageParams params) async {
     final message = MessageParams(
+      id: params.id,
       content: params.content,
       isRead: false,
       sentAt: DateTime.now().toIso8601String(),

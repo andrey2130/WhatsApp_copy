@@ -108,7 +108,7 @@ class ChatListRepoImpl implements ChatListRepo {
 
   @override
   Future<Either<Failure, void>> sendMessage({required MessageParams message}) {
-    return _chatListDatasource.sendMessage(message: message).then((result) {
+    return _chatListDatasource.sendMessage(message: message ).then((result) {
       result.fold(
         (failure) =>
             getIt<Talker>().error('Send message failed: ${failure.message}'),

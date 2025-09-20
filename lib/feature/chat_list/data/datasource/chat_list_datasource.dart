@@ -45,7 +45,9 @@ class ChatListDatasourceImpl implements ChatListDatasource {
     required MessageParams message,
   }) async {
     try {
-      await _firestore.collection('messages').add(message.toJson());
+      final docRef = _firestore.collection('messages').doc();
+      final messageWithId = message.copyWith(id: docRef.id);
+      await docRef.set(messageWithId.toJson());
       return Right(null);
     } catch (e, st) {
       getIt<Talker>().handle(e, st);

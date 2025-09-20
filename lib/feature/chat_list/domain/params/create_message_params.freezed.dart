@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CreateMessageParams {
 
- String get content; String get conversationId; String get senderId;
+ String get id; String get content; String get conversationId; String get senderId;
 /// Create a copy of CreateMessageParams
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $CreateMessageParamsCopyWith<CreateMessageParams> get copyWith => _$CreateMessag
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateMessageParams&&(identical(other.content, content) || other.content == content)&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId)&&(identical(other.senderId, senderId) || other.senderId == senderId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateMessageParams&&(identical(other.id, id) || other.id == id)&&(identical(other.content, content) || other.content == content)&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId)&&(identical(other.senderId, senderId) || other.senderId == senderId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,content,conversationId,senderId);
+int get hashCode => Object.hash(runtimeType,id,content,conversationId,senderId);
 
 @override
 String toString() {
-  return 'CreateMessageParams(content: $content, conversationId: $conversationId, senderId: $senderId)';
+  return 'CreateMessageParams(id: $id, content: $content, conversationId: $conversationId, senderId: $senderId)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $CreateMessageParamsCopyWith<$Res>  {
   factory $CreateMessageParamsCopyWith(CreateMessageParams value, $Res Function(CreateMessageParams) _then) = _$CreateMessageParamsCopyWithImpl;
 @useResult
 $Res call({
- String content, String conversationId, String senderId
+ String id, String content, String conversationId, String senderId
 });
 
 
@@ -65,9 +65,10 @@ class _$CreateMessageParamsCopyWithImpl<$Res>
 
 /// Create a copy of CreateMessageParams
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? content = null,Object? conversationId = null,Object? senderId = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? content = null,Object? conversationId = null,Object? senderId = null,}) {
   return _then(_self.copyWith(
-content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as String,conversationId: null == conversationId ? _self.conversationId : conversationId // ignore: cast_nullable_to_non_nullable
 as String,senderId: null == senderId ? _self.senderId : senderId // ignore: cast_nullable_to_non_nullable
 as String,
@@ -155,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String content,  String conversationId,  String senderId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String content,  String conversationId,  String senderId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CreateMessageParams() when $default != null:
-return $default(_that.content,_that.conversationId,_that.senderId);case _:
+return $default(_that.id,_that.content,_that.conversationId,_that.senderId);case _:
   return orElse();
 
 }
@@ -176,10 +177,10 @@ return $default(_that.content,_that.conversationId,_that.senderId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String content,  String conversationId,  String senderId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String content,  String conversationId,  String senderId)  $default,) {final _that = this;
 switch (_that) {
 case _CreateMessageParams():
-return $default(_that.content,_that.conversationId,_that.senderId);case _:
+return $default(_that.id,_that.content,_that.conversationId,_that.senderId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +197,10 @@ return $default(_that.content,_that.conversationId,_that.senderId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String content,  String conversationId,  String senderId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String content,  String conversationId,  String senderId)?  $default,) {final _that = this;
 switch (_that) {
 case _CreateMessageParams() when $default != null:
-return $default(_that.content,_that.conversationId,_that.senderId);case _:
+return $default(_that.id,_that.content,_that.conversationId,_that.senderId);case _:
   return null;
 
 }
@@ -211,9 +212,10 @@ return $default(_that.content,_that.conversationId,_that.senderId);case _:
 @JsonSerializable()
 
 class _CreateMessageParams implements CreateMessageParams {
-  const _CreateMessageParams({required this.content, required this.conversationId, required this.senderId});
+  const _CreateMessageParams({required this.id, required this.content, required this.conversationId, required this.senderId});
   factory _CreateMessageParams.fromJson(Map<String, dynamic> json) => _$CreateMessageParamsFromJson(json);
 
+@override final  String id;
 @override final  String content;
 @override final  String conversationId;
 @override final  String senderId;
@@ -231,16 +233,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateMessageParams&&(identical(other.content, content) || other.content == content)&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId)&&(identical(other.senderId, senderId) || other.senderId == senderId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateMessageParams&&(identical(other.id, id) || other.id == id)&&(identical(other.content, content) || other.content == content)&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId)&&(identical(other.senderId, senderId) || other.senderId == senderId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,content,conversationId,senderId);
+int get hashCode => Object.hash(runtimeType,id,content,conversationId,senderId);
 
 @override
 String toString() {
-  return 'CreateMessageParams(content: $content, conversationId: $conversationId, senderId: $senderId)';
+  return 'CreateMessageParams(id: $id, content: $content, conversationId: $conversationId, senderId: $senderId)';
 }
 
 
@@ -251,7 +253,7 @@ abstract mixin class _$CreateMessageParamsCopyWith<$Res> implements $CreateMessa
   factory _$CreateMessageParamsCopyWith(_CreateMessageParams value, $Res Function(_CreateMessageParams) _then) = __$CreateMessageParamsCopyWithImpl;
 @override @useResult
 $Res call({
- String content, String conversationId, String senderId
+ String id, String content, String conversationId, String senderId
 });
 
 
@@ -268,9 +270,10 @@ class __$CreateMessageParamsCopyWithImpl<$Res>
 
 /// Create a copy of CreateMessageParams
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? content = null,Object? conversationId = null,Object? senderId = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? content = null,Object? conversationId = null,Object? senderId = null,}) {
   return _then(_CreateMessageParams(
-content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as String,conversationId: null == conversationId ? _self.conversationId : conversationId // ignore: cast_nullable_to_non_nullable
 as String,senderId: null == senderId ? _self.senderId : senderId // ignore: cast_nullable_to_non_nullable
 as String,

@@ -66,6 +66,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     try {
       await _createMessageUsecase(
         CreateMessageParams(
+          id: event.message.id,
           content: event.message.content,
           conversationId: event.message.conversationId,
           senderId: event.message.senderId,

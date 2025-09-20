@@ -158,9 +158,17 @@ class _ChatScreenState extends State<ChatScreen> {
                 );
 
                 return MessageBuble(
+                  id: messages[index].id,
+                  messageId: messages[index].id,
                   message: messages[index].content,
                   isMe: messages[index].senderId == currentUserId,
                   time: _dateFormat(messages[index].sentAt),
+                  doubleTap: () {
+                    print(
+                      'Double tap detected on message: ${messages[index].id}',
+                    );
+                    _deleteMessage(messages[index].id);
+                  },
                 );
               },
             );
@@ -231,6 +239,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           context.read<MessagesBloc>().add(
                             MessagesEvent.send(
                               MessageParams(
+                                id: '',
                                 content: messageController.text,
                                 isRead: false,
                                 sentAt: DateTime.now().toIso8601String(),
@@ -266,5 +275,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   String _dateFormat(String date) {
     return DateFormat('HH:mm').format(DateTime.parse(date));
+  }
+
+  void _deleteMessage(String messageId) {
+    print('_deleteMessage called with messageId: $messageId');
+    context.read<MessagesBloc>().add(MessagesEvent.delete(messageId));
   }
 }

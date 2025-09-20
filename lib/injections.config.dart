@@ -110,9 +110,6 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i977.SendConversationUsecase(chatListRepo: gh<_i778.ChatListRepo>()),
     );
-    gh.factory<_i258.GetAllMessagesUsecase>(
-      () => _i258.GetAllMessagesUsecase(chatListRepo: gh<_i778.ChatListRepo>()),
-    );
     gh.factory<_i1020.DeleteConversationUsecase>(
       () => _i1020.DeleteConversationUsecase(
         chatListRepo: gh<_i778.ChatListRepo>(),
@@ -138,6 +135,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i570.CreateMessageUsecase>(
       () => _i570.CreateMessageUsecase(chatListRepo: gh<_i778.ChatListRepo>()),
+    );
+    gh.factory<_i258.GetAllMessagesUsecase>(
+      () => _i258.GetAllMessagesUsecase(chatListRepo: gh<_i778.ChatListRepo>()),
     );
     gh.factory<_i206.ChatListBloc>(
       () => _i206.ChatListBloc(
