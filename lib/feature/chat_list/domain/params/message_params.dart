@@ -6,7 +6,7 @@ part 'message_params.g.dart';
 @freezed
 abstract class MessageParams with _$MessageParams {
   const factory MessageParams({
-    required String id,
+    String? id,
     required String content,
     required bool isRead,
     required String sentAt,

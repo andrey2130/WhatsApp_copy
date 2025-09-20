@@ -82,6 +82,10 @@ final GoRouter appRouter = GoRouter(
         final userName = extra != null && extra['name'] is String
             ? (extra['name'] as String)
             : uid;
+        final conversationId =
+            extra != null && extra['conversationId'] is String
+            ? extra['conversationId'] as String
+            : '';
         final rawPhoto = extra != null && extra['photoUrl'] is String
             ? extra['photoUrl'] as String
             : null;
@@ -92,6 +96,7 @@ final GoRouter appRouter = GoRouter(
           userId: uid,
           userName: userName,
           avatarUrl: avatarUrl,
+          conversationId: conversationId,
         );
       },
     ),

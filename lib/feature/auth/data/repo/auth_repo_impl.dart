@@ -74,4 +74,15 @@ class AuthRepoImpl implements AuthRepo {
       return Left(Failure(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, String?>> getCurrentUser() async {
+    try {
+      final result = await _authDatasource.getCurrentUser();
+      return Right(result);
+    } catch (e) {
+      getIt<Talker>().handle(e);
+      return Left(Failure(message: e.toString()));
+    }
+  }
 }

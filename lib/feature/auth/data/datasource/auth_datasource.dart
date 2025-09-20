@@ -24,6 +24,7 @@ abstract class AuthDatasource {
   Future<String> sendOtp({required SendOtpParams params});
   Future<void> verifyOtp({required VerifyOtpParams params});
   Future<void> logOut();
+  Future<String?> getCurrentUser();
 }
 
 @Injectable(as: AuthDatasource)
@@ -177,6 +178,17 @@ class AuthDatasourceImpl implements AuthDatasource {
       }
 
       return user?.uid ?? '';
+    } catch (e) {
+      getIt<Talker>().handle(e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<String?> getCurrentUser() async {
+    try {
+      final user = _firebaseAuth.currentUser;
+      return user?.uid;
     } catch (e) {
       getIt<Talker>().handle(e);
       rethrow;

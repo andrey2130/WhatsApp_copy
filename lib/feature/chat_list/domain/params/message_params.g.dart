@@ -8,7 +8,7 @@ part of 'message_params.dart';
 
 _MessageParams _$MessageParamsFromJson(Map<String, dynamic> json) =>
     _MessageParams(
-      id: json['id'] as String,
+      id: json['id'] as String?,
       content: json['content'] as String,
       isRead: json['isRead'] as bool,
       sentAt: json['sentAt'] as String,

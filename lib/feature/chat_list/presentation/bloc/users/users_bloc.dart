@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:talker_flutter/talker_flutter.dart';
-import 'package:telegram_copy/feature/chat_list/domain/params/users_params.dart';
+import 'package:telegram_copy/core/usecases/usecase.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/get_all_users_usecase.dart';
 import 'package:telegram_copy/feature/settings/domain/params/user_params.dart';
 import 'package:telegram_copy/injections.dart';
@@ -27,12 +27,10 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
     emit(const UsersState.initial());
   }
 
-
-
   Future<void> _onLoadUsers(UsersLoad event, Emitter<UsersState> emit) async {
     emit(const UsersState.loading());
     try {
-      final users = await _getAllUsersUsecase(GetUsersParams());
+      final users = await _getAllUsersUsecase(NoParams());
       getIt<Talker>().info('Users loaded: ${users.length}');
       emit(UsersState.success(users: users));
     } catch (e, st) {

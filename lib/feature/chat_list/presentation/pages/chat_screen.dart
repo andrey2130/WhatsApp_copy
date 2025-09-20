@@ -5,12 +5,12 @@ import 'package:go_router/go_router.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_textfield.dart';
-import 'package:telegram_copy/feature/chat_list/presentation/bloc/chat_list_bloc.dart';
-import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_buble.dart';
-
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:telegram_copy/feature/chat_list/domain/params/conversation_params.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params.dart';
+import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
+import 'package:telegram_copy/injections.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/bloc/conversations/conversations_bloc.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/bloc/messages/messages_bloc.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_buble.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({
@@ -18,11 +18,12 @@ class ChatScreen extends StatefulWidget {
     required this.userId,
     required this.userName,
     this.avatarUrl,
+    required this.conversationId,
   });
   final String userId;
   final String userName;
   final String? avatarUrl;
-
+  final String conversationId;
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
@@ -31,14 +32,10 @@ class _ChatScreenState extends State<ChatScreen> {
   final ScrollController _scrollController = ScrollController();
 
   final TextEditingController _messageController = TextEditingController();
-  String? _conversationId;
 
   @override
   void initState() {
     super.initState();
-    context.read<ChatListBloc>().add(
-      const ChatListEvent.subscribeConversations(),
-    );
   }
 
   @override
@@ -52,82 +49,89 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: BlocConsumer<ChatListBloc, ChatListState>(
-          listener: (context, state) {
-            state.maybeWhen(
-              messagesSuccess: (conversationId, conversations, messages) {
-                _scrollController.animateTo(
-                  _scrollController.position.maxScrollExtent,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                );
-              },
-              conversationsSuccess: (conversations) {
-                final currentUserId = FirebaseAuth.instance.currentUser?.uid;
-                if (currentUserId == null) return;
-                final id = _findConversationId(
-                  conversations,
-                  currentUserId,
-                  widget.userId,
-                );
-                if (id != null && id != _conversationId) {
-                  _conversationId = id;
-                  context.read<ChatListBloc>().add(
-                    ChatListEvent.subscribeMessages(conversationId: id),
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider<MessagesBloc>(
+              create: (context) => getIt<MessagesBloc>(),
+            ),
+            BlocProvider<ConversationsBloc>(
+              create: (context) => getIt<ConversationsBloc>(),
+            ),
+          ],
+          child: BlocConsumer<MessagesBloc, MessagesState>(
+            listener: (context, state) {
+              state.maybeWhen(
+                success: (messages) {
+                  _scrollController.animateTo(
+                    _scrollController.position.maxScrollExtent,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
                   );
-                }
-              },
-              orElse: () {},
-            );
-          },
-          builder: (context, state) {
-            return Column(
-              children: [
-                CustomAppBar(
-                  leftWidget: IconButton(
-                    onPressed: () => context.pop(),
-                    icon: Icon(Icons.arrow_back),
+                },
+                orElse: () {},
+              );
+            },
+            builder: (context, state) {
+              state.maybeWhen(
+                initial: () {
+                  context.read<MessagesBloc>().add(
+                    MessagesEvent.subscribe(widget.conversationId),
+                  );
+                },
+                orElse: () {},
+              );
+              return Column(
+                children: [
+                  CustomAppBar(
+                    leftWidget: IconButton(
+                      onPressed: () => context.pop(),
+                      icon: Icon(Icons.arrow_back),
+                    ),
+                    avatarWidget: CircleAvatar(
+                      backgroundImage: widget.avatarUrl != null
+                          ? NetworkImage(widget.avatarUrl!)
+                          : null,
+                      child: widget.avatarUrl == null
+                          ? Icon(Icons.person)
+                          : null,
+                    ),
+                    left2Widget: Text(widget.userName),
                   ),
-                  avatarWidget: CircleAvatar(
-                    backgroundImage: widget.avatarUrl != null
-                        ? NetworkImage(widget.avatarUrl!)
-                        : null,
-                    child: widget.avatarUrl == null ? Icon(Icons.person) : null,
-                  ),
-                  left2Widget: Text(widget.userName),
-                ),
-                Expanded(
-                  child: Stack(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/whatsAppBack.jpg'),
-                            fit: BoxFit.cover,
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(
+                                'assets/images/whatsAppBack.jpg',
+                              ),
+                              fit: BoxFit.cover,
+                            ),
                           ),
+                          child: _buildMessagesList(state),
                         ),
-                        child: _buildMessagesList(state),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: _buildMessageInput(_messageController),
-                      ),
-                    ],
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: _buildMessageInput(_messageController),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            );
-          },
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildMessagesList(ChatListState state) {
+  Widget _buildMessagesList(MessagesState state) {
     return state.maybeWhen(
-      messagesSuccess: (conversationId, conversations, messages) {
+      success: (messages) {
         return ListView.builder(
           controller: _scrollController,
           padding: EdgeInsets.only(
@@ -138,12 +142,19 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           itemCount: messages.length,
           itemBuilder: (context, index) {
-            final msg = messages[index];
-            final currentUserId = FirebaseAuth.instance.currentUser?.uid;
-            return MessageBuble(
-              message: msg.content,
-              isMe: msg.senderId == currentUserId,
-              time: msg.sentAt,
+            return BlocBuilder<AuthBloc, AuthBlocState>(
+              builder: (context, authState) {
+                final currentUserId = authState.maybeWhen(
+                  authenticated: (userId) => userId,
+                  orElse: () => null,
+                );
+
+                return MessageBuble(
+                  message: messages[index].content,
+                  isMe: messages[index].senderId == currentUserId,
+                  time: messages[index].sentAt,
+                );
+              },
             );
           },
         );
@@ -198,81 +209,40 @@ class _ChatScreenState extends State<ChatScreen> {
               color: AppColors.primaryGreen,
               borderRadius: BorderRadius.circular(28.r),
             ),
-            child: IconButton(
-              color: Colors.white,
-              onPressed: () {
-                if (messageController.text.isEmpty) return;
-                final currentUserId = FirebaseAuth.instance.currentUser?.uid;
-                if (currentUserId == null) return;
-                final text = messageController.text.trim();
-                String? id = _conversationId;
-                final bloc = context.read<ChatListBloc>();
-                final state = bloc.state;
-                state.maybeWhen(
-                  conversationsSuccess: (conversations) {
-                    id ??= _findConversationId(
-                      conversations,
-                      currentUserId,
-                      widget.userId,
-                    );
-                  },
-                  orElse: () {},
+            child: BlocBuilder<AuthBloc, AuthBlocState>(
+              builder: (context, authState) {
+                final currentUserId = authState.maybeWhen(
+                  authenticated: (userId) => userId,
+                  orElse: () => null,
                 );
-                if (id == null) {
-                  final newConversationId = DateTime.now()
-                      .microsecondsSinceEpoch
-                      .toString();
-                  final conversation = ConversationParams(
-                    id: newConversationId,
-                    title: widget.userName,
-                    isGroup: false,
-                    participantIds: [currentUserId, widget.userId],
-                    creatorId: currentUserId,
-                    createdAt: DateTime.now(),
-                    updatedAt: DateTime.now(),
-                  );
-                  bloc.add(
-                    ChatListEvent.sendConversation(conversation: conversation),
-                  );
-                  _conversationId = newConversationId;
-                  id = newConversationId;
-                  bloc.add(
-                    ChatListEvent.subscribeMessages(conversationId: id!),
-                  );
-                }
-                final msg = MessageParams(
-                  id: DateTime.now().microsecondsSinceEpoch.toString(),
-                  content: text,
-                  isRead: false,
-                  sentAt: DateTime.now().toIso8601String(),
-                  createdAt: DateTime.now().toIso8601String(),
-                  updatedAt: DateTime.now().toIso8601String(),
-                  conversationId: id!,
-                  senderId: currentUserId,
+
+                return IconButton(
+                  color: Colors.white,
+                  onPressed: currentUserId != null
+                      ? () {
+                          context.read<MessagesBloc>().add(
+                            MessagesEvent.send(
+                              MessageParams(
+                                content: messageController.text,
+                                isRead: false,
+                                sentAt: DateTime.now().toIso8601String(),
+                                createdAt: DateTime.now().toIso8601String(),
+                                updatedAt: DateTime.now().toIso8601String(),
+                                conversationId: widget.conversationId,
+                                senderId: currentUserId,
+                              ),
+                            ),
+                          );
+                          messageController.clear();
+                        }
+                      : null,
+                  icon: Icon(Icons.send),
                 );
-                bloc.add(ChatListEvent.sendMessage(message: msg));
-                messageController.clear();
               },
-              icon: Icon(Icons.send),
             ),
           ),
         ],
       ),
     );
-  }
-
-  String? _findConversationId(
-    List<ConversationParams> conversations,
-    String currentUserId,
-    String otherUserId,
-  ) {
-    for (final c in conversations) {
-      if (!c.isGroup &&
-          c.participantIds.contains(currentUserId) &&
-          c.participantIds.contains(otherUserId)) {
-        return c.id;
-      }
-    }
-    return null;
   }
 }

@@ -6,6 +6,8 @@ import 'package:telegram_copy/core/usecases/usecase.dart';
 import 'dart:async';
 
 import 'package:telegram_copy/feature/chat_list/domain/params/conversation_params.dart';
+import 'package:telegram_copy/feature/chat_list/domain/params/delete_conversation_params.dart';
+import 'package:telegram_copy/feature/chat_list/domain/params/delete_message_params.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/subscribe_messages_params.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/get_all_conversations.dart';
