@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_textfield.dart';
@@ -42,6 +43,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void dispose() {
     _scrollController.dispose();
     _messageController.dispose();
+
     super.dispose();
   }
 
@@ -63,14 +65,16 @@ class _ChatScreenState extends State<ChatScreen> {
               state.maybeWhen(
                 success: (messages) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (_scrollController.hasClients) {
-                      _scrollController.animateTo(
-                        _scrollController.position.maxScrollExtent,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    }
+                    _scrollToBottom();
                   });
+                },
+                loading: () {
+                  // Show loading indicator
+                },
+                error: (message) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(message)));
                 },
                 orElse: () {},
               );
@@ -156,7 +160,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 return MessageBuble(
                   message: messages[index].content,
                   isMe: messages[index].senderId == currentUserId,
-                  time: messages[index].sentAt,
+                  time: _dateFormat(messages[index].sentAt),
                 );
               },
             );
@@ -248,5 +252,19 @@ class _ChatScreenState extends State<ChatScreen> {
         ],
       ),
     );
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  String _dateFormat(String date) {
+    return DateFormat('HH:mm').format(DateTime.parse(date));
   }
 }
