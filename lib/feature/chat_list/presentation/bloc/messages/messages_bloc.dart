@@ -3,10 +3,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 import 'package:telegram_copy/core/usecases/usecase.dart';
-import 'package:telegram_copy/feature/chat_list/domain/params/create_message_params.dart';
-import 'package:telegram_copy/feature/chat_list/domain/params/delete_message_params.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params.dart';
-import 'package:telegram_copy/feature/chat_list/domain/params/subscribe_messages_params.dart';
+
 import 'package:telegram_copy/feature/chat_list/domain/usecases/get_all_messages.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/create_message_usecase.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/update_message_usecase.dart';
@@ -64,14 +62,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     Emitter<MessagesState> emit,
   ) async {
     try {
-      await _createMessageUsecase(
-        CreateMessageParams(
-          id: event.message.id,
-          content: event.message.content,
-          conversationId: event.message.conversationId,
-          senderId: event.message.senderId,
-        ),
-      );
+      await _createMessageUsecase(event.message);
     } catch (e, st) {
       getIt<Talker>().handle(e, st);
       emit(MessagesState.error(e.toString()));
@@ -94,9 +85,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     Emitter<MessagesState> emit,
   ) async {
     try {
-      await _deleteMessageUsecase(
-        DeleteMessageParams(messageId: event.messageId),
-      );
+      await _deleteMessageUsecase(event.messageId);
     } catch (e, st) {
       getIt<Talker>().handle(e, st);
     }
@@ -108,9 +97,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   ) async {
     emit(const MessagesState.loading());
     try {
-      final stream = await _subscribeMessagesUsecase(
-        SubscribeMessagesParams(conversationId: event.conversationId),
-      );
+      final stream = await _subscribeMessagesUsecase(event.conversationId);
       await emit.onEach<List<MessageParams>>(
         stream,
         onData: (messages) {

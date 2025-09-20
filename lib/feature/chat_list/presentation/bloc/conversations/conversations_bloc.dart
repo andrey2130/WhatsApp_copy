@@ -4,7 +4,6 @@ import 'package:injectable/injectable.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 import 'package:telegram_copy/core/usecases/usecase.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/conversation_params.dart';
-import 'package:telegram_copy/feature/chat_list/domain/params/delete_conversation_params.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/get_all_conversations.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/send_conversation_usecase.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/update_conversation_usecase.dart';
@@ -84,9 +83,7 @@ class ConversationsBloc extends Bloc<ConversationsEvent, ConversationsState> {
     Emitter<ConversationsState> emit,
   ) async {
     try {
-      await _deleteConversationUsecase(
-        DeleteConversationParams(conversationId: event.conversationId),
-      );
+      await _deleteConversationUsecase(event.conversationId);
     } catch (e, st) {
       getIt<Talker>().handle(e, st);
     }

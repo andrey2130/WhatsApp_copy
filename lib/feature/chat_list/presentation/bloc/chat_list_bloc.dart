@@ -6,10 +6,8 @@ import 'package:telegram_copy/core/usecases/usecase.dart';
 import 'dart:async';
 
 import 'package:telegram_copy/feature/chat_list/domain/params/conversation_params.dart';
-import 'package:telegram_copy/feature/chat_list/domain/params/delete_conversation_params.dart';
-import 'package:telegram_copy/feature/chat_list/domain/params/delete_message_params.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params.dart';
-import 'package:telegram_copy/feature/chat_list/domain/params/subscribe_messages_params.dart';
+
 import 'package:telegram_copy/feature/chat_list/domain/usecases/get_all_conversations.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/get_all_messages.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/send_conversation_usecase.dart';
@@ -170,9 +168,7 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
     Emitter<ChatListState> emit,
   ) async {
     try {
-      await _deleteConversationUsecase(
-        DeleteConversationParams(conversationId: event.conversationId),
-      );
+      await _deleteConversationUsecase(event.conversationId);
     } catch (e, st) {
       getIt<Talker>().handle(e, st);
     }
@@ -183,9 +179,7 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
     Emitter<ChatListState> emit,
   ) async {
     try {
-      await _deleteMessageUsecase(
-        DeleteMessageParams(messageId: event.messageId),
-      );
+      await _deleteMessageUsecase(event.messageId);
     } catch (e, st) {
       getIt<Talker>().handle(e, st);
     }
@@ -230,9 +224,7 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
       ),
     );
     try {
-      _messagesStream = await _subscribeMessagesUsecase(
-        SubscribeMessagesParams(conversationId: event.conversationId),
-      );
+      _messagesStream = await _subscribeMessagesUsecase(event.conversationId);
       await emit.onEach<List<MessageParams>>(
         _messagesStream!,
         onData: (list) {
