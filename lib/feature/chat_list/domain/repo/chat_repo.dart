@@ -13,6 +13,7 @@ abstract class ChatRepo {
   Future<Either<Failure, DeleteMessageParams>> deleteMessage(
     DeleteMessageParams params,
   );
+  Future<Either<Failure, MessageParams>> readMessage(MessageParams params);
   Stream<List<MessageParams>> watchMessages(String chatId);
   Stream<List<ChatParams>> watchChats(String currentUserId);
 }

@@ -17,7 +17,7 @@ abstract class ChatDatasource {
   Future<Either<Failure, DeleteMessageParams>> deleteMessage(
     DeleteMessageParams params,
   );
-
+  Future<Either<Failure, MessageParams>> readMessage(MessageParams params);
   Stream<List<MessageParams>> watchMessages(String chatId);
   Stream<List<ChatParams>> watchChats(String currentUserId);
 }
@@ -181,6 +181,24 @@ class ChatDatasourceImpl implements ChatDatasource {
     } catch (e, st) {
       getIt<Talker>().handle(e, st);
       rethrow;
+    }
+  }
+
+  @override
+  Future<Either<Failure, MessageParams>> readMessage(
+    MessageParams params,
+  ) async {
+    try {
+      await _firestore
+          .collection('chats')
+          .doc(params.chatId)
+          .collection('messages')
+          .doc(params.id)
+          .update({'isRead': true});
+      return Right(params);
+    } catch (e) {
+      getIt<Talker>().handle(e);
+      return Left(Failure(message: e.toString()));
     }
   }
 

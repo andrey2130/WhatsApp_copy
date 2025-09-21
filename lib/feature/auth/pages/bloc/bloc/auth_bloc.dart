@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:talker_flutter/talker_flutter.dart';
+import 'package:telegram_copy/core/app_route/app_router.dart';
 import 'package:telegram_copy/core/usecases/usecase.dart';
 import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/send_otp_params.dart';
 import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/verify_otp_params.dart';
@@ -41,6 +42,9 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
     on<LogOut>(_onLogOut);
     on<LoginViaEmail>(_onLoginViaEmail);
     on<RegisterViaEmail>(_onRegisterViaEmail);
+    on<AuthStateChanged>(_onAuthStateChanged);
+
+    _listenToAuthChanges();
   }
 
   Future<void> _onCheckAuthStatus(
@@ -119,7 +123,10 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
     emit(const AuthBlocState.loading());
 
     await _logOutUsecase(const NoParams());
+    getIt<Talker>().info('User logged out');
     emit(const AuthBlocState.unauthenticated());
+
+    appRouter.refresh();
   }
 
   Future<void> _onLoginViaEmail(
@@ -148,5 +155,28 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
       emit(AuthBlocState.failure(message: failure.message));
       getIt<Talker>().handle(failure.message);
     }, (userId) => emit(AuthBlocState.authenticated(userId: userId)));
+  }
+
+  Future<void> _onAuthStateChanged(
+    AuthStateChanged event,
+    Emitter<AuthBlocState> emit,
+  ) async {
+    if (event.userId != null) {
+      getIt<Talker>().info(
+        'Auth state changed: User authenticated: ${event.userId}',
+      );
+      emit(AuthBlocState.authenticated(userId: event.userId!));
+    } else {
+      getIt<Talker>().info('Auth state changed: User unauthenticated');
+      emit(const AuthBlocState.unauthenticated());
+    }
+
+    appRouter.refresh();
+  }
+
+  void _listenToAuthChanges() {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      add(AuthBlocEvent.authStateChanged(userId: user?.uid));
+    });
   }
 }

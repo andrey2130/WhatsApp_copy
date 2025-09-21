@@ -55,7 +55,7 @@ extension AuthBlocEventPatterns on AuthBlocEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( SendOtp value)?  sendOtp,TResult Function( VerifyOtp value)?  verifyOtp,TResult Function( ResendOtp value)?  resendOtp,TResult Function( LoginViaEmail value)?  loginViaEmail,TResult Function( RegisterViaEmail value)?  registerViaEmail,TResult Function( CheckAuthStatus value)?  checkAuthStatus,TResult Function( LogOut value)?  logOut,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( SendOtp value)?  sendOtp,TResult Function( VerifyOtp value)?  verifyOtp,TResult Function( ResendOtp value)?  resendOtp,TResult Function( LoginViaEmail value)?  loginViaEmail,TResult Function( RegisterViaEmail value)?  registerViaEmail,TResult Function( CheckAuthStatus value)?  checkAuthStatus,TResult Function( LogOut value)?  logOut,TResult Function( AuthStateChanged value)?  authStateChanged,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case SendOtp() when sendOtp != null:
@@ -65,7 +65,8 @@ return resendOtp(_that);case LoginViaEmail() when loginViaEmail != null:
 return loginViaEmail(_that);case RegisterViaEmail() when registerViaEmail != null:
 return registerViaEmail(_that);case CheckAuthStatus() when checkAuthStatus != null:
 return checkAuthStatus(_that);case LogOut() when logOut != null:
-return logOut(_that);case _:
+return logOut(_that);case AuthStateChanged() when authStateChanged != null:
+return authStateChanged(_that);case _:
   return orElse();
 
 }
@@ -83,7 +84,7 @@ return logOut(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( SendOtp value)  sendOtp,required TResult Function( VerifyOtp value)  verifyOtp,required TResult Function( ResendOtp value)  resendOtp,required TResult Function( LoginViaEmail value)  loginViaEmail,required TResult Function( RegisterViaEmail value)  registerViaEmail,required TResult Function( CheckAuthStatus value)  checkAuthStatus,required TResult Function( LogOut value)  logOut,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( SendOtp value)  sendOtp,required TResult Function( VerifyOtp value)  verifyOtp,required TResult Function( ResendOtp value)  resendOtp,required TResult Function( LoginViaEmail value)  loginViaEmail,required TResult Function( RegisterViaEmail value)  registerViaEmail,required TResult Function( CheckAuthStatus value)  checkAuthStatus,required TResult Function( LogOut value)  logOut,required TResult Function( AuthStateChanged value)  authStateChanged,}){
 final _that = this;
 switch (_that) {
 case SendOtp():
@@ -93,7 +94,8 @@ return resendOtp(_that);case LoginViaEmail():
 return loginViaEmail(_that);case RegisterViaEmail():
 return registerViaEmail(_that);case CheckAuthStatus():
 return checkAuthStatus(_that);case LogOut():
-return logOut(_that);}
+return logOut(_that);case AuthStateChanged():
+return authStateChanged(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -107,7 +109,7 @@ return logOut(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( SendOtp value)?  sendOtp,TResult? Function( VerifyOtp value)?  verifyOtp,TResult? Function( ResendOtp value)?  resendOtp,TResult? Function( LoginViaEmail value)?  loginViaEmail,TResult? Function( RegisterViaEmail value)?  registerViaEmail,TResult? Function( CheckAuthStatus value)?  checkAuthStatus,TResult? Function( LogOut value)?  logOut,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( SendOtp value)?  sendOtp,TResult? Function( VerifyOtp value)?  verifyOtp,TResult? Function( ResendOtp value)?  resendOtp,TResult? Function( LoginViaEmail value)?  loginViaEmail,TResult? Function( RegisterViaEmail value)?  registerViaEmail,TResult? Function( CheckAuthStatus value)?  checkAuthStatus,TResult? Function( LogOut value)?  logOut,TResult? Function( AuthStateChanged value)?  authStateChanged,}){
 final _that = this;
 switch (_that) {
 case SendOtp() when sendOtp != null:
@@ -117,7 +119,8 @@ return resendOtp(_that);case LoginViaEmail() when loginViaEmail != null:
 return loginViaEmail(_that);case RegisterViaEmail() when registerViaEmail != null:
 return registerViaEmail(_that);case CheckAuthStatus() when checkAuthStatus != null:
 return checkAuthStatus(_that);case LogOut() when logOut != null:
-return logOut(_that);case _:
+return logOut(_that);case AuthStateChanged() when authStateChanged != null:
+return authStateChanged(_that);case _:
   return null;
 
 }
@@ -134,7 +137,7 @@ return logOut(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( SendOtpParams params)?  sendOtp,TResult Function( VerifyOtpParams params)?  verifyOtp,TResult Function( SendOtpParams params)?  resendOtp,TResult Function( LoginParams params)?  loginViaEmail,TResult Function( RegisterParams params)?  registerViaEmail,TResult Function()?  checkAuthStatus,TResult Function()?  logOut,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( SendOtpParams params)?  sendOtp,TResult Function( VerifyOtpParams params)?  verifyOtp,TResult Function( SendOtpParams params)?  resendOtp,TResult Function( LoginParams params)?  loginViaEmail,TResult Function( RegisterParams params)?  registerViaEmail,TResult Function()?  checkAuthStatus,TResult Function()?  logOut,TResult Function( String? userId)?  authStateChanged,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case SendOtp() when sendOtp != null:
 return sendOtp(_that.params);case VerifyOtp() when verifyOtp != null:
@@ -143,7 +146,8 @@ return resendOtp(_that.params);case LoginViaEmail() when loginViaEmail != null:
 return loginViaEmail(_that.params);case RegisterViaEmail() when registerViaEmail != null:
 return registerViaEmail(_that.params);case CheckAuthStatus() when checkAuthStatus != null:
 return checkAuthStatus();case LogOut() when logOut != null:
-return logOut();case _:
+return logOut();case AuthStateChanged() when authStateChanged != null:
+return authStateChanged(_that.userId);case _:
   return orElse();
 
 }
@@ -161,7 +165,7 @@ return logOut();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( SendOtpParams params)  sendOtp,required TResult Function( VerifyOtpParams params)  verifyOtp,required TResult Function( SendOtpParams params)  resendOtp,required TResult Function( LoginParams params)  loginViaEmail,required TResult Function( RegisterParams params)  registerViaEmail,required TResult Function()  checkAuthStatus,required TResult Function()  logOut,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( SendOtpParams params)  sendOtp,required TResult Function( VerifyOtpParams params)  verifyOtp,required TResult Function( SendOtpParams params)  resendOtp,required TResult Function( LoginParams params)  loginViaEmail,required TResult Function( RegisterParams params)  registerViaEmail,required TResult Function()  checkAuthStatus,required TResult Function()  logOut,required TResult Function( String? userId)  authStateChanged,}) {final _that = this;
 switch (_that) {
 case SendOtp():
 return sendOtp(_that.params);case VerifyOtp():
@@ -170,7 +174,8 @@ return resendOtp(_that.params);case LoginViaEmail():
 return loginViaEmail(_that.params);case RegisterViaEmail():
 return registerViaEmail(_that.params);case CheckAuthStatus():
 return checkAuthStatus();case LogOut():
-return logOut();}
+return logOut();case AuthStateChanged():
+return authStateChanged(_that.userId);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -184,7 +189,7 @@ return logOut();}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( SendOtpParams params)?  sendOtp,TResult? Function( VerifyOtpParams params)?  verifyOtp,TResult? Function( SendOtpParams params)?  resendOtp,TResult? Function( LoginParams params)?  loginViaEmail,TResult? Function( RegisterParams params)?  registerViaEmail,TResult? Function()?  checkAuthStatus,TResult? Function()?  logOut,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( SendOtpParams params)?  sendOtp,TResult? Function( VerifyOtpParams params)?  verifyOtp,TResult? Function( SendOtpParams params)?  resendOtp,TResult? Function( LoginParams params)?  loginViaEmail,TResult? Function( RegisterParams params)?  registerViaEmail,TResult? Function()?  checkAuthStatus,TResult? Function()?  logOut,TResult? Function( String? userId)?  authStateChanged,}) {final _that = this;
 switch (_that) {
 case SendOtp() when sendOtp != null:
 return sendOtp(_that.params);case VerifyOtp() when verifyOtp != null:
@@ -193,7 +198,8 @@ return resendOtp(_that.params);case LoginViaEmail() when loginViaEmail != null:
 return loginViaEmail(_that.params);case RegisterViaEmail() when registerViaEmail != null:
 return registerViaEmail(_that.params);case CheckAuthStatus() when checkAuthStatus != null:
 return checkAuthStatus();case LogOut() when logOut != null:
-return logOut();case _:
+return logOut();case AuthStateChanged() when authStateChanged != null:
+return authStateChanged(_that.userId);case _:
   return null;
 
 }
@@ -639,6 +645,72 @@ String toString() {
 
 
 
+
+/// @nodoc
+
+
+class AuthStateChanged implements AuthBlocEvent {
+  const AuthStateChanged({required this.userId});
+  
+
+ final  String? userId;
+
+/// Create a copy of AuthBlocEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$AuthStateChangedCopyWith<AuthStateChanged> get copyWith => _$AuthStateChangedCopyWithImpl<AuthStateChanged>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthStateChanged&&(identical(other.userId, userId) || other.userId == userId));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,userId);
+
+@override
+String toString() {
+  return 'AuthBlocEvent.authStateChanged(userId: $userId)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $AuthStateChangedCopyWith<$Res> implements $AuthBlocEventCopyWith<$Res> {
+  factory $AuthStateChangedCopyWith(AuthStateChanged value, $Res Function(AuthStateChanged) _then) = _$AuthStateChangedCopyWithImpl;
+@useResult
+$Res call({
+ String? userId
+});
+
+
+
+
+}
+/// @nodoc
+class _$AuthStateChangedCopyWithImpl<$Res>
+    implements $AuthStateChangedCopyWith<$Res> {
+  _$AuthStateChangedCopyWithImpl(this._self, this._then);
+
+  final AuthStateChanged _self;
+  final $Res Function(AuthStateChanged) _then;
+
+/// Create a copy of AuthBlocEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? userId = freezed,}) {
+  return _then(AuthStateChanged(
+userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
 
 /// @nodoc
 mixin _$AuthBlocState {

@@ -12,4 +12,5 @@ class ChatsEvent with _$ChatsEvent {
   const factory ChatsEvent.deleteMessage(DeleteMessageParams params) =
       DeleteMessage;
   const factory ChatsEvent.loadChatMessages(String chatId) = LoadChatMessages;
+  const factory ChatsEvent.readMessage(MessageParams params) = ReadMessage;
 }

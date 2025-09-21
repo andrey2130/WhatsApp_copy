@@ -10,6 +10,7 @@ import 'package:telegram_copy/feature/chat_list/domain/usecases/create_chat_usec
 import 'package:telegram_copy/feature/chat_list/domain/usecases/delete_meesage_usecase.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/load_chat_usecase.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/load_chat_messages_usecase.dart';
+import 'package:telegram_copy/feature/chat_list/domain/usecases/read_message.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/send_message_usecase.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/watch_chats_usecase.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/watch_message_usecase.dart';
@@ -28,6 +29,9 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
   final WatchChatsUsecase _watchChatsUsecase;
   final DeleteMeesageUsecase _deleteMeesageUsecase;
   final WatchMessageUsecase _watchMessageUsecase;
+  final ReadMessageUsecase _readMessageUsecase;
+
+  final Set<String> _readMessageIds = <String>{};
   ChatsBloc({
     required LoadChatsUsecase loadChatsUsecase,
     required CreateChatUsecase createChatUsecase,
@@ -36,6 +40,7 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
     required WatchChatsUsecase watchChatsUsecase,
     required DeleteMeesageUsecase deleteMeesageUsecase,
     required WatchMessageUsecase watchMessageUsecase,
+    required ReadMessageUsecase readMessageUsecase,
   }) : _loadChatsUsecase = loadChatsUsecase,
        _createChatUsecase = createChatUsecase,
        _sendMessageUsecase = sendMessageUsecase,
@@ -43,6 +48,7 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
        _watchChatsUsecase = watchChatsUsecase,
        _deleteMeesageUsecase = deleteMeesageUsecase,
        _watchMessageUsecase = watchMessageUsecase,
+       _readMessageUsecase = readMessageUsecase,
        super(const ChatsState.initial()) {
     on<LoadChats>(_onLoadChats);
     on<CreateChat>(_onCreateChat);
@@ -51,6 +57,7 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
     on<WatchChats>(_onWatchChats);
     on<DeleteMessage>(_onDeleteMessage);
     on<WatchMessage>(_onWatchMessage);
+    on<ReadMessage>(_onReadMessage);
   }
 
   Future<void> _onLoadChats(LoadChats event, Emitter<ChatsState> emit) async {
@@ -96,6 +103,8 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
     try {
       final messages = await _loadChatMessagesUsecase(event.chatId);
 
+      _readMessageIds.clear();
+
       final currentState = state;
       currentState.maybeWhen(
         loaded: (chats) {
@@ -119,6 +128,8 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
     Emitter<ChatsState> emit,
   ) async {
     emit(const ChatsState.loading());
+
+    _readMessageIds.clear();
 
     try {
       await emit.forEach(
@@ -202,6 +213,23 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
           emit(const ChatsState.success());
         },
       );
+    } catch (e) {
+      getIt<Talker>().handle(e);
+      emit(ChatsState.error(e.toString()));
+    }
+  }
+
+  Future<void> _onReadMessage(
+    ReadMessage event,
+    Emitter<ChatsState> emit,
+  ) async {
+    try {
+      if (_readMessageIds.contains(event.params.id)) {
+        return;
+      }
+
+      await _readMessageUsecase(event.params);
+      _readMessageIds.add(event.params.id);
     } catch (e) {
       getIt<Talker>().handle(e);
       emit(ChatsState.error(e.toString()));

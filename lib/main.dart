@@ -39,9 +39,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (context) =>
-              getIt<AuthBloc>()..add(const AuthBlocEvent.checkAuthStatus(
-                
-              )),
+              getIt<AuthBloc>()..add(const AuthBlocEvent.checkAuthStatus()),
         ),
         BlocProvider(create: (context) => getIt<SettingsBloc>()),
         BlocProvider(create: (context) => getIt<ChatsBloc>()),

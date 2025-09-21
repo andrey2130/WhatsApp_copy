@@ -11,8 +11,11 @@ sealed class AuthBlocEvent with _$AuthBlocEvent {
 
   const factory AuthBlocEvent.loginViaEmail({required LoginParams params}) =
       LoginViaEmail;
-  const factory AuthBlocEvent.registerViaEmail({required RegisterParams params}) =
-      RegisterViaEmail;
+  const factory AuthBlocEvent.registerViaEmail({
+    required RegisterParams params,
+  }) = RegisterViaEmail;
   const factory AuthBlocEvent.checkAuthStatus() = CheckAuthStatus;
   const factory AuthBlocEvent.logOut() = LogOut;
+  const factory AuthBlocEvent.authStateChanged({required String? userId}) =
+      AuthStateChanged;
 }
