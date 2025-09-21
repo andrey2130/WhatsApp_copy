@@ -180,7 +180,9 @@ class _ChatScreenState extends State<ChatScreen> {
         return VisibilityDetector(
           key: Key(message.id),
           onVisibilityChanged: (visibility) {
-            if (visibility.visibleFraction == 1) {
+            if (visibility.visibleFraction == 1 &&
+                message.isRead != true &&
+                message.senderId != widget.userId) {
               _readMessage(message);
             }
           },

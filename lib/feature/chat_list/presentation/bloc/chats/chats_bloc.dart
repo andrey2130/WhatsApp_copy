@@ -30,6 +30,8 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
   final DeleteMeesageUsecase _deleteMeesageUsecase;
   final WatchMessageUsecase _watchMessageUsecase;
   final ReadMessageUsecase _readMessageUsecase;
+
+  final Set<String> _readMessageIds = <String>{};
   ChatsBloc({
     required LoadChatsUsecase loadChatsUsecase,
     required CreateChatUsecase createChatUsecase,
@@ -101,6 +103,8 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
     try {
       final messages = await _loadChatMessagesUsecase(event.chatId);
 
+      _readMessageIds.clear();
+
       final currentState = state;
       currentState.maybeWhen(
         loaded: (chats) {
@@ -124,6 +128,8 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
     Emitter<ChatsState> emit,
   ) async {
     emit(const ChatsState.loading());
+
+    _readMessageIds.clear();
 
     try {
       await emit.forEach(
@@ -218,7 +224,12 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
     Emitter<ChatsState> emit,
   ) async {
     try {
+      if (_readMessageIds.contains(event.params.id)) {
+        return;
+      }
+
       await _readMessageUsecase(event.params);
+      _readMessageIds.add(event.params.id);
     } catch (e) {
       getIt<Talker>().handle(e);
       emit(ChatsState.error(e.toString()));
