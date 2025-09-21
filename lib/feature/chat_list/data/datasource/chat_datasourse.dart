@@ -5,7 +5,8 @@ import 'package:talker_flutter/talker_flutter.dart';
 import 'package:telegram_copy/core/error/failure.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/chat.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/create_chat.dart';
-import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/message.dart';
+import 'package:telegram_copy/feature/chat_list/domain/params/message_params/delete_messaga.dart';
+import 'package:telegram_copy/feature/chat_list/domain/params/message_params/message.dart';
 import 'package:telegram_copy/injections.dart';
 
 abstract class ChatDatasource {
@@ -13,6 +14,11 @@ abstract class ChatDatasource {
   Future<Either<Failure, MessageParams>> sendMessage(MessageParams params);
   Future<Either<Failure, List<ChatParams>>> loadChats(String currentUserId);
   Future<Either<Failure, List<MessageParams>>> loadChatMessages(String chatId);
+  Future<Either<Failure, DeleteMessageParams>> deleteMessage(
+    DeleteMessageParams params,
+  );
+
+  Stream<List<MessageParams>> watchMessages(String chatId);
   Stream<List<ChatParams>> watchChats(String currentUserId);
 }
 
@@ -67,7 +73,10 @@ class ChatDatasourceImpl implements ChatDatasource {
         getIt<Talker>().info('New chat created with ID: $chatId');
       }
 
-      await chatDoc.collection('messages').doc().set(params.toJson());
+      getIt<Talker>().info(
+        'Saving message with ID: ${params.id} to chat: $chatId',
+      );
+      await chatDoc.collection('messages').doc(params.id).set(params.toJson());
 
       await chatDoc.update({
         'lastMessage': params.message,
@@ -152,6 +161,30 @@ class ChatDatasourceImpl implements ChatDatasource {
   }
 
   @override
+  Future<Either<Failure, DeleteMessageParams>> deleteMessage(
+    DeleteMessageParams params,
+  ) async {
+    try {
+      getIt<Talker>().info(
+        'Attempting to delete message ${params.messageId} from chat ${params.chatId}',
+      );
+      await _firestore
+          .collection('chats')
+          .doc(params.chatId)
+          .collection('messages')
+          .doc(params.messageId)
+          .delete();
+      getIt<Talker>().info(
+        'Message ${params.messageId} successfully deleted from Firestore',
+      );
+      return Right(params);
+    } catch (e, st) {
+      getIt<Talker>().handle(e, st);
+      rethrow;
+    }
+  }
+
+  @override
   Stream<List<ChatParams>> watchChats(String currentUserId) {
     return _firestore
         .collection('chats')
@@ -196,5 +229,20 @@ class ChatDatasourceImpl implements ChatDatasource {
       getIt<Talker>().handle(e);
       return DateTime.now().toIso8601String();
     }
+  }
+
+  @override
+  Stream<List<MessageParams>> watchMessages(String chatId) {
+    return _firestore
+        .collection('chats')
+        .doc(chatId)
+        .collection('messages')
+        .orderBy('createdAt', descending: false)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => MessageParams.fromJson(doc.data()))
+              .toList();
+        });
   }
 }

@@ -6,7 +6,8 @@ import 'package:telegram_copy/core/error/failure.dart';
 import 'package:telegram_copy/feature/chat_list/data/datasource/chat_datasourse.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/chat.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/create_chat.dart';
-import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/message.dart';
+import 'package:telegram_copy/feature/chat_list/domain/params/message_params/delete_messaga.dart';
+import 'package:telegram_copy/feature/chat_list/domain/params/message_params/message.dart';
 import 'package:telegram_copy/feature/chat_list/domain/repo/chat_repo.dart';
 import 'package:telegram_copy/injections.dart';
 
@@ -95,6 +96,30 @@ class ChatRepoImpl implements ChatRepo {
       getIt<Talker>().handle(e);
       return Left(Failure(message: e.toString()));
     }
+  }
+
+  @override
+  Future<Either<Failure, DeleteMessageParams>> deleteMessage(
+    DeleteMessageParams params,
+  ) async {
+    getIt<Talker>().info(
+      'ChatRepo: Deleting message ${params.messageId} from chat ${params.chatId}',
+    );
+    final result = await _chatDatasource.deleteMessage(params);
+    result.fold(
+      (l) => getIt<Talker>().error(
+        'ChatRepo: Failed to delete message: ${l.message}',
+      ),
+      (r) => getIt<Talker>().info(
+        'ChatRepo: Successfully deleted message ${params.messageId}',
+      ),
+    );
+    return result;
+  }
+
+  @override
+  Stream<List<MessageParams>> watchMessages(String chatId) {
+    return _chatDatasource.watchMessages(chatId);
   }
 
   @override

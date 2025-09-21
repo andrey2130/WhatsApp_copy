@@ -55,14 +55,16 @@ extension ChatsEventPatterns on ChatsEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( LoadChats value)?  loadChats,TResult Function( CreateChat value)?  createChat,TResult Function( SendMessage value)?  sendMessage,TResult Function( WatchChats value)?  watchChats,TResult Function( LoadChatMessages value)?  loadChatMessages,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( LoadChats value)?  loadChats,TResult Function( CreateChat value)?  createChat,TResult Function( SendMessage value)?  sendMessage,TResult Function( WatchChats value)?  watchChats,TResult Function( WatchMessage value)?  watchMessage,TResult Function( DeleteMessage value)?  deleteMessage,TResult Function( LoadChatMessages value)?  loadChatMessages,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case LoadChats() when loadChats != null:
 return loadChats(_that);case CreateChat() when createChat != null:
 return createChat(_that);case SendMessage() when sendMessage != null:
 return sendMessage(_that);case WatchChats() when watchChats != null:
-return watchChats(_that);case LoadChatMessages() when loadChatMessages != null:
+return watchChats(_that);case WatchMessage() when watchMessage != null:
+return watchMessage(_that);case DeleteMessage() when deleteMessage != null:
+return deleteMessage(_that);case LoadChatMessages() when loadChatMessages != null:
 return loadChatMessages(_that);case _:
   return orElse();
 
@@ -81,14 +83,16 @@ return loadChatMessages(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( LoadChats value)  loadChats,required TResult Function( CreateChat value)  createChat,required TResult Function( SendMessage value)  sendMessage,required TResult Function( WatchChats value)  watchChats,required TResult Function( LoadChatMessages value)  loadChatMessages,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( LoadChats value)  loadChats,required TResult Function( CreateChat value)  createChat,required TResult Function( SendMessage value)  sendMessage,required TResult Function( WatchChats value)  watchChats,required TResult Function( WatchMessage value)  watchMessage,required TResult Function( DeleteMessage value)  deleteMessage,required TResult Function( LoadChatMessages value)  loadChatMessages,}){
 final _that = this;
 switch (_that) {
 case LoadChats():
 return loadChats(_that);case CreateChat():
 return createChat(_that);case SendMessage():
 return sendMessage(_that);case WatchChats():
-return watchChats(_that);case LoadChatMessages():
+return watchChats(_that);case WatchMessage():
+return watchMessage(_that);case DeleteMessage():
+return deleteMessage(_that);case LoadChatMessages():
 return loadChatMessages(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -106,14 +110,16 @@ return loadChatMessages(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( LoadChats value)?  loadChats,TResult? Function( CreateChat value)?  createChat,TResult? Function( SendMessage value)?  sendMessage,TResult? Function( WatchChats value)?  watchChats,TResult? Function( LoadChatMessages value)?  loadChatMessages,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( LoadChats value)?  loadChats,TResult? Function( CreateChat value)?  createChat,TResult? Function( SendMessage value)?  sendMessage,TResult? Function( WatchChats value)?  watchChats,TResult? Function( WatchMessage value)?  watchMessage,TResult? Function( DeleteMessage value)?  deleteMessage,TResult? Function( LoadChatMessages value)?  loadChatMessages,}){
 final _that = this;
 switch (_that) {
 case LoadChats() when loadChats != null:
 return loadChats(_that);case CreateChat() when createChat != null:
 return createChat(_that);case SendMessage() when sendMessage != null:
 return sendMessage(_that);case WatchChats() when watchChats != null:
-return watchChats(_that);case LoadChatMessages() when loadChatMessages != null:
+return watchChats(_that);case WatchMessage() when watchMessage != null:
+return watchMessage(_that);case DeleteMessage() when deleteMessage != null:
+return deleteMessage(_that);case LoadChatMessages() when loadChatMessages != null:
 return loadChatMessages(_that);case _:
   return null;
 
@@ -131,13 +137,15 @@ return loadChatMessages(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String currentUserId)?  loadChats,TResult Function( CreateChatParams params)?  createChat,TResult Function( MessageParams params)?  sendMessage,TResult Function( String currentUserId)?  watchChats,TResult Function( String chatId)?  loadChatMessages,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String currentUserId)?  loadChats,TResult Function( CreateChatParams params)?  createChat,TResult Function( MessageParams params)?  sendMessage,TResult Function( String currentUserId)?  watchChats,TResult Function( String chatId)?  watchMessage,TResult Function( DeleteMessageParams params)?  deleteMessage,TResult Function( String chatId)?  loadChatMessages,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case LoadChats() when loadChats != null:
 return loadChats(_that.currentUserId);case CreateChat() when createChat != null:
 return createChat(_that.params);case SendMessage() when sendMessage != null:
 return sendMessage(_that.params);case WatchChats() when watchChats != null:
-return watchChats(_that.currentUserId);case LoadChatMessages() when loadChatMessages != null:
+return watchChats(_that.currentUserId);case WatchMessage() when watchMessage != null:
+return watchMessage(_that.chatId);case DeleteMessage() when deleteMessage != null:
+return deleteMessage(_that.params);case LoadChatMessages() when loadChatMessages != null:
 return loadChatMessages(_that.chatId);case _:
   return orElse();
 
@@ -156,13 +164,15 @@ return loadChatMessages(_that.chatId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String currentUserId)  loadChats,required TResult Function( CreateChatParams params)  createChat,required TResult Function( MessageParams params)  sendMessage,required TResult Function( String currentUserId)  watchChats,required TResult Function( String chatId)  loadChatMessages,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String currentUserId)  loadChats,required TResult Function( CreateChatParams params)  createChat,required TResult Function( MessageParams params)  sendMessage,required TResult Function( String currentUserId)  watchChats,required TResult Function( String chatId)  watchMessage,required TResult Function( DeleteMessageParams params)  deleteMessage,required TResult Function( String chatId)  loadChatMessages,}) {final _that = this;
 switch (_that) {
 case LoadChats():
 return loadChats(_that.currentUserId);case CreateChat():
 return createChat(_that.params);case SendMessage():
 return sendMessage(_that.params);case WatchChats():
-return watchChats(_that.currentUserId);case LoadChatMessages():
+return watchChats(_that.currentUserId);case WatchMessage():
+return watchMessage(_that.chatId);case DeleteMessage():
+return deleteMessage(_that.params);case LoadChatMessages():
 return loadChatMessages(_that.chatId);case _:
   throw StateError('Unexpected subclass');
 
@@ -180,13 +190,15 @@ return loadChatMessages(_that.chatId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String currentUserId)?  loadChats,TResult? Function( CreateChatParams params)?  createChat,TResult? Function( MessageParams params)?  sendMessage,TResult? Function( String currentUserId)?  watchChats,TResult? Function( String chatId)?  loadChatMessages,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String currentUserId)?  loadChats,TResult? Function( CreateChatParams params)?  createChat,TResult? Function( MessageParams params)?  sendMessage,TResult? Function( String currentUserId)?  watchChats,TResult? Function( String chatId)?  watchMessage,TResult? Function( DeleteMessageParams params)?  deleteMessage,TResult? Function( String chatId)?  loadChatMessages,}) {final _that = this;
 switch (_that) {
 case LoadChats() when loadChats != null:
 return loadChats(_that.currentUserId);case CreateChat() when createChat != null:
 return createChat(_that.params);case SendMessage() when sendMessage != null:
 return sendMessage(_that.params);case WatchChats() when watchChats != null:
-return watchChats(_that.currentUserId);case LoadChatMessages() when loadChatMessages != null:
+return watchChats(_that.currentUserId);case WatchMessage() when watchMessage != null:
+return watchMessage(_that.chatId);case DeleteMessage() when deleteMessage != null:
+return deleteMessage(_that.params);case LoadChatMessages() when loadChatMessages != null:
 return loadChatMessages(_that.chatId);case _:
   return null;
 
@@ -480,6 +492,147 @@ as String,
 /// @nodoc
 
 
+class WatchMessage implements ChatsEvent {
+  const WatchMessage(this.chatId);
+  
+
+ final  String chatId;
+
+/// Create a copy of ChatsEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$WatchMessageCopyWith<WatchMessage> get copyWith => _$WatchMessageCopyWithImpl<WatchMessage>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WatchMessage&&(identical(other.chatId, chatId) || other.chatId == chatId));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,chatId);
+
+@override
+String toString() {
+  return 'ChatsEvent.watchMessage(chatId: $chatId)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $WatchMessageCopyWith<$Res> implements $ChatsEventCopyWith<$Res> {
+  factory $WatchMessageCopyWith(WatchMessage value, $Res Function(WatchMessage) _then) = _$WatchMessageCopyWithImpl;
+@useResult
+$Res call({
+ String chatId
+});
+
+
+
+
+}
+/// @nodoc
+class _$WatchMessageCopyWithImpl<$Res>
+    implements $WatchMessageCopyWith<$Res> {
+  _$WatchMessageCopyWithImpl(this._self, this._then);
+
+  final WatchMessage _self;
+  final $Res Function(WatchMessage) _then;
+
+/// Create a copy of ChatsEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? chatId = null,}) {
+  return _then(WatchMessage(
+null == chatId ? _self.chatId : chatId // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class DeleteMessage implements ChatsEvent {
+  const DeleteMessage(this.params);
+  
+
+ final  DeleteMessageParams params;
+
+/// Create a copy of ChatsEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$DeleteMessageCopyWith<DeleteMessage> get copyWith => _$DeleteMessageCopyWithImpl<DeleteMessage>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DeleteMessage&&(identical(other.params, params) || other.params == params));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,params);
+
+@override
+String toString() {
+  return 'ChatsEvent.deleteMessage(params: $params)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $DeleteMessageCopyWith<$Res> implements $ChatsEventCopyWith<$Res> {
+  factory $DeleteMessageCopyWith(DeleteMessage value, $Res Function(DeleteMessage) _then) = _$DeleteMessageCopyWithImpl;
+@useResult
+$Res call({
+ DeleteMessageParams params
+});
+
+
+$DeleteMessageParamsCopyWith<$Res> get params;
+
+}
+/// @nodoc
+class _$DeleteMessageCopyWithImpl<$Res>
+    implements $DeleteMessageCopyWith<$Res> {
+  _$DeleteMessageCopyWithImpl(this._self, this._then);
+
+  final DeleteMessage _self;
+  final $Res Function(DeleteMessage) _then;
+
+/// Create a copy of ChatsEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? params = null,}) {
+  return _then(DeleteMessage(
+null == params ? _self.params : params // ignore: cast_nullable_to_non_nullable
+as DeleteMessageParams,
+  ));
+}
+
+/// Create a copy of ChatsEvent
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$DeleteMessageParamsCopyWith<$Res> get params {
+  
+  return $DeleteMessageParamsCopyWith<$Res>(_self.params, (value) {
+    return _then(_self.copyWith(params: value));
+  });
+}
+}
+
+/// @nodoc
+
+
 class LoadChatMessages implements ChatsEvent {
   const LoadChatMessages(this.chatId);
   
@@ -587,7 +740,7 @@ extension ChatsStatePatterns on ChatsState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( Initial value)?  initial,TResult Function( Loading value)?  loading,TResult Function( Loaded value)?  loaded,TResult Function( MessagesLoaded value)?  messagesLoaded,TResult Function( ChatWithMessages value)?  chatWithMessages,TResult Function( ErrorState value)?  error,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( Initial value)?  initial,TResult Function( Loading value)?  loading,TResult Function( Loaded value)?  loaded,TResult Function( MessagesLoaded value)?  messagesLoaded,TResult Function( ChatWithMessages value)?  chatWithMessages,TResult Function( Success value)?  success,TResult Function( ErrorState value)?  error,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case Initial() when initial != null:
@@ -595,7 +748,8 @@ return initial(_that);case Loading() when loading != null:
 return loading(_that);case Loaded() when loaded != null:
 return loaded(_that);case MessagesLoaded() when messagesLoaded != null:
 return messagesLoaded(_that);case ChatWithMessages() when chatWithMessages != null:
-return chatWithMessages(_that);case ErrorState() when error != null:
+return chatWithMessages(_that);case Success() when success != null:
+return success(_that);case ErrorState() when error != null:
 return error(_that);case _:
   return orElse();
 
@@ -614,7 +768,7 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( Initial value)  initial,required TResult Function( Loading value)  loading,required TResult Function( Loaded value)  loaded,required TResult Function( MessagesLoaded value)  messagesLoaded,required TResult Function( ChatWithMessages value)  chatWithMessages,required TResult Function( ErrorState value)  error,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( Initial value)  initial,required TResult Function( Loading value)  loading,required TResult Function( Loaded value)  loaded,required TResult Function( MessagesLoaded value)  messagesLoaded,required TResult Function( ChatWithMessages value)  chatWithMessages,required TResult Function( Success value)  success,required TResult Function( ErrorState value)  error,}){
 final _that = this;
 switch (_that) {
 case Initial():
@@ -622,7 +776,8 @@ return initial(_that);case Loading():
 return loading(_that);case Loaded():
 return loaded(_that);case MessagesLoaded():
 return messagesLoaded(_that);case ChatWithMessages():
-return chatWithMessages(_that);case ErrorState():
+return chatWithMessages(_that);case Success():
+return success(_that);case ErrorState():
 return error(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -640,7 +795,7 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( Initial value)?  initial,TResult? Function( Loading value)?  loading,TResult? Function( Loaded value)?  loaded,TResult? Function( MessagesLoaded value)?  messagesLoaded,TResult? Function( ChatWithMessages value)?  chatWithMessages,TResult? Function( ErrorState value)?  error,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( Initial value)?  initial,TResult? Function( Loading value)?  loading,TResult? Function( Loaded value)?  loaded,TResult? Function( MessagesLoaded value)?  messagesLoaded,TResult? Function( ChatWithMessages value)?  chatWithMessages,TResult? Function( Success value)?  success,TResult? Function( ErrorState value)?  error,}){
 final _that = this;
 switch (_that) {
 case Initial() when initial != null:
@@ -648,7 +803,8 @@ return initial(_that);case Loading() when loading != null:
 return loading(_that);case Loaded() when loaded != null:
 return loaded(_that);case MessagesLoaded() when messagesLoaded != null:
 return messagesLoaded(_that);case ChatWithMessages() when chatWithMessages != null:
-return chatWithMessages(_that);case ErrorState() when error != null:
+return chatWithMessages(_that);case Success() when success != null:
+return success(_that);case ErrorState() when error != null:
 return error(_that);case _:
   return null;
 
@@ -666,14 +822,15 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<ChatParams> chats)?  loaded,TResult Function( List<MessageParams> messages)?  messagesLoaded,TResult Function( List<ChatParams> chats,  List<MessageParams> messages)?  chatWithMessages,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<ChatParams> chats)?  loaded,TResult Function( List<MessageParams> messages)?  messagesLoaded,TResult Function( List<ChatParams> chats,  List<MessageParams> messages)?  chatWithMessages,TResult Function()?  success,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case Initial() when initial != null:
 return initial();case Loading() when loading != null:
 return loading();case Loaded() when loaded != null:
 return loaded(_that.chats);case MessagesLoaded() when messagesLoaded != null:
 return messagesLoaded(_that.messages);case ChatWithMessages() when chatWithMessages != null:
-return chatWithMessages(_that.chats,_that.messages);case ErrorState() when error != null:
+return chatWithMessages(_that.chats,_that.messages);case Success() when success != null:
+return success();case ErrorState() when error != null:
 return error(_that.message);case _:
   return orElse();
 
@@ -692,14 +849,15 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<ChatParams> chats)  loaded,required TResult Function( List<MessageParams> messages)  messagesLoaded,required TResult Function( List<ChatParams> chats,  List<MessageParams> messages)  chatWithMessages,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<ChatParams> chats)  loaded,required TResult Function( List<MessageParams> messages)  messagesLoaded,required TResult Function( List<ChatParams> chats,  List<MessageParams> messages)  chatWithMessages,required TResult Function()  success,required TResult Function( String message)  error,}) {final _that = this;
 switch (_that) {
 case Initial():
 return initial();case Loading():
 return loading();case Loaded():
 return loaded(_that.chats);case MessagesLoaded():
 return messagesLoaded(_that.messages);case ChatWithMessages():
-return chatWithMessages(_that.chats,_that.messages);case ErrorState():
+return chatWithMessages(_that.chats,_that.messages);case Success():
+return success();case ErrorState():
 return error(_that.message);case _:
   throw StateError('Unexpected subclass');
 
@@ -717,14 +875,15 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<ChatParams> chats)?  loaded,TResult? Function( List<MessageParams> messages)?  messagesLoaded,TResult? Function( List<ChatParams> chats,  List<MessageParams> messages)?  chatWithMessages,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<ChatParams> chats)?  loaded,TResult? Function( List<MessageParams> messages)?  messagesLoaded,TResult? Function( List<ChatParams> chats,  List<MessageParams> messages)?  chatWithMessages,TResult? Function()?  success,TResult? Function( String message)?  error,}) {final _that = this;
 switch (_that) {
 case Initial() when initial != null:
 return initial();case Loading() when loading != null:
 return loading();case Loaded() when loaded != null:
 return loaded(_that.chats);case MessagesLoaded() when messagesLoaded != null:
 return messagesLoaded(_that.messages);case ChatWithMessages() when chatWithMessages != null:
-return chatWithMessages(_that.chats,_that.messages);case ErrorState() when error != null:
+return chatWithMessages(_that.chats,_that.messages);case Success() when success != null:
+return success();case ErrorState() when error != null:
 return error(_that.message);case _:
   return null;
 
@@ -1020,6 +1179,38 @@ as List<MessageParams>,
 
 
 }
+
+/// @nodoc
+
+
+class Success implements ChatsState {
+  const Success();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Success);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'ChatsState.success()';
+}
+
+
+}
+
+
+
 
 /// @nodoc
 

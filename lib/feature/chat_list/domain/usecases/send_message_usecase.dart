@@ -1,6 +1,6 @@
 import 'package:injectable/injectable.dart';
 import 'package:telegram_copy/core/usecases/usecase.dart';
-import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/message.dart';
+import 'package:telegram_copy/feature/chat_list/domain/params/message_params/message.dart';
 import 'package:telegram_copy/feature/chat_list/domain/repo/chat_repo.dart';
 
 @injectable

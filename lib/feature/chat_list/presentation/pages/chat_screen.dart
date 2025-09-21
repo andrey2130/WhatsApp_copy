@@ -4,13 +4,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:talker_flutter/talker_flutter.dart';
+import 'package:telegram_copy/feature/chat_list/domain/params/message_params/delete_messaga.dart';
 import 'package:uuid/uuid.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_textfield.dart';
 
 import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
-import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/message.dart';
+import 'package:telegram_copy/feature/chat_list/domain/params/message_params/message.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/bloc/chats/chats_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_buble.dart';
 import 'package:telegram_copy/feature/settings/presentation/bloc/settings_bloc.dart';
@@ -45,6 +46,9 @@ class _ChatScreenState extends State<ChatScreen> {
     context.read<ChatsBloc>().add(
       ChatsEvent.loadChatMessages(widget.conversationId),
     );
+    context.read<ChatsBloc>().add(
+      ChatsEvent.watchMessage(widget.conversationId),
+    );
     context.read<SettingsBloc>().add(const SettingsEvent.loadRequested());
   }
 
@@ -77,6 +81,9 @@ class _ChatScreenState extends State<ChatScreen> {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text('Error: $message')));
+          },
+          success: () {
+            print('Message deleted successfully');
           },
           orElse: () {
             getIt<Talker>().handle(
@@ -277,6 +284,15 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _deleteMessage(String messageId) {
     print('_deleteMessage called with messageId: $messageId');
+    context.read<ChatsBloc>().add(
+      ChatsEvent.deleteMessage(
+        DeleteMessageParams(
+          messageId: messageId,
+          chatId: widget.conversationId,
+          senderId: widget.userId,
+        ),
+      ),
+    );
   }
 
   String _getCurrentUserName() {

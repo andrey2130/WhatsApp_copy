@@ -16,5 +16,7 @@ class ChatsState with _$ChatsState {
     required List<MessageParams> messages,
   }) = ChatWithMessages;
 
+  const factory ChatsState.success() = Success;
+
   const factory ChatsState.error(String message) = ErrorState;
 }
