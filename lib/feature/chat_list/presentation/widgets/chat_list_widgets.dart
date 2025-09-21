@@ -4,11 +4,13 @@ import 'package:go_router/go_router.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
 import 'package:telegram_copy/core/utils/widgets/user_list_item.dart';
+import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/chat.dart';
 
 class ChatListWidgets extends StatelessWidget {
   final int index;
+  final ChatParams chat;
 
-  const ChatListWidgets({super.key, required this.index});
+  const ChatListWidgets({super.key, required this.index, required this.chat});
 
   @override
   Widget build(BuildContext context) {
@@ -16,12 +18,12 @@ class ChatListWidgets extends StatelessWidget {
       onTap: () {
         // Navigate to chat screen
         context.push(
-          '/chat_list/user/1',
+          '/chat_list/user/${chat.id}',
           extra: {
-            'name': '1',
-            'conversationId': '1',
-            'photoUrl': '1',
-            'receiverIds': ['1'].where((id) => id != '1').toList(),
+            'name': chat.fistUserName,
+            'conversationId': chat.id,
+            'photoUrl': '',
+            'receiverIds': [chat.firstUserId, chat.secondUserId],
           },
         );
       },
@@ -34,59 +36,43 @@ class ChatListWidgets extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(27.5.r),
-          child: Image.network(
-            '1',
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Icon(Icons.person, color: Colors.black, size: 24.r);
-            },
-          ),
+          child: Icon(Icons.person, color: Colors.black, size: 24.r),
         ),
       ),
-      title: Text('1', style: AppTextStyle.getRegularBlack()),
+      title: Text(chat.fistUserName, style: AppTextStyle.getRegularBlack()),
       subtitle: Text(
-        '1',
+        '${chat.lastMessage}',
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
         style: AppTextStyle.getFilterText(),
       ),
       meta: Text(
-        _formatTime('1'),
+        _formatTime(chat.updatedAt),
         style: AppTextStyle.getFilterText().copyWith(
           fontWeight: FontWeight.w600,
           color: const Color(0xFF959595),
         ),
       ),
-      badge: 1 > 0
-          ? Container(
-              width: 18.w,
-              height: 16.h,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: AppColors.primaryGreen,
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Text(
-                '1',
-                textAlign: TextAlign.center,
-                style: AppTextStyle.getFilterText(),
-              ),
-            )
-          : null,
+      badge: null,
     );
   }
 
   String _formatTime(String dateTime) {
-    final now = DateTime.now();
-    final difference = now.difference(DateTime.parse(dateTime));
+    try {
+      final now = DateTime.now();
+      final parsedDate = DateTime.parse(dateTime);
+      final difference = now.difference(parsedDate);
 
-    if (difference.inDays > 0) {
-      return '${difference.inDays}d';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours}h';
-    } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}m';
-    } else {
+      if (difference.inDays > 0) {
+        return '${difference.inDays}d';
+      } else if (difference.inHours > 0) {
+        return '${difference.inHours}h';
+      } else if (difference.inMinutes > 0) {
+        return '${difference.inMinutes}m';
+      } else {
+        return 'now';
+      }
+    } catch (e) {
       return 'now';
     }
   }

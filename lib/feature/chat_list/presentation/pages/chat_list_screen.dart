@@ -5,11 +5,13 @@ import 'package:go_router/go_router.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_textfield.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/bloc/chats/chats_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/bloc/users/users_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/chat_list_widgets.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/filter_widgets.dart';
-import 'package:telegram_copy/feature/chat_list/presentation/widgets/suggest_user.dart';
+
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/chat_list_more_menu.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/widgets/suggest_user.dart';
 import 'package:telegram_copy/injections.dart';
 
 class ChatListScreen extends StatefulWidget {
@@ -42,6 +44,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
         BlocProvider(
           create: (context) =>
               getIt<UsersBloc>()..add(const UsersEvent.loadUsers()),
+        ),
+        BlocProvider(
+          create: (context) =>
+              getIt<ChatsBloc>()..add(const ChatsEvent.loadChats()),
         ),
       ],
       child: Scaffold(
@@ -111,11 +117,26 @@ Widget _buildAndroidBody(
           const SliverPadding(padding: EdgeInsets.only(top: 12)),
           SliverToBoxAdapter(child: FilterWidgets(selectedFilter: 'All')),
 
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => ChatListWidgets(index: index),
-              childCount: 0,
-            ),
+          BlocBuilder<ChatsBloc, ChatsState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                loading: () => const SliverToBoxAdapter(
+                  child: Center(child: CircularProgressIndicator.adaptive()),
+                ),
+                loaded: (chats) => SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) =>
+                        ChatListWidgets(index: index, chat: chats[index]),
+                    childCount: chats.length,
+                  ),
+                ),
+                error: (message) => SliverToBoxAdapter(
+                  child: Center(child: Text('Error: $message')),
+                ),
+                orElse: () =>
+                    const SliverToBoxAdapter(child: SizedBox.shrink()),
+              );
+            },
           ),
 
           const SliverPadding(padding: EdgeInsets.only(top: 12)),
@@ -131,35 +152,26 @@ Widget _buildAndroidBody(
           const SliverPadding(padding: EdgeInsets.only(top: 12)),
           BlocBuilder<UsersBloc, UsersState>(
             builder: (context, state) {
-              return state.when(
-                initial: () =>
-                    const SliverToBoxAdapter(child: SizedBox.shrink()),
+              return state.maybeWhen(
                 loading: () => const SliverToBoxAdapter(
                   child: Center(child: CircularProgressIndicator.adaptive()),
                 ),
-                loaded: (users) => SliverList(
+                loaded: (chats) => SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) => SuggestUser(
                       index: index,
-                      name: users[index]['name'],
-                      bio: users[index]['bio'],
+                      uid: chats[index]['uid'],
+                      name: chats[index]['name'],
+                      bio: chats[index]['bio'],
                     ),
-                    childCount: users.length,
-                  ),
-                ),
-                loadedMore: (users) => SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) => SuggestUser(
-                      index: index,
-                      name: users[index]['name'],
-                      bio: users[index]['bio'],
-                    ),
-                    childCount: users.length,
+                    childCount: chats.length,
                   ),
                 ),
                 error: (message) => SliverToBoxAdapter(
                   child: Center(child: Text('Error: $message')),
                 ),
+                orElse: () =>
+                    const SliverToBoxAdapter(child: SizedBox.shrink()),
               );
             },
           ),
@@ -174,42 +186,44 @@ Widget _buildIosBody(
   BuildContext context,
   TextEditingController searchController,
   ScrollController scrollController,
-  String userId,
-  String conversationId,
 ) {
-  return RefreshIndicator.adaptive(
-    onRefresh: () async {},
-    child: CustomScrollView(
-      controller: scrollController,
-      physics: const AlwaysScrollableScrollPhysics(),
-      slivers: [
-        const SliverPadding(
-          padding: EdgeInsets.symmetric(horizontal: 8),
-          sliver: SliverToBoxAdapter(child: SizedBox.shrink()),
-        ),
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          sliver: SliverToBoxAdapter(
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 8),
+    child: RefreshIndicator.adaptive(
+      onRefresh: () async {},
+      child: CustomScrollView(
+        controller: scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          SliverToBoxAdapter(
             child: CustomAppBar(
               leftWidget: Text('WhatsApp', style: AppTextStyle.getBoldGreen()),
               rightWidget: IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.camera_alt_outlined),
+                icon: const Icon(Icons.camera_alt_outlined),
               ),
               right2Widget: IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.search),
+                icon: const Icon(Icons.search),
               ),
-              right3Widget: IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.more_vert),
+              right3Widget: ChatListMoreMenu(
+                onSelected: (action) {
+                  switch (action) {
+                    case ChatListMoreAction.settings:
+                      context.push('/settings');
+                      break;
+                    case ChatListMoreAction.newGroup:
+                      break;
+                    case ChatListMoreAction.newBroadcast:
+                      break;
+                    case ChatListMoreAction.linkedDevices:
+                      break;
+                  }
+                },
               ),
             ),
           ),
-        ),
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          sliver: SliverToBoxAdapter(
+          SliverToBoxAdapter(
             child: CustomTextField(
               radius: 26,
               prefixIcon: const Icon(Icons.search),
@@ -217,27 +231,33 @@ Widget _buildIosBody(
               hintText: 'Search...',
             ),
           ),
-        ),
-        const SliverPadding(padding: EdgeInsets.only(top: 12)),
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          sliver: SliverToBoxAdapter(
-            child: FilterWidgets(selectedFilter: 'All'),
+          const SliverPadding(padding: EdgeInsets.only(top: 12)),
+          SliverToBoxAdapter(child: FilterWidgets(selectedFilter: 'All')),
+
+          BlocBuilder<ChatsBloc, ChatsState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                loading: () => const SliverToBoxAdapter(
+                  child: Center(child: CircularProgressIndicator.adaptive()),
+                ),
+                loaded: (chats) => SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) =>
+                        ChatListWidgets(index: index, chat: chats[index]),
+                    childCount: chats.length,
+                  ),
+                ),
+                error: (message) => SliverToBoxAdapter(
+                  child: Center(child: Text('Error: $message')),
+                ),
+                orElse: () =>
+                    const SliverToBoxAdapter(child: SizedBox.shrink()),
+              );
+            },
           ),
-        ),
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          sliver: SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => ChatListWidgets(index: index),
-              childCount: 0,
-            ),
-          ),
-        ),
-        const SliverPadding(padding: EdgeInsets.only(top: 12)),
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          sliver: SliverToBoxAdapter(
+
+          const SliverPadding(padding: EdgeInsets.only(top: 12)),
+          SliverToBoxAdapter(
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -246,18 +266,30 @@ Widget _buildIosBody(
               ),
             ),
           ),
-        ),
-        const SliverPadding(padding: EdgeInsets.only(top: 12)),
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          sliver: SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => ChatListWidgets(index: index),
-              childCount: 0,
-            ),
+          const SliverPadding(padding: EdgeInsets.only(top: 12)),
+          BlocBuilder<ChatsBloc, ChatsState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                loading: () => const SliverToBoxAdapter(
+                  child: Center(child: CircularProgressIndicator.adaptive()),
+                ),
+                loaded: (chats) => SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) =>
+                        ChatListWidgets(index: index, chat: chats[index]),
+                    childCount: chats.length,
+                  ),
+                ),
+                error: (message) => SliverToBoxAdapter(
+                  child: Center(child: Text('Error: $message')),
+                ),
+                orElse: () =>
+                    const SliverToBoxAdapter(child: SizedBox.shrink()),
+              );
+            },
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }

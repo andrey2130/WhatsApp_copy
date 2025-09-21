@@ -3,13 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-
+import 'package:talker_flutter/talker_flutter.dart';
+import 'package:uuid/uuid.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_textfield.dart';
 
 import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
+import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/message.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/bloc/chats/chats_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_buble.dart';
+import 'package:telegram_copy/injections.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({
@@ -37,6 +41,9 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
+    context.read<ChatsBloc>().add(
+      ChatsEvent.loadChatMessages(widget.conversationId),
+    );
   }
 
   @override
@@ -49,75 +56,118 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            CustomAppBar(
-              leftWidget: IconButton(
-                onPressed: () => context.pop(),
-                icon: Icon(Icons.arrow_back),
-              ),
-              avatarWidget: CircleAvatar(
-                backgroundImage: widget.avatarUrl != null
-                    ? NetworkImage(widget.avatarUrl!)
-                    : null,
-                child: widget.avatarUrl == null ? Icon(Icons.person) : null,
-              ),
-              left2Widget: Text(widget.userName),
-            ),
-            Expanded(
-              child: Stack(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/whatsAppBack.jpg'),
-                        fit: BoxFit.cover,
+    return BlocConsumer<ChatsBloc, ChatsState>(
+      listener: (context, state) {
+        state.maybeWhen(
+          loaded: (chats) {
+            _scrollToBottom();
+          },
+          messagesLoaded: (messages) {
+            _scrollToBottom();
+          },
+          loading: () {
+            Center(child: CircularProgressIndicator.adaptive());
+          },
+          error: (message) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('Error: $message')));
+          },
+          orElse: () {
+            getIt<Talker>().handle(
+              'ChatScreen unexpected state: ${state.toString()}',
+            );
+          },
+        );
+      },
+      builder: (context, state) {
+        return Scaffold(
+          body: SafeArea(
+            child: Column(
+              children: [
+                CustomAppBar(
+                  leftWidget: IconButton(
+                    onPressed: () => context.pop(),
+                    icon: Icon(Icons.arrow_back),
+                  ),
+                  avatarWidget: CircleAvatar(
+                    backgroundImage: widget.avatarUrl != null
+                        ? NetworkImage(widget.avatarUrl!)
+                        : null,
+                    child: widget.avatarUrl == null ? Icon(Icons.person) : null,
+                  ),
+                  left2Widget: Text(widget.userName),
+                ),
+                Expanded(
+                  child: Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/whatsAppBack.jpg'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: state.maybeWhen(
+                          loading: () => const Center(
+                            child: CircularProgressIndicator.adaptive(),
+                          ),
+                          error: (message) => Center(child: Text(message)),
+                          loaded: (chats) => _buildMessagesList(),
+                          messagesLoaded: (messages) => _buildMessagesList(),
+                          orElse: () => const SizedBox.shrink(),
+                        ),
                       ),
-                    ),
-                    child: _buildMessagesList(),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: _buildMessageInput(_messageController),
+                      ),
+                    ],
                   ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: _buildMessageInput(_messageController),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildMessagesList() {
-    return ListView.builder(
-      controller: _scrollController,
-      padding: EdgeInsets.only(top: 16.h, bottom: 80.h, left: 8.w, right: 8.w),
-      itemCount: 2,
-      itemBuilder: (context, index) {
-        return BlocBuilder<AuthBloc, AuthBlocState>(
-          builder: (context, authState) {
-            authState.maybeWhen(
-              authenticated: (userId) => userId,
-              orElse: () => null,
-            );
+    return BlocBuilder<ChatsBloc, ChatsState>(
+      builder: (context, state) {
+        return state.maybeWhen(
+          messagesLoaded: (messages) => ListView.builder(
+            controller: _scrollController,
+            padding: EdgeInsets.only(
+              top: 16.h,
+              bottom: 80.h,
+              left: 8.w,
+              right: 8.w,
+            ),
+            itemCount: messages.length,
+            itemBuilder: (context, index) {
+              final message = messages[index];
+              final isMe = message.senderId == widget.userId;
 
-            return MessageBuble(
-              id: '1',
-              messageId: '1',
-              message: 'Hello',
-              isMe: true,
-              time: _dateFormat('2021-01-01'),
-              doubleTap: () {
-                print('Double tap detected on message: 1');
-                _deleteMessage('1');
-              },
-            );
-          },
+              return MessageBuble(
+                id: message.id,
+                messageId: message.id,
+                message: message.message,
+                isMe: isMe,
+                time: _dateFormat(message.createdAt),
+                doubleTap: () {
+                  print('Double tap detected on message: ${message.id}');
+                  _deleteMessage(message.id);
+                },
+              );
+            },
+          ),
+          loading: () => const SizedBox.shrink(),
+          error: (message) => const SizedBox.shrink(),
+          orElse: () => const SizedBox.shrink(),
         );
       },
     );
@@ -168,7 +218,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
                 return IconButton(
                   color: Colors.white,
-                  onPressed: () {},
+                  onPressed: () =>
+                      _sendMessage(messageController.text, messageController),
                   icon: Icon(Icons.send),
                 );
               },
@@ -177,6 +228,26 @@ class _ChatScreenState extends State<ChatScreen> {
         ],
       ),
     );
+  }
+
+  void _sendMessage(String message, TextEditingController messageController) {
+    context.read<ChatsBloc>().add(
+      ChatsEvent.sendMessage(
+        MessageParams(
+          id: const Uuid().v4(),
+          senderName: widget.userName,
+          receiverName: widget.receiverIds[0],
+          message: message,
+          senderId: widget.userId,
+          receiverId: widget.receiverIds[0],
+          chatId: widget.conversationId,
+          createdAt: DateTime.now().toIso8601String(),
+          updatedAt: DateTime.now().toIso8601String(),
+        ),
+      ),
+    );
+    messageController.clear();
+    _scrollToBottom();
   }
 
   // ignore: unused_element
