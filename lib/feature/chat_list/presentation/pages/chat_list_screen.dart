@@ -1,13 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_textfield.dart';
-import 'package:telegram_copy/feature/chat_list/presentation/bloc/chat_list_bloc.dart';
-import 'package:telegram_copy/feature/chat_list/presentation/bloc/users/users_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/chat_list_widgets.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/filter_widgets.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/suggest_user.dart';
@@ -23,17 +19,10 @@ class ChatListScreen extends StatefulWidget {
 class _ChatListScreenState extends State<ChatListScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  bool _hasLoadedUsers = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_hasLoadedUsers) {
-        context.read<UsersBloc>().add(const UsersEvent.load());
-        _hasLoadedUsers = true;
-      }
-    });
   }
 
   @override
@@ -60,13 +49,11 @@ Widget _buildIosBody(
   BuildContext context,
   TextEditingController searchController,
   ScrollController scrollController,
+  String userId,
+  String conversationId,
 ) {
   return RefreshIndicator.adaptive(
-    onRefresh: () async {
-      context.read<ChatListBloc>().add(
-        const ChatListEvent.loadAllConversations(),
-      );
-    },
+    onRefresh: () async {},
     child: CustomScrollView(
       controller: scrollController,
       physics: const AlwaysScrollableScrollPhysics(),
@@ -110,23 +97,15 @@ Widget _buildIosBody(
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           sliver: SliverToBoxAdapter(
-            child: BlocBuilder<ChatListBloc, ChatListState>(
-              builder: (context, state) {
-                return state.maybeWhen(
-                  filterChanged: (filter) =>
-                      FilterWidgets(selectedFilter: 'All'),
-                  orElse: () => FilterWidgets(selectedFilter: 'All'),
-                );
-              },
-            ),
+            child: FilterWidgets(selectedFilter: 'All'),
           ),
         ),
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate(
-              (context, index) => const ChatListWidgets(),
-              childCount: 4,
+              (context, index) => ChatListWidgets(index: index),
+              childCount: 0,
             ),
           ),
         ),
@@ -146,19 +125,11 @@ Widget _buildIosBody(
         const SliverPadding(padding: EdgeInsets.only(top: 12)),
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
-          sliver: BlocBuilder<UsersBloc, UsersState>(
-            builder: (context, state) {
-              final userCount = state.maybeWhen(
-                success: (users) => users.length,
-                orElse: () => 0,
-              );
-              return SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) => SuggestUser(index: index),
-                  childCount: userCount,
-                ),
-              );
-            },
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => ChatListWidgets(index: index),
+              childCount: 0,
+            ),
           ),
         ),
       ],
@@ -174,9 +145,7 @@ Widget _buildAndroidBody(
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8),
     child: RefreshIndicator.adaptive(
-      onRefresh: () async {
-        context.read<UsersBloc>().add(const UsersEvent.load());
-      },
+      onRefresh: () async {},
       child: CustomScrollView(
         controller: scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
@@ -218,22 +187,15 @@ Widget _buildAndroidBody(
             ),
           ),
           const SliverPadding(padding: EdgeInsets.only(top: 12)),
-          SliverToBoxAdapter(
-            child: BlocBuilder<ChatListBloc, ChatListState>(
-              builder: (context, state) {
-                return state.maybeWhen(
-                  filterChanged: (filter) => FilterWidgets(selectedFilter: ''),
-                  orElse: () => FilterWidgets(selectedFilter: 'All'),
-                );
-              },
-            ),
-          ),
+          SliverToBoxAdapter(child: FilterWidgets(selectedFilter: 'All')),
+
           SliverList(
             delegate: SliverChildBuilderDelegate(
-              (context, index) => const ChatListWidgets(),
-              childCount: 4,
+              (context, index) => ChatListWidgets(index: index),
+              childCount: 0,
             ),
           ),
+
           const SliverPadding(padding: EdgeInsets.only(top: 12)),
           SliverToBoxAdapter(
             child: Align(
@@ -245,19 +207,11 @@ Widget _buildAndroidBody(
             ),
           ),
           const SliverPadding(padding: EdgeInsets.only(top: 12)),
-          BlocBuilder<UsersBloc, UsersState>(
-            builder: (context, state) {
-              final userCount = state.maybeWhen(
-                success: (users) => users.length,
-                orElse: () => 0,
-              );
-              return SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) => SuggestUser(index: index),
-                  childCount: userCount,
-                ),
-              );
-            },
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => SuggestUser(index: index),
+              childCount: 0,
+            ),
           ),
         ],
       ),

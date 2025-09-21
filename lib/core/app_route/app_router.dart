@@ -85,18 +85,22 @@ final GoRouter appRouter = GoRouter(
         final conversationId =
             extra != null && extra['conversationId'] is String
             ? extra['conversationId'] as String
-            : '';
+            : uid;
         final rawPhoto = extra != null && extra['photoUrl'] is String
             ? extra['photoUrl'] as String
             : null;
         final avatarUrl = (rawPhoto != null && rawPhoto.trim().isNotEmpty)
             ? rawPhoto
             : null;
+        final receiverIds = extra != null && extra['receiverIds'] is List
+            ? List<String>.from(extra['receiverIds'] as List)
+            : [uid];
         return ChatScreen(
           userId: uid,
           userName: userName,
           avatarUrl: avatarUrl,
           conversationId: conversationId,
+          receiverIds: receiverIds,
         );
       },
     ),

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
-import 'package:telegram_copy/feature/chat_list/presentation/bloc/chat_list_bloc.dart';
 
 class FilterWidgets extends StatelessWidget {
   const FilterWidgets({super.key, required this.selectedFilter});
@@ -51,11 +49,7 @@ class FilterWidgets extends StatelessWidget {
           return Padding(
             padding: EdgeInsets.only(left: 8.w),
             child: GestureDetector(
-              onTap: () {
-                context.read<ChatListBloc>().add(
-                  ChatListEvent.filterChanged(filter: filter['name'] as String),
-                );
-              },
+              onTap: () {},
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(

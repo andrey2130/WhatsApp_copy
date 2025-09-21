@@ -3,14 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_textfield.dart';
-import 'package:telegram_copy/feature/chat_list/domain/params/message_params.dart';
+
 import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
-import 'package:telegram_copy/injections.dart';
-import 'package:telegram_copy/feature/chat_list/presentation/bloc/conversations/conversations_bloc.dart';
-import 'package:telegram_copy/feature/chat_list/presentation/bloc/messages/messages_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_buble.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -20,11 +18,13 @@ class ChatScreen extends StatefulWidget {
     required this.userName,
     this.avatarUrl,
     required this.conversationId,
+    required this.receiverIds,
   });
   final String userId;
   final String userName;
   final String? avatarUrl;
   final String conversationId;
+  final List<String> receiverIds;
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
@@ -51,139 +51,73 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider<MessagesBloc>(
-              create: (context) => getIt<MessagesBloc>(),
+        child: Column(
+          children: [
+            CustomAppBar(
+              leftWidget: IconButton(
+                onPressed: () => context.pop(),
+                icon: Icon(Icons.arrow_back),
+              ),
+              avatarWidget: CircleAvatar(
+                backgroundImage: widget.avatarUrl != null
+                    ? NetworkImage(widget.avatarUrl!)
+                    : null,
+                child: widget.avatarUrl == null ? Icon(Icons.person) : null,
+              ),
+              left2Widget: Text(widget.userName),
             ),
-            BlocProvider<ConversationsBloc>(
-              create: (context) => getIt<ConversationsBloc>(),
-            ),
-          ],
-          child: BlocConsumer<MessagesBloc, MessagesState>(
-            listener: (context, state) {
-              state.maybeWhen(
-                success: (messages) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _scrollToBottom();
-                  });
-                },
-                loading: () {
-                  // Show loading indicator
-                },
-                error: (message) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(message)));
-                },
-                orElse: () {},
-              );
-            },
-            builder: (context, state) {
-              state.maybeWhen(
-                initial: () {
-                  context.read<MessagesBloc>().add(
-                    MessagesEvent.subscribe(widget.conversationId),
-                  );
-                },
-                orElse: () {},
-              );
-              return Column(
+            Expanded(
+              child: Stack(
                 children: [
-                  CustomAppBar(
-                    leftWidget: IconButton(
-                      onPressed: () => context.pop(),
-                      icon: Icon(Icons.arrow_back),
+                  Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/whatsAppBack.jpg'),
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                    avatarWidget: CircleAvatar(
-                      backgroundImage: widget.avatarUrl != null
-                          ? NetworkImage(widget.avatarUrl!)
-                          : null,
-                      child: widget.avatarUrl == null
-                          ? Icon(Icons.person)
-                          : null,
-                    ),
-                    left2Widget: Text(widget.userName),
+                    child: _buildMessagesList(),
                   ),
-                  Expanded(
-                    child: Stack(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage(
-                                'assets/images/whatsAppBack.jpg',
-                              ),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          child: _buildMessagesList(state),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: _buildMessageInput(_messageController),
-                        ),
-                      ],
-                    ),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: _buildMessageInput(_messageController),
                   ),
                 ],
-              );
-            },
-          ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildMessagesList(MessagesState state) {
-    return state.maybeWhen(
-      success: (messages) {
-        return ListView.builder(
-          controller: _scrollController,
-          padding: EdgeInsets.only(
-            top: 16.h,
-            bottom: 80.h,
-            left: 8.w,
-            right: 8.w,
-          ),
-          itemCount: messages.length,
-          itemBuilder: (context, index) {
-            return BlocBuilder<AuthBloc, AuthBlocState>(
-              builder: (context, authState) {
-                final currentUserId = authState.maybeWhen(
-                  authenticated: (userId) => userId,
-                  orElse: () => null,
-                );
+  Widget _buildMessagesList() {
+    return ListView.builder(
+      controller: _scrollController,
+      padding: EdgeInsets.only(top: 16.h, bottom: 80.h, left: 8.w, right: 8.w),
+      itemCount: 2,
+      itemBuilder: (context, index) {
+        return BlocBuilder<AuthBloc, AuthBlocState>(
+          builder: (context, authState) {
+            authState.maybeWhen(
+              authenticated: (userId) => userId,
+              orElse: () => null,
+            );
 
-                return MessageBuble(
-                  id: messages[index].id,
-                  messageId: messages[index].id,
-                  message: messages[index].content,
-                  isMe: messages[index].senderId == currentUserId,
-                  time: _dateFormat(messages[index].sentAt),
-                  doubleTap: () {
-                    print(
-                      'Double tap detected on message: ${messages[index].id}',
-                    );
-                    _deleteMessage(messages[index].id);
-                  },
-                );
+            return MessageBuble(
+              id: '1',
+              messageId: '1',
+              message: 'Hello',
+              isMe: true,
+              time: _dateFormat('2021-01-01'),
+              doubleTap: () {
+                print('Double tap detected on message: 1');
+                _deleteMessage('1');
               },
             );
           },
-        );
-      },
-      orElse: () {
-        return ListView(
-          controller: _scrollController,
-          padding: EdgeInsets.only(
-            top: 16.h,
-            bottom: 80.h,
-            left: 8.w,
-            right: 8.w,
-          ),
         );
       },
     );
@@ -227,32 +161,14 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             child: BlocBuilder<AuthBloc, AuthBlocState>(
               builder: (context, authState) {
-                final currentUserId = authState.maybeWhen(
+                authState.maybeWhen(
                   authenticated: (userId) => userId,
                   orElse: () => null,
                 );
 
                 return IconButton(
                   color: Colors.white,
-                  onPressed: currentUserId != null
-                      ? () {
-                          context.read<MessagesBloc>().add(
-                            MessagesEvent.send(
-                              MessageParams(
-                                id: '',
-                                content: messageController.text,
-                                isRead: false,
-                                sentAt: DateTime.now().toIso8601String(),
-                                createdAt: DateTime.now().toIso8601String(),
-                                updatedAt: DateTime.now().toIso8601String(),
-                                conversationId: widget.conversationId,
-                                senderId: currentUserId,
-                              ),
-                            ),
-                          );
-                          messageController.clear();
-                        }
-                      : null,
+                  onPressed: () {},
                   icon: Icon(Icons.send),
                 );
               },
@@ -263,6 +179,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  // ignore: unused_element
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
@@ -279,6 +196,5 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _deleteMessage(String messageId) {
     print('_deleteMessage called with messageId: $messageId');
-    context.read<MessagesBloc>().add(MessagesEvent.delete(messageId));
   }
 }

@@ -29,9 +29,7 @@ class UserDataSourceImpl implements UserDataSource {
         'createdAt': FieldValue.serverTimestamp(),
         'bio': params.bio,
       });
-      print('User data saved successfully to Firestore');
     } catch (e) {
-      print('Failed to save user data to Firestore: $e');
       getIt<Talker>().handle(e);
       // Don't rethrow to allow auth to continue even if Firestore fails
     }
@@ -46,9 +44,7 @@ class UserDataSourceImpl implements UserDataSource {
         'createdAt': FieldValue.serverTimestamp(),
         'bio': params.bio,
       });
-      print('User data saved successfully to Firestore');
     } catch (e) {
-      print('Failed to save user data to Firestore: $e');
       getIt<Talker>().handle(e);
       // Don't rethrow to allow auth to continue even if Firestore fails
     }
