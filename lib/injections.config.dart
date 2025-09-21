@@ -39,6 +39,7 @@ import 'feature/chat_list/domain/usecases/get_users_usecase.dart' as _i902;
 import 'feature/chat_list/domain/usecases/load_chat_messages_usecase.dart'
     as _i849;
 import 'feature/chat_list/domain/usecases/load_chat_usecase.dart' as _i835;
+import 'feature/chat_list/domain/usecases/read_message.dart' as _i592;
 import 'feature/chat_list/domain/usecases/send_message_usecase.dart' as _i410;
 import 'feature/chat_list/domain/usecases/watch_chats_usecase.dart' as _i566;
 import 'feature/chat_list/domain/usecases/watch_message_usecase.dart' as _i241;
@@ -113,6 +114,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i566.WatchChatsUsecase>(
       () => _i566.WatchChatsUsecase(chatRepo: gh<_i402.ChatRepo>()),
     );
+    gh.factory<_i592.ReadMessageUsecase>(
+      () => _i592.ReadMessageUsecase(chatRepo: gh<_i402.ChatRepo>()),
+    );
+    gh.factory<_i778.ChatListRepo>(
+      () => _i622.ChatListRepoImpl(
+        chatListDatasource: gh<_i449.ChatListDatasource>(),
+      ),
+    );
+    gh.factory<_i902.GetUsersUsecase>(
+      () => _i902.GetUsersUsecase(chatListRepo: gh<_i778.ChatListRepo>()),
+    );
     gh.factory<_i322.ChatsBloc>(
       () => _i322.ChatsBloc(
         loadChatsUsecase: gh<_i835.LoadChatsUsecase>(),
@@ -122,15 +134,8 @@ extension GetItInjectableX on _i174.GetIt {
         watchChatsUsecase: gh<_i566.WatchChatsUsecase>(),
         deleteMeesageUsecase: gh<_i6.DeleteMeesageUsecase>(),
         watchMessageUsecase: gh<_i241.WatchMessageUsecase>(),
+        readMessageUsecase: gh<_i592.ReadMessageUsecase>(),
       ),
-    );
-    gh.factory<_i778.ChatListRepo>(
-      () => _i622.ChatListRepoImpl(
-        chatListDatasource: gh<_i449.ChatListDatasource>(),
-      ),
-    );
-    gh.factory<_i902.GetUsersUsecase>(
-      () => _i902.GetUsersUsecase(chatListRepo: gh<_i778.ChatListRepo>()),
     );
     gh.factory<_i816.UpdateAboutUsecase>(
       () => _i816.UpdateAboutUsecase(settingsRepo: gh<_i920.SettingsRepo>()),

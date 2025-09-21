@@ -118,6 +118,19 @@ class ChatRepoImpl implements ChatRepo {
   }
 
   @override
+  Future<Either<Failure, MessageParams>> readMessage(
+    MessageParams params,
+  ) async {
+    try {
+      final result = await _chatDatasource.readMessage(params);
+      return Right(result.fold((l) => throw Exception(l.message), (r) => r));
+    } catch (e) {
+      getIt<Talker>().handle(e);
+      return Left(Failure(message: e.toString()));
+    }
+  }
+
+  @override
   Stream<List<MessageParams>> watchMessages(String chatId) {
     return _chatDatasource.watchMessages(chatId);
   }

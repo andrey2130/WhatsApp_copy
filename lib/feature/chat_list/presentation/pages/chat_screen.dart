@@ -4,18 +4,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:talker_flutter/talker_flutter.dart';
-import 'package:telegram_copy/feature/chat_list/domain/params/message_params/delete_messaga.dart';
 import 'package:uuid/uuid.dart';
+
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_textfield.dart';
-
 import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
+import 'package:telegram_copy/feature/chat_list/domain/params/message_params/delete_messaga.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params/message.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/bloc/chats/chats_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_buble.dart';
 import 'package:telegram_copy/feature/settings/presentation/bloc/settings_bloc.dart';
 import 'package:telegram_copy/injections.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({
@@ -84,6 +85,7 @@ class _ChatScreenState extends State<ChatScreen> {
           },
           success: () {
             print('Message deleted successfully');
+            // Don't do anything special, just let the UI rebuild
           },
           orElse: () {
             getIt<Talker>().handle(
@@ -129,6 +131,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           messagesLoaded: (messages) => _buildMessagesList(),
                           chatWithMessages: (chats, messages) =>
                               _buildMessagesList(),
+                          success: () => _buildMessagesList(),
                           orElse: () => const SizedBox.shrink(),
                         ),
                       ),
@@ -156,6 +159,7 @@ class _ChatScreenState extends State<ChatScreen> {
           messagesLoaded: (messages) => _buildMessagesListView(messages),
           chatWithMessages: (chats, messages) =>
               _buildMessagesListView(messages),
+          success: () => _buildMessagesListView([]),
           loading: () => const SizedBox.shrink(),
           error: (message) => const SizedBox.shrink(),
           orElse: () => const SizedBox.shrink(),
@@ -173,16 +177,23 @@ class _ChatScreenState extends State<ChatScreen> {
         final message = messages[index];
         final isMe = message.senderId == widget.userId;
 
-        return MessageBuble(
-          id: message.id,
-          messageId: message.id,
-          message: message.message,
-          isMe: isMe,
-          time: _dateFormat(message.createdAt),
-          doubleTap: () {
-            print('Double tap detected on message: ${message.id}');
-            _deleteMessage(message.id);
+        return VisibilityDetector(
+          key: Key(message.id),
+          onVisibilityChanged: (visibility) {
+            if (visibility.visibleFraction == 1) {
+              _readMessage(message);
+            }
           },
+          child: MessageBuble(
+            id: message.id,
+            messageId: message.id,
+            message: message.message,
+            isMe: isMe,
+            time: _dateFormat(message.createdAt),
+            doubleTap: () {
+              _deleteMessage(message.id);
+            },
+          ),
         );
       },
     );
@@ -301,5 +312,10 @@ class _ChatScreenState extends State<ChatScreen> {
       success: (user) => user.name.isNotEmpty ? user.name : 'Unknown User',
       orElse: () => 'Unknown User',
     );
+  }
+
+  void _readMessage(MessageParams message) {
+    print('_readMessage called with message: ${message.id}');
+    context.read<ChatsBloc>().add(ChatsEvent.readMessage(message));
   }
 }
