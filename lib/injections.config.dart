@@ -14,6 +14,8 @@ import 'package:firebase_auth/firebase_auth.dart' as _i59;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
+import 'core/services/auth_service.dart' as _i630;
+import 'core/services/auth_service_impl.dart' as _i940;
 import 'feature/auth/data/datasource/auth_datasource.dart' as _i274;
 import 'feature/auth/data/datasource/user_datasource.dart' as _i574;
 import 'feature/auth/data/repo/auth_repo_impl.dart' as _i939;
@@ -61,6 +63,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i1000.SettingsDatasource>(
       () => _i1000.SettingsDatasourceImpl(gh<_i974.FirebaseFirestore>()),
     );
+    gh.factory<_i630.AuthService>(
+      () => _i940.AuthServiceImpl(gh<_i59.FirebaseAuth>()),
+    );
     gh.factory<_i330.ChatDatasource>(
       () => _i330.ChatDatasourceImpl(gh<_i974.FirebaseFirestore>()),
     );
@@ -87,26 +92,26 @@ extension GetItInjectableX on _i174.GetIt {
         userDataSource: gh<_i574.UserDataSource>(),
       ),
     );
-    gh.factory<_i773.CreateChatUsecase>(
-      () => _i773.CreateChatUsecase(chatRepo: gh<_i402.ChatRepo>()),
-    );
-    gh.factory<_i410.SendMessageUsecase>(
-      () => _i410.SendMessageUsecase(chatRepo: gh<_i402.ChatRepo>()),
-    );
-    gh.factory<_i835.LoadChatsUsecase>(
-      () => _i835.LoadChatsUsecase(chatRepo: gh<_i402.ChatRepo>()),
+    gh.factory<_i241.WatchMessageUsecase>(
+      () => _i241.WatchMessageUsecase(chatRepo: gh<_i402.ChatRepo>()),
     );
     gh.factory<_i849.LoadChatMessagesUsecase>(
       () => _i849.LoadChatMessagesUsecase(chatRepo: gh<_i402.ChatRepo>()),
     );
-    gh.factory<_i566.WatchChatsUsecase>(
-      () => _i566.WatchChatsUsecase(chatRepo: gh<_i402.ChatRepo>()),
+    gh.factory<_i773.CreateChatUsecase>(
+      () => _i773.CreateChatUsecase(chatRepo: gh<_i402.ChatRepo>()),
+    );
+    gh.factory<_i835.LoadChatsUsecase>(
+      () => _i835.LoadChatsUsecase(chatRepo: gh<_i402.ChatRepo>()),
     );
     gh.factory<_i6.DeleteMeesageUsecase>(
       () => _i6.DeleteMeesageUsecase(chatRepo: gh<_i402.ChatRepo>()),
     );
-    gh.factory<_i241.WatchMessageUsecase>(
-      () => _i241.WatchMessageUsecase(chatRepo: gh<_i402.ChatRepo>()),
+    gh.factory<_i410.SendMessageUsecase>(
+      () => _i410.SendMessageUsecase(chatRepo: gh<_i402.ChatRepo>()),
+    );
+    gh.factory<_i566.WatchChatsUsecase>(
+      () => _i566.WatchChatsUsecase(chatRepo: gh<_i402.ChatRepo>()),
     );
     gh.factory<_i322.ChatsBloc>(
       () => _i322.ChatsBloc(
@@ -127,14 +132,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i902.GetUsersUsecase>(
       () => _i902.GetUsersUsecase(chatListRepo: gh<_i778.ChatListRepo>()),
     );
-    gh.factory<_i481.GetUserDataUsecase>(
-      () => _i481.GetUserDataUsecase(settingsRepo: gh<_i920.SettingsRepo>()),
+    gh.factory<_i816.UpdateAboutUsecase>(
+      () => _i816.UpdateAboutUsecase(settingsRepo: gh<_i920.SettingsRepo>()),
     );
     gh.factory<_i577.UpdateUserNameUsecase>(
       () => _i577.UpdateUserNameUsecase(settingsRepo: gh<_i920.SettingsRepo>()),
     );
-    gh.factory<_i816.UpdateAboutUsecase>(
-      () => _i816.UpdateAboutUsecase(settingsRepo: gh<_i920.SettingsRepo>()),
+    gh.factory<_i481.GetUserDataUsecase>(
+      () => _i481.GetUserDataUsecase(settingsRepo: gh<_i920.SettingsRepo>()),
     );
     gh.factory<_i583.AuthRepo>(
       () => _i939.AuthRepoImpl(authDatasource: gh<_i274.AuthDatasource>()),

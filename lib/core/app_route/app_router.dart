@@ -1,5 +1,9 @@
+import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:telegram_copy/core/error/failure.dart';
+import 'package:telegram_copy/core/services/auth_service.dart';
+import 'package:telegram_copy/core/services/route_guard_service.dart';
 import 'package:telegram_copy/feature/auth/pages/screens/sign_via_phone.dart';
 import 'package:telegram_copy/feature/auth/pages/screens/sign_in_screen.dart';
 import 'package:telegram_copy/feature/auth/pages/screens/opt_screen.dart';
@@ -10,6 +14,7 @@ import 'package:telegram_copy/feature/chat_list/presentation/pages/chat_screen.d
 import 'package:telegram_copy/feature/settings/presentation/pages/change_user_name.dart';
 import 'package:telegram_copy/feature/settings/presentation/pages/setting_screen.dart';
 import 'package:telegram_copy/feature/settings/presentation/pages/user_setting_screen.dart';
+import 'package:telegram_copy/injections.dart';
 
 class OtpRouteData {
   final String phoneNumber;
@@ -20,24 +25,8 @@ class OtpRouteData {
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
-  redirect: (context, state) {
-    final user = FirebaseAuth.instance.currentUser;
-    final isAuthRoute =
-        state.uri.path == '/' ||
-        state.uri.path == '/email_auth' ||
-        state.uri.path == '/register' ||
-        state.uri.path.startsWith('/opt');
-
-    if (user == null && !isAuthRoute) {
-      return '/';
-    }
-
-    if (user != null && isAuthRoute) {
-      return '/home';
-    }
-
-    return null;
-  },
+  redirect: (context, state) =>
+      RouteGuardService.instance.checkAuthRedirect(state),
   routes: [
     GoRoute(
       path: '/',
@@ -95,12 +84,24 @@ final GoRouter appRouter = GoRouter(
         final receiverIds = extra != null && extra['receiverIds'] is List
             ? List<String>.from(extra['receiverIds'] as List)
             : [uid];
-        return ChatScreen(
-          userId: FirebaseAuth.instance.currentUser?.uid ?? '',
-          userName: userName,
-          avatarUrl: avatarUrl,
-          conversationId: conversationId,
-          receiverIds: receiverIds,
+        return FutureBuilder<Either<Failure, String?>>(
+          future: getIt<AuthService>().getCurrentUserId(),
+          builder: (context, snapshot) {
+            final userId =
+                snapshot.data?.fold(
+                  (failure) => '',
+                  (userId) => userId ?? '',
+                ) ??
+                '';
+
+            return ChatScreen(
+              userId: userId,
+              userName: userName,
+              avatarUrl: avatarUrl,
+              conversationId: conversationId,
+              receiverIds: receiverIds,
+            );
+          },
         );
       },
     ),
