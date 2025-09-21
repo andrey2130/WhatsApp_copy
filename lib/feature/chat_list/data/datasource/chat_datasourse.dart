@@ -11,8 +11,9 @@ import 'package:telegram_copy/injections.dart';
 abstract class ChatDatasource {
   Future<Either<Failure, CreateChatParams>> createChat(CreateChatParams params);
   Future<Either<Failure, MessageParams>> sendMessage(MessageParams params);
-  Future<Either<Failure, List<ChatParams>>> loadChats();
+  Future<Either<Failure, List<ChatParams>>> loadChats(String currentUserId);
   Future<Either<Failure, List<MessageParams>>> loadChatMessages(String chatId);
+  Stream<List<ChatParams>> watchChats(String currentUserId);
 }
 
 @Injectable(as: ChatDatasource)
@@ -85,21 +86,23 @@ class ChatDatasourceImpl implements ChatDatasource {
   }
 
   @override
-  Future<Either<Failure, List<ChatParams>>> loadChats() async {
+  Future<Either<Failure, List<ChatParams>>> loadChats(
+    String currentUserId,
+  ) async {
     try {
-      final chatsSnapshot = await _firestore.collection('chats').get();
+      final chatsSnapshot = await _firestore
+          .collection('chats')
+          .where('participants', arrayContains: currentUserId)
+          .get();
 
       if (chatsSnapshot.docs.isEmpty) {
-        getIt<Talker>().info('No chats found in Firestore');
+        getIt<Talker>().info('No chats found for user $currentUserId');
         return const Right([]);
       }
 
       final chatList = chatsSnapshot.docs.map((doc) {
         final data = doc.data();
-
-        getIt<Talker>().info('Document ${doc.id} data: $data');
-
-        final chatParams = ChatParams(
+        return ChatParams(
           id: doc.id,
           fistUserName: data['fistUserName'] ?? 'Unknown',
           secondUserName: data['secondUserName'] ?? 'Unknown',
@@ -111,20 +114,15 @@ class ChatDatasourceImpl implements ChatDatasource {
               (data['participants'] != null && data['participants'].length > 1)
               ? data['participants'][1]
               : '',
-          createdAt: data['createdAt'] is Timestamp
-              ? (data['createdAt'] as Timestamp).toDate().toIso8601String()
-              : DateTime.now().toIso8601String(),
+          createdAt: _parseTimestamp(data['createdAt']),
           lastMessage: data['lastMessage'] ?? '',
-          updatedAt: data['updatedAt'] is Timestamp
-              ? (data['updatedAt'] as Timestamp).toDate().toIso8601String()
-              : DateTime.now().toIso8601String(),
+          updatedAt: _parseTimestamp(data['updatedAt']),
         );
-
-        getIt<Talker>().info('Created ChatParams: $chatParams');
-        return chatParams;
       }).toList();
 
-      getIt<Talker>().info('Loaded ${chatList.length} chats');
+      getIt<Talker>().info(
+        'Loaded ${chatList.length} chats for $currentUserId',
+      );
       return Right(chatList);
     } catch (e) {
       getIt<Talker>().handle(e);
@@ -150,6 +148,53 @@ class ChatDatasourceImpl implements ChatDatasource {
     } catch (e) {
       getIt<Talker>().handle(e);
       return Left(Failure(message: e.toString()));
+    }
+  }
+
+  @override
+  Stream<List<ChatParams>> watchChats(String currentUserId) {
+    return _firestore
+        .collection('chats')
+        .where('participants', arrayContains: currentUserId)
+        .orderBy('updatedAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs.map((doc) {
+            final data = doc.data();
+            return ChatParams(
+              id: doc.id,
+              fistUserName: data['fistUserName'] ?? 'Unknown',
+              secondUserName: data['secondUserName'] ?? 'Unknown',
+              firstUserId:
+                  (data['participants'] != null &&
+                      data['participants'].isNotEmpty)
+                  ? data['participants'][0]
+                  : '',
+              secondUserId:
+                  (data['participants'] != null &&
+                      data['participants'].length > 1)
+                  ? data['participants'][1]
+                  : '',
+              createdAt: _parseTimestamp(data['createdAt']),
+              lastMessage: data['lastMessage'] ?? '',
+              updatedAt: _parseTimestamp(data['updatedAt']),
+            );
+          }).toList();
+        });
+  }
+
+  String _parseTimestamp(dynamic timestamp) {
+    try {
+      if (timestamp is Timestamp) {
+        return timestamp.toDate().toIso8601String();
+      } else if (timestamp is String) {
+        return timestamp;
+      } else {
+        return DateTime.now().toIso8601String();
+      }
+    } catch (e) {
+      getIt<Talker>().handle(e);
+      return DateTime.now().toIso8601String();
     }
   }
 }

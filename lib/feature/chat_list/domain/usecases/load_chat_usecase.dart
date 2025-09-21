@@ -4,14 +4,14 @@ import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/chat.d
 import 'package:telegram_copy/feature/chat_list/domain/repo/chat_repo.dart';
 
 @injectable
-class LoadChatsUsecase implements UseCase<List<ChatParams>, void> {
+class LoadChatsUsecase implements UseCase<List<ChatParams>, String> {
   final ChatRepo _chatRepo;
 
   LoadChatsUsecase({required ChatRepo chatRepo}) : _chatRepo = chatRepo;
 
   @override
-  Future<List<ChatParams>> call(void params) async {
-    final result = await _chatRepo.loadChats();
+  Future<List<ChatParams>> call(String params) async {
+    final result = await _chatRepo.loadChats(params);
     return result.fold((l) => throw Exception(l.message), (r) => r);
   }
 }

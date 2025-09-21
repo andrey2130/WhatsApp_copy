@@ -65,6 +65,9 @@ class _ChatScreenState extends State<ChatScreen> {
           messagesLoaded: (messages) {
             _scrollToBottom();
           },
+          chatWithMessages: (chats, messages) {
+            _scrollToBottom();
+          },
           loading: () {
             Center(child: CircularProgressIndicator.adaptive());
           },
@@ -115,6 +118,8 @@ class _ChatScreenState extends State<ChatScreen> {
                           error: (message) => Center(child: Text(message)),
                           loaded: (chats) => _buildMessagesList(),
                           messagesLoaded: (messages) => _buildMessagesList(),
+                          chatWithMessages: (chats, messages) =>
+                              _buildMessagesList(),
                           orElse: () => const SizedBox.shrink(),
                         ),
                       ),
@@ -139,35 +144,36 @@ class _ChatScreenState extends State<ChatScreen> {
     return BlocBuilder<ChatsBloc, ChatsState>(
       builder: (context, state) {
         return state.maybeWhen(
-          messagesLoaded: (messages) => ListView.builder(
-            controller: _scrollController,
-            padding: EdgeInsets.only(
-              top: 16.h,
-              bottom: 80.h,
-              left: 8.w,
-              right: 8.w,
-            ),
-            itemCount: messages.length,
-            itemBuilder: (context, index) {
-              final message = messages[index];
-              final isMe = message.senderId == widget.userId;
-
-              return MessageBuble(
-                id: message.id,
-                messageId: message.id,
-                message: message.message,
-                isMe: isMe,
-                time: _dateFormat(message.createdAt),
-                doubleTap: () {
-                  print('Double tap detected on message: ${message.id}');
-                  _deleteMessage(message.id);
-                },
-              );
-            },
-          ),
+          messagesLoaded: (messages) => _buildMessagesListView(messages),
+          chatWithMessages: (chats, messages) =>
+              _buildMessagesListView(messages),
           loading: () => const SizedBox.shrink(),
           error: (message) => const SizedBox.shrink(),
           orElse: () => const SizedBox.shrink(),
+        );
+      },
+    );
+  }
+
+  Widget _buildMessagesListView(List<MessageParams> messages) {
+    return ListView.builder(
+      controller: _scrollController,
+      padding: EdgeInsets.only(top: 16.h, bottom: 80.h, left: 8.w, right: 8.w),
+      itemCount: messages.length,
+      itemBuilder: (context, index) {
+        final message = messages[index];
+        final isMe = message.senderId == widget.userId;
+
+        return MessageBuble(
+          id: message.id,
+          messageId: message.id,
+          message: message.message,
+          isMe: isMe,
+          time: _dateFormat(message.createdAt),
+          doubleTap: () {
+            print('Double tap detected on message: ${message.id}');
+            _deleteMessage(message.id);
+          },
         );
       },
     );
@@ -231,26 +237,28 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _sendMessage(String message, TextEditingController messageController) {
+    if (message.trim().isEmpty) return;
+
     context.read<ChatsBloc>().add(
       ChatsEvent.sendMessage(
         MessageParams(
           id: const Uuid().v4(),
           senderName: widget.userName,
-          receiverName: widget.receiverIds[0],
-          message: message,
+          receiverName: "Unknown", // 👈 поки що плейсхолдер
+          message: message.trim(),
           senderId: widget.userId,
-          receiverId: widget.receiverIds[0],
-          chatId: widget.conversationId,
+          receiverId: widget.receiverIds.first,
+          chatId: widget.conversationId, // 👈 може бути ''
           createdAt: DateTime.now().toIso8601String(),
           updatedAt: DateTime.now().toIso8601String(),
         ),
       ),
     );
+
     messageController.clear();
     _scrollToBottom();
   }
 
-  // ignore: unused_element
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(

@@ -7,6 +7,7 @@ import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/messag
 abstract class ChatRepo {
   Future<Either<Failure, CreateChatParams>> createChat(CreateChatParams params);
   Future<Either<Failure, MessageParams>> sendMessage(MessageParams params);
-  Future<Either<Failure, List<ChatParams>>> loadChats();
+  Future<Either<Failure, List<ChatParams>>> loadChats(String currentUserId);
   Future<Either<Failure, List<MessageParams>>> loadChatMessages(String chatId);
+  Stream<List<ChatParams>> watchChats(String currentUserId);
 }

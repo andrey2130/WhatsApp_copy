@@ -37,6 +37,7 @@ import 'feature/chat_list/domain/usecases/load_chat_messages_usecase.dart'
     as _i849;
 import 'feature/chat_list/domain/usecases/load_chat_usecase.dart' as _i835;
 import 'feature/chat_list/domain/usecases/send_message_usecase.dart' as _i410;
+import 'feature/chat_list/domain/usecases/watch_chats_usecase.dart' as _i566;
 import 'feature/chat_list/presentation/bloc/chats/chats_bloc.dart' as _i322;
 import 'feature/chat_list/presentation/bloc/users/users_bloc.dart' as _i456;
 import 'feature/settings/data/datasource/settings_datasource.dart' as _i1000;
@@ -67,13 +68,16 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i449.ChatListDatasource>(
       () => _i449.ChatListDatasourceImpl(gh<_i974.FirebaseFirestore>()),
     );
+    gh.factory<_i402.ChatRepo>(
+      () => _i921.ChatRepoImpl(
+        chatDatasource: gh<_i330.ChatDatasource>(),
+        firestore: gh<_i974.FirebaseFirestore>(),
+      ),
+    );
     gh.factory<_i920.SettingsRepo>(
       () => _i757.SettingsRepoImpl(
         settingsDatasource: gh<_i1000.SettingsDatasource>(),
       ),
-    );
-    gh.factory<_i402.ChatRepo>(
-      () => _i921.ChatRepoImpl(chatDatasource: gh<_i330.ChatDatasource>()),
     );
     gh.factory<_i274.AuthDatasource>(
       () => _i274.AuthDatasourceImpl(
@@ -92,6 +96,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i849.LoadChatMessagesUsecase>(
       () => _i849.LoadChatMessagesUsecase(chatRepo: gh<_i402.ChatRepo>()),
+    );
+    gh.factory<_i566.WatchChatsUsecase>(
+      () => _i566.WatchChatsUsecase(chatRepo: gh<_i402.ChatRepo>()),
     );
     gh.factory<_i778.ChatListRepo>(
       () => _i622.ChatListRepoImpl(
@@ -126,6 +133,7 @@ extension GetItInjectableX on _i174.GetIt {
         createChatUsecase: gh<_i773.CreateChatUsecase>(),
         sendMessageUsecase: gh<_i410.SendMessageUsecase>(),
         loadChatMessagesUsecase: gh<_i849.LoadChatMessagesUsecase>(),
+        watchChatsUsecase: gh<_i566.WatchChatsUsecase>(),
       ),
     );
     gh.factory<_i1027.GetCurrentUserUsecase>(

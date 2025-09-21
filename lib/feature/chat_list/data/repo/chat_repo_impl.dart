@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:talker_flutter/talker_flutter.dart';
@@ -12,9 +13,13 @@ import 'package:telegram_copy/injections.dart';
 @Injectable(as: ChatRepo)
 class ChatRepoImpl implements ChatRepo {
   final ChatDatasource _chatDatasource;
+  final FirebaseFirestore _firestore;
 
-  ChatRepoImpl({required ChatDatasource chatDatasource})
-    : _chatDatasource = chatDatasource;
+  ChatRepoImpl({
+    required ChatDatasource chatDatasource,
+    required FirebaseFirestore firestore,
+  }) : _chatDatasource = chatDatasource,
+       _firestore = firestore;
 
   @override
   Future<Either<Failure, CreateChatParams>> createChat(
@@ -43,10 +48,36 @@ class ChatRepoImpl implements ChatRepo {
   }
 
   @override
-  Future<Either<Failure, List<ChatParams>>> loadChats() async {
+  Future<Either<Failure, List<ChatParams>>> loadChats(
+    String currentUserId,
+  ) async {
     try {
-      final result = await _chatDatasource.loadChats();
-      return Right(result.fold((l) => throw Exception(l.message), (r) => r));
+      final snap = await _firestore
+          .collection('chats')
+          .where('participants', arrayContains: currentUserId)
+          .get();
+      final result = snap.docs.map((doc) {
+        final data = doc.data();
+        return ChatParams(
+          id: doc.id,
+          fistUserName: data['fistUserName'] ?? 'Unknown',
+          secondUserName: data['secondUserName'] ?? 'Unknown',
+          firstUserId: data['participants'][0] ?? 'Unknown',
+          secondUserId: data['participants'][1] ?? 'Unknown',
+          createdAt: data['createdAt'] is Timestamp
+              ? (data['createdAt'] as Timestamp).toDate().toIso8601String()
+              : data['createdAt'] is String
+              ? data['createdAt'] as String
+              : DateTime.now().toIso8601String(),
+          updatedAt: data['updatedAt'] is Timestamp
+              ? (data['updatedAt'] as Timestamp).toDate().toIso8601String()
+              : data['updatedAt'] is String
+              ? data['updatedAt'] as String
+              : DateTime.now().toIso8601String(),
+          lastMessage: data['lastMessage'] ?? 'Unknown',
+        );
+      }).toList();
+      return Right(result);
     } catch (e) {
       getIt<Talker>().handle(e);
       return Left(Failure(message: e.toString()));
@@ -64,5 +95,10 @@ class ChatRepoImpl implements ChatRepo {
       getIt<Talker>().handle(e);
       return Left(Failure(message: e.toString()));
     }
+  }
+
+  @override
+  Stream<List<ChatParams>> watchChats(String currentUserId) {
+    return _chatDatasource.watchChats(currentUserId);
   }
 }

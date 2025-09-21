@@ -96,7 +96,7 @@ final GoRouter appRouter = GoRouter(
             ? List<String>.from(extra['receiverIds'] as List)
             : [uid];
         return ChatScreen(
-          userId: uid,
+          userId: FirebaseAuth.instance.currentUser?.uid ?? '',
           userName: userName,
           avatarUrl: avatarUrl,
           conversationId: conversationId,

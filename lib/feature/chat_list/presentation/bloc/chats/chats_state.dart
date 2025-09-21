@@ -11,5 +11,10 @@ class ChatsState with _$ChatsState {
   const factory ChatsState.messagesLoaded(List<MessageParams> messages) =
       MessagesLoaded;
 
+  const factory ChatsState.chatWithMessages({
+    required List<ChatParams> chats,
+    required List<MessageParams> messages,
+  }) = ChatWithMessages;
+
   const factory ChatsState.error(String message) = ErrorState;
 }

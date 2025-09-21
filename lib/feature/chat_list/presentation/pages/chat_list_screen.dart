@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_textfield.dart';
+import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/bloc/chats/chats_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/bloc/users/users_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/chat_list_widgets.dart';
@@ -28,12 +29,23 @@ class _ChatListScreenState extends State<ChatListScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authBloc = context.read<AuthBloc>();
+      final authState = authBloc.state;
+      authState.maybeWhen(
+        authenticated: (userId) {
+          context.read<ChatsBloc>().add(ChatsEvent.watchChats(userId));
+        },
+        orElse: () {},
+      );
+    });
   }
 
   @override
   void dispose() {
     _searchController.dispose();
     _scrollController.dispose();
+    
     super.dispose();
   }
 
@@ -45,20 +57,35 @@ class _ChatListScreenState extends State<ChatListScreen> {
           create: (context) =>
               getIt<UsersBloc>()..add(const UsersEvent.loadUsers()),
         ),
-        BlocProvider(
-          create: (context) =>
-              getIt<ChatsBloc>()..add(const ChatsEvent.loadChats()),
-        ),
+        BlocProvider(create: (context) => getIt<ChatsBloc>()),
       ],
-      child: Scaffold(
-        body: SafeArea(
-          child: Platform.isAndroid
-              ? _buildAndroidBody(context, _searchController, _scrollController)
-              : _buildAndroidBody(
-                  context,
-                  _searchController,
-                  _scrollController,
-                ),
+      child: BlocListener<AuthBloc, AuthBlocState>(
+        listener: (context, authState) {
+          authState.maybeWhen(
+            loading: () {
+              Center(child: CircularProgressIndicator.adaptive());
+            },
+            authenticated: (userId) {
+              context.read<ChatsBloc>().add(ChatsEvent.loadChats(userId));
+              context.read<ChatsBloc>().add(ChatsEvent.watchChats(userId));
+            },
+            orElse: () {},
+          );
+        },
+        child: Scaffold(
+          body: SafeArea(
+            child: Platform.isAndroid
+                ? _buildAndroidBody(
+                    context,
+                    _searchController,
+                    _scrollController,
+                  )
+                : _buildAndroidBody(
+                    context,
+                    _searchController,
+                    _scrollController,
+                  ),
+          ),
         ),
       ),
     );
@@ -73,7 +100,16 @@ Widget _buildAndroidBody(
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8),
     child: RefreshIndicator.adaptive(
-      onRefresh: () async {},
+      onRefresh: () async {
+        context.read<ChatsBloc>().add(
+          ChatsEvent.loadChats(
+            context.read<AuthBloc>().state.maybeWhen(
+              authenticated: (userId) => userId,
+              orElse: () => '',
+            ),
+          ),
+        );
+      },
       child: CustomScrollView(
         controller: scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
@@ -120,9 +156,6 @@ Widget _buildAndroidBody(
           BlocBuilder<ChatsBloc, ChatsState>(
             builder: (context, state) {
               return state.maybeWhen(
-                loading: () => const SliverToBoxAdapter(
-                  child: Center(child: CircularProgressIndicator.adaptive()),
-                ),
                 loaded: (chats) => SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) =>
@@ -153,9 +186,6 @@ Widget _buildAndroidBody(
           BlocBuilder<UsersBloc, UsersState>(
             builder: (context, state) {
               return state.maybeWhen(
-                loading: () => const SliverToBoxAdapter(
-                  child: Center(child: CircularProgressIndicator.adaptive()),
-                ),
                 loaded: (chats) => SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) => SuggestUser(
@@ -270,9 +300,6 @@ Widget _buildIosBody(
           BlocBuilder<ChatsBloc, ChatsState>(
             builder: (context, state) {
               return state.maybeWhen(
-                loading: () => const SliverToBoxAdapter(
-                  child: Center(child: CircularProgressIndicator.adaptive()),
-                ),
                 loaded: (chats) => SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) =>
