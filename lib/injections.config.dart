@@ -25,6 +25,11 @@ import 'feature/auth/domain/usecases/register_via_email_usecase.dart' as _i836;
 import 'feature/auth/domain/usecases/sent_otp_usecase.dart' as _i688;
 import 'feature/auth/domain/usecases/verify_otp_usecase.dart' as _i234;
 import 'feature/auth/pages/bloc/bloc/auth_bloc.dart' as _i147;
+import 'feature/chat_list/data/datasource/chat_list_datasource.dart' as _i449;
+import 'feature/chat_list/data/repo/chat_list_repo_impl.dart' as _i622;
+import 'feature/chat_list/domain/repo/chat_list_repo.dart' as _i778;
+import 'feature/chat_list/domain/usecases/get_users_usecase.dart' as _i902;
+import 'feature/chat_list/presentation/bloc/users/users_bloc.dart' as _i456;
 import 'feature/settings/data/datasource/settings_datasource.dart' as _i1000;
 import 'feature/settings/data/repo/settings_repo_impl.dart' as _i757;
 import 'feature/settings/domain/repo/settings_repo.dart' as _i920;
@@ -47,6 +52,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i574.UserDataSource>(
       () => _i574.UserDataSourceImpl(gh<_i974.FirebaseFirestore>()),
     );
+    gh.factory<_i449.ChatListDatasource>(
+      () => _i449.ChatListDatasourceImpl(gh<_i974.FirebaseFirestore>()),
+    );
     gh.factory<_i920.SettingsRepo>(
       () => _i757.SettingsRepoImpl(
         settingsDatasource: gh<_i1000.SettingsDatasource>(),
@@ -57,6 +65,14 @@ extension GetItInjectableX on _i174.GetIt {
         firebaseAuth: gh<_i59.FirebaseAuth>(),
         userDataSource: gh<_i574.UserDataSource>(),
       ),
+    );
+    gh.factory<_i778.ChatListRepo>(
+      () => _i622.ChatListRepoImpl(
+        chatListDatasource: gh<_i449.ChatListDatasource>(),
+      ),
+    );
+    gh.factory<_i902.GetUsersUsecase>(
+      () => _i902.GetUsersUsecase(chatListRepo: gh<_i778.ChatListRepo>()),
     );
     gh.factory<_i481.GetUserDataUsecase>(
       () => _i481.GetUserDataUsecase(settingsRepo: gh<_i920.SettingsRepo>()),
@@ -79,6 +95,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i1027.GetCurrentUserUsecase>(
       () => _i1027.GetCurrentUserUsecase(gh<_i583.AuthRepo>()),
+    );
+    gh.factory<_i456.UsersBloc>(
+      () => _i456.UsersBloc(getUsersUsecase: gh<_i902.GetUsersUsecase>()),
     );
     gh.factory<_i655.LogOutUsecase>(
       () => _i655.LogOutUsecase(authRepo: gh<_i583.AuthRepo>()),

@@ -7,8 +7,15 @@ import 'package:telegram_copy/core/utils/widgets/user_list_item.dart';
 
 class SuggestUser extends StatefulWidget {
   final int index;
+  final String name;
+  final String bio;
 
-  const SuggestUser({super.key, required this.index});
+  const SuggestUser({
+    super.key,
+    required this.index,
+    required this.name,
+    required this.bio,
+  });
 
   @override
   State<SuggestUser> createState() => _SuggestUserState();
@@ -28,9 +35,9 @@ class _SuggestUserState extends State<SuggestUser> {
         ),
         child: Icon(Icons.person, color: Colors.black, size: 24.r),
       ),
-      title: Text('1', style: AppTextStyle.getRegularBlack()),
+      title: Text(widget.name, style: AppTextStyle.getRegularBlack()),
       subtitle: Text(
-        '1',
+        widget.bio,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
         style: AppTextStyle.getFilterText(),
