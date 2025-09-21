@@ -83,10 +83,7 @@ class _ChatScreenState extends State<ChatScreen> {
               context,
             ).showSnackBar(SnackBar(content: Text('Error: $message')));
           },
-          success: () {
-            print('Message deleted successfully');
-            // Don't do anything special, just let the UI rebuild
-          },
+          success: () {},
           orElse: () {
             getIt<Talker>().handle(
               'ChatScreen unexpected state: ${state.toString()}',
@@ -169,6 +166,12 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildMessagesListView(List<MessageParams> messages) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (messages.isNotEmpty) {
+        _scrollToBottom();
+      }
+    });
+
     return ListView.builder(
       controller: _scrollController,
       padding: EdgeInsets.only(top: 16.h, bottom: 80.h, left: 8.w, right: 8.w),
@@ -265,11 +268,11 @@ class _ChatScreenState extends State<ChatScreen> {
       ChatsEvent.sendMessage(
         MessageParams(
           id: const Uuid().v4(),
-          senderName: _getCurrentUserName(), // Current user's name
-          receiverName: widget.userName, // Receiver's name
+          senderName: _getCurrentUserName(),
+          receiverName: widget.userName,
           message: message.trim(),
           senderId: widget.userId,
-          receiverId: widget.receiverIds.first, // This is the receiver's ID
+          receiverId: widget.receiverIds.first,
           chatId: widget.conversationId,
           createdAt: DateTime.now().toIso8601String(),
           updatedAt: DateTime.now().toIso8601String(),
@@ -283,11 +286,15 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
+      });
     }
   }
 
@@ -296,7 +303,6 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _deleteMessage(String messageId) {
-    print('_deleteMessage called with messageId: $messageId');
     context.read<ChatsBloc>().add(
       ChatsEvent.deleteMessage(
         DeleteMessageParams(
@@ -317,7 +323,6 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _readMessage(MessageParams message) {
-    print('_readMessage called with message: ${message.id}');
     context.read<ChatsBloc>().add(ChatsEvent.readMessage(message));
   }
 }
