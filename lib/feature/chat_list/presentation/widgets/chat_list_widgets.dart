@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
 import 'package:telegram_copy/core/utils/widgets/user_list_item.dart';
+import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/chat.dart';
 
 class ChatListWidgets extends StatelessWidget {
@@ -14,16 +16,29 @@ class ChatListWidgets extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return BlocBuilder<AuthBloc, AuthBlocState>(
+      builder: (context, authState) {
+        final currentUserId = authState.maybeWhen(
+          authenticated: (userId) => userId,
+          orElse: () => '',
+        );
+
+        return _buildChatItem(context, currentUserId);
+      },
+    );
+  }
+
+  Widget _buildChatItem(BuildContext context, String currentUserId) {
     return UserListItem(
       onTap: () {
         // Navigate to chat screen
         context.push(
           '/chat_list/user/${chat.id}',
           extra: {
-            'name': chat.fistUserName,
+            'name': getDisplayName(currentUserId),
             'conversationId': chat.id,
             'photoUrl': '',
-            'receiverIds': [chat.firstUserId, chat.secondUserId],
+            'receiverIds': [getReceiverId(currentUserId)],
           },
         );
       },
@@ -39,7 +54,10 @@ class ChatListWidgets extends StatelessWidget {
           child: Icon(Icons.person, color: Colors.black, size: 24.r),
         ),
       ),
-      title: Text(chat.fistUserName, style: AppTextStyle.getRegularBlack()),
+      title: Text(
+        getDisplayName(currentUserId),
+        style: AppTextStyle.getRegularBlack(),
+      ),
       subtitle: Text(
         '${chat.lastMessage}',
         maxLines: 2,
@@ -55,6 +73,22 @@ class ChatListWidgets extends StatelessWidget {
       ),
       badge: null,
     );
+  }
+
+  String getDisplayName(String currentUserId) {
+    if (currentUserId == chat.firstUserId) {
+      return chat.secondUserName;
+    } else {
+      return chat.fistUserName;
+    }
+  }
+
+  String getReceiverId(String currentUserId) {
+    if (currentUserId == chat.firstUserId) {
+      return chat.secondUserId;
+    } else {
+      return chat.firstUserId;
+    }
   }
 
   String _formatTime(String dateTime) {

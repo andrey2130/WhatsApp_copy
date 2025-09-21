@@ -13,6 +13,7 @@ import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/message.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/bloc/chats/chats_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_buble.dart';
+import 'package:telegram_copy/feature/settings/presentation/bloc/settings_bloc.dart';
 import 'package:telegram_copy/injections.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -44,6 +45,7 @@ class _ChatScreenState extends State<ChatScreen> {
     context.read<ChatsBloc>().add(
       ChatsEvent.loadChatMessages(widget.conversationId),
     );
+    context.read<SettingsBloc>().add(const SettingsEvent.loadRequested());
   }
 
   @override
@@ -243,12 +245,12 @@ class _ChatScreenState extends State<ChatScreen> {
       ChatsEvent.sendMessage(
         MessageParams(
           id: const Uuid().v4(),
-          senderName: widget.userName,
-          receiverName: "Unknown", // 👈 поки що плейсхолдер
+          senderName: _getCurrentUserName(), // Current user's name
+          receiverName: widget.userName, // Receiver's name
           message: message.trim(),
           senderId: widget.userId,
-          receiverId: widget.receiverIds.first,
-          chatId: widget.conversationId, // 👈 може бути ''
+          receiverId: widget.receiverIds.first, // This is the receiver's ID
+          chatId: widget.conversationId,
           createdAt: DateTime.now().toIso8601String(),
           updatedAt: DateTime.now().toIso8601String(),
         ),
@@ -275,5 +277,13 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _deleteMessage(String messageId) {
     print('_deleteMessage called with messageId: $messageId');
+  }
+
+  String _getCurrentUserName() {
+    final settingsState = context.read<SettingsBloc>().state;
+    return settingsState.maybeWhen(
+      success: (user) => user.name.isNotEmpty ? user.name : 'Unknown User',
+      orElse: () => 'Unknown User',
+    );
   }
 }
