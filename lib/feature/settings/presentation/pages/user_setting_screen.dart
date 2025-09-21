@@ -18,11 +18,22 @@ class UserSettingScreen extends StatefulWidget {
 class _UserSettingScreenState extends State<UserSettingScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: BlocBuilder<SettingsBloc, SettingsState>(
-          builder: (context, state) {
-            return Column(
+    return BlocConsumer<SettingsBloc, SettingsState>(
+      listener: (context, state) {
+        state.maybeWhen(
+          loading: () {
+            return const Center(child: CircularProgressIndicator.adaptive());
+          },
+          failure: (error) {
+            return Center(child: Text(error.toString()));
+          },
+          orElse: () {},
+        );
+      },
+      builder: (context, state) {
+        return Scaffold(
+          body: SafeArea(
+            child: Column(
               children: [
                 CustomAppBar(
                   leftWidget: IconButton(
@@ -51,10 +62,10 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
                 SizedBox(height: 30.h),
                 _buildProfileSections(state),
               ],
-            );
-          },
-        ),
-      ),
+            ),
+          ),
+        );
+      },
     );
   }
 
