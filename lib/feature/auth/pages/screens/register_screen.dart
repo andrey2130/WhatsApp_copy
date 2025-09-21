@@ -19,6 +19,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
@@ -41,6 +42,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _onRegister(
     BuildContext context,
+    TextEditingController nameController,
     TextEditingController emailController,
     TextEditingController passwordController,
     TextEditingController confirmPasswordController,
@@ -79,6 +81,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     context.read<AuthBloc>().add(
       RegisterViaEmail(
         params: RegisterParams(
+          name: nameController.text,
           email: emailController.text,
           password: passwordController.text,
           confirmPassword: confirmPasswordController.text,
@@ -91,7 +94,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: BlocListener<AuthBloc, AuthBlocState>(
+        child: BlocConsumer<AuthBloc, AuthBlocState>(
           listener: (context, state) {
             if (state is Authenticated) {
               context.go('/home');
@@ -101,30 +104,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ).showSnackBar(SnackBar(content: Text(state.message)));
             }
           },
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(22.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _header(),
+          builder: (context, state) {
+            if (state is Loading) {
+              return Center(child: CircularProgressIndicator.adaptive());
+            }
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(22.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _header(),
 
-                  SizedBox(height: 20),
-                  _textFieldSection(
-                    _emailController,
-                    _passwordController,
-                    _confirmPasswordController,
-                    _isPasswordVisible,
-                    _togglePasswordVisibility,
-                  ),
+                    SizedBox(height: 20),
+                    _textFieldSection(
+                      _nameController,
+                      _emailController,
+                      _passwordController,
+                      _confirmPasswordController,
 
-                  SizedBox(height: 20),
-                  _signInSection(),
-                ],
+                      _isPasswordVisible,
+                      _togglePasswordVisibility,
+                    ),
+
+                    SizedBox(height: 20),
+                    _signInSection(),
+                  ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );
@@ -181,6 +191,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _textFieldSection(
+    TextEditingController nameController,
     TextEditingController emailController,
     TextEditingController passwordController,
     TextEditingController confirmPasswordController,
@@ -189,6 +200,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   ) {
     return Column(
       children: [
+        CustomTextField(
+          hintText: 'Enter your name',
+          controller: nameController,
+          labelText: 'Name',
+          keyboardType: TextInputType.name,
+          isPassword: false,
+        ),
+        SizedBox(height: 20),
         CustomTextField(
           hintText: 'Enter your email',
           controller: emailController,
@@ -227,6 +246,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           text: 'Sign up',
           onPressed: () => _onRegister(
             context,
+            nameController,
             emailController,
             passwordController,
             confirmPasswordController,

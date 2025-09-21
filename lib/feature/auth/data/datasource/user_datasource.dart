@@ -3,11 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:injectable/injectable.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/login_via_phone_params.dart';
-import 'package:telegram_copy/feature/auth/domain/params/login_params.dart';
+
+import 'package:telegram_copy/feature/auth/domain/params/register_params.dart';
 import 'package:telegram_copy/injections.dart';
 
 abstract class UserDataSource {
-  Future<void> saveUserDataEmail(User user, LoginParams params);
+  Future<void> saveUserDataEmail(User user, RegisterParams params);
   Future<void> saveUserData(User user, LoginViaPhoneParams params);
   Future<Map<String, dynamic>?> getUserData(String userId);
 }
@@ -19,16 +20,16 @@ class UserDataSourceImpl implements UserDataSource {
   UserDataSourceImpl(this._firestore);
 
   @override
-  Future<void> saveUserDataEmail(User user, LoginParams params) async {
+  Future<void> saveUserDataEmail(User user, RegisterParams params) async {
     try {
       await _firestore.collection('users').doc(user.uid).set({
         'uid': user.uid,
         'email': params.email,
+        'name': params.name,
         'createdAt': FieldValue.serverTimestamp(),
+        'bio': params.bio,
       });
-      print('User data saved successfully to Firestore');
     } catch (e) {
-      print('Failed to save user data to Firestore: $e');
       getIt<Talker>().handle(e);
       // Don't rethrow to allow auth to continue even if Firestore fails
     }
@@ -41,10 +42,9 @@ class UserDataSourceImpl implements UserDataSource {
         'uid': user.uid,
         'phoneNumber': params.phoneNumber,
         'createdAt': FieldValue.serverTimestamp(),
+        'bio': params.bio,
       });
-      print('User data saved successfully to Firestore');
     } catch (e) {
-      print('Failed to save user data to Firestore: $e');
       getIt<Talker>().handle(e);
       // Don't rethrow to allow auth to continue even if Firestore fails
     }

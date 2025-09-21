@@ -8,14 +8,18 @@ part of 'register_params.dart';
 
 _RegisterParams _$RegisterParamsFromJson(Map<String, dynamic> json) =>
     _RegisterParams(
+      name: json['name'] as String,
       email: json['email'] as String,
       password: json['password'] as String,
       confirmPassword: json['confirmPassword'] as String,
+      bio: json['bio'] as String? ?? '',
     );
 
 Map<String, dynamic> _$RegisterParamsToJson(_RegisterParams instance) =>
     <String, dynamic>{
+      'name': instance.name,
       'email': instance.email,
       'password': instance.password,
       'confirmPassword': instance.confirmPassword,
+      'bio': instance.bio,
     };

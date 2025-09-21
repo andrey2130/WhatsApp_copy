@@ -6,9 +6,11 @@ part 'register_params.g.dart';
 @freezed
 abstract class RegisterParams with _$RegisterParams {
   const factory RegisterParams({
+    required String name,
     required String email,
     required String password,
     required String confirmPassword,
+    @Default('') String bio,
   }) = _RegisterParams;
 
   factory RegisterParams.fromJson(Map<String, dynamic> json) =>

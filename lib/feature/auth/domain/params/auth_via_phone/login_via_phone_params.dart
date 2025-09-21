@@ -8,6 +8,7 @@ abstract class LoginViaPhoneParams with _$LoginViaPhoneParams {
   const factory LoginViaPhoneParams({
     required String phoneNumber,
     required String otpCode,
+    @Default('Hey there! I am using WhatsApp.') String bio,
   }) = _LoginViaPhoneParams;
 
   factory LoginViaPhoneParams.fromJson(Map<String, dynamic> json) =>

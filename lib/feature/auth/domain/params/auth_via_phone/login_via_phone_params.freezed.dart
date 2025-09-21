@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$LoginViaPhoneParams {
 
- String get phoneNumber; String get otpCode;
+ String get phoneNumber; String get otpCode; String get bio;
 /// Create a copy of LoginViaPhoneParams
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $LoginViaPhoneParamsCopyWith<LoginViaPhoneParams> get copyWith => _$LoginViaPhon
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginViaPhoneParams&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.otpCode, otpCode) || other.otpCode == otpCode));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginViaPhoneParams&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.otpCode, otpCode) || other.otpCode == otpCode)&&(identical(other.bio, bio) || other.bio == bio));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,phoneNumber,otpCode);
+int get hashCode => Object.hash(runtimeType,phoneNumber,otpCode,bio);
 
 @override
 String toString() {
-  return 'LoginViaPhoneParams(phoneNumber: $phoneNumber, otpCode: $otpCode)';
+  return 'LoginViaPhoneParams(phoneNumber: $phoneNumber, otpCode: $otpCode, bio: $bio)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $LoginViaPhoneParamsCopyWith<$Res>  {
   factory $LoginViaPhoneParamsCopyWith(LoginViaPhoneParams value, $Res Function(LoginViaPhoneParams) _then) = _$LoginViaPhoneParamsCopyWithImpl;
 @useResult
 $Res call({
- String phoneNumber, String otpCode
+ String phoneNumber, String otpCode, String bio
 });
 
 
@@ -65,10 +65,11 @@ class _$LoginViaPhoneParamsCopyWithImpl<$Res>
 
 /// Create a copy of LoginViaPhoneParams
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? phoneNumber = null,Object? otpCode = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? phoneNumber = null,Object? otpCode = null,Object? bio = null,}) {
   return _then(_self.copyWith(
 phoneNumber: null == phoneNumber ? _self.phoneNumber : phoneNumber // ignore: cast_nullable_to_non_nullable
 as String,otpCode: null == otpCode ? _self.otpCode : otpCode // ignore: cast_nullable_to_non_nullable
+as String,bio: null == bio ? _self.bio : bio // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -154,10 +155,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String phoneNumber,  String otpCode)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String phoneNumber,  String otpCode,  String bio)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoginViaPhoneParams() when $default != null:
-return $default(_that.phoneNumber,_that.otpCode);case _:
+return $default(_that.phoneNumber,_that.otpCode,_that.bio);case _:
   return orElse();
 
 }
@@ -175,10 +176,10 @@ return $default(_that.phoneNumber,_that.otpCode);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String phoneNumber,  String otpCode)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String phoneNumber,  String otpCode,  String bio)  $default,) {final _that = this;
 switch (_that) {
 case _LoginViaPhoneParams():
-return $default(_that.phoneNumber,_that.otpCode);case _:
+return $default(_that.phoneNumber,_that.otpCode,_that.bio);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,10 +196,10 @@ return $default(_that.phoneNumber,_that.otpCode);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String phoneNumber,  String otpCode)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String phoneNumber,  String otpCode,  String bio)?  $default,) {final _that = this;
 switch (_that) {
 case _LoginViaPhoneParams() when $default != null:
-return $default(_that.phoneNumber,_that.otpCode);case _:
+return $default(_that.phoneNumber,_that.otpCode,_that.bio);case _:
   return null;
 
 }
@@ -210,11 +211,12 @@ return $default(_that.phoneNumber,_that.otpCode);case _:
 @JsonSerializable()
 
 class _LoginViaPhoneParams implements LoginViaPhoneParams {
-  const _LoginViaPhoneParams({required this.phoneNumber, required this.otpCode});
+  const _LoginViaPhoneParams({required this.phoneNumber, required this.otpCode, this.bio = 'Hey there! I am using WhatsApp.'});
   factory _LoginViaPhoneParams.fromJson(Map<String, dynamic> json) => _$LoginViaPhoneParamsFromJson(json);
 
 @override final  String phoneNumber;
 @override final  String otpCode;
+@override@JsonKey() final  String bio;
 
 /// Create a copy of LoginViaPhoneParams
 /// with the given fields replaced by the non-null parameter values.
@@ -229,16 +231,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginViaPhoneParams&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.otpCode, otpCode) || other.otpCode == otpCode));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginViaPhoneParams&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.otpCode, otpCode) || other.otpCode == otpCode)&&(identical(other.bio, bio) || other.bio == bio));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,phoneNumber,otpCode);
+int get hashCode => Object.hash(runtimeType,phoneNumber,otpCode,bio);
 
 @override
 String toString() {
-  return 'LoginViaPhoneParams(phoneNumber: $phoneNumber, otpCode: $otpCode)';
+  return 'LoginViaPhoneParams(phoneNumber: $phoneNumber, otpCode: $otpCode, bio: $bio)';
 }
 
 
@@ -249,7 +251,7 @@ abstract mixin class _$LoginViaPhoneParamsCopyWith<$Res> implements $LoginViaPho
   factory _$LoginViaPhoneParamsCopyWith(_LoginViaPhoneParams value, $Res Function(_LoginViaPhoneParams) _then) = __$LoginViaPhoneParamsCopyWithImpl;
 @override @useResult
 $Res call({
- String phoneNumber, String otpCode
+ String phoneNumber, String otpCode, String bio
 });
 
 
@@ -266,10 +268,11 @@ class __$LoginViaPhoneParamsCopyWithImpl<$Res>
 
 /// Create a copy of LoginViaPhoneParams
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? phoneNumber = null,Object? otpCode = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? phoneNumber = null,Object? otpCode = null,Object? bio = null,}) {
   return _then(_LoginViaPhoneParams(
 phoneNumber: null == phoneNumber ? _self.phoneNumber : phoneNumber // ignore: cast_nullable_to_non_nullable
 as String,otpCode: null == otpCode ? _self.otpCode : otpCode // ignore: cast_nullable_to_non_nullable
+as String,bio: null == bio ? _self.bio : bio // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

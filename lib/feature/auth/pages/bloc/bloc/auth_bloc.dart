@@ -48,11 +48,14 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
     Emitter<AuthBlocState> emit,
   ) async {
     emit(const AuthBlocState.loading());
+    getIt<Talker>().info('Checking auth status...');
 
     final User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
+      getIt<Talker>().info('User is authenticated: ${currentUser.uid}');
       emit(AuthBlocState.authenticated(userId: currentUser.uid));
     } else {
+      getIt<Talker>().info('User is not authenticated');
       emit(const AuthBlocState.unauthenticated());
     }
   }

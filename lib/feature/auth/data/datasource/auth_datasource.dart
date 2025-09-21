@@ -24,6 +24,7 @@ abstract class AuthDatasource {
   Future<String> sendOtp({required SendOtpParams params});
   Future<void> verifyOtp({required VerifyOtpParams params});
   Future<void> logOut();
+  Future<String?> getCurrentUser();
 }
 
 @Injectable(as: AuthDatasource)
@@ -99,6 +100,7 @@ class AuthDatasourceImpl implements AuthDatasource {
           LoginViaPhoneParams(
             phoneNumber: params.phoneNumber,
             otpCode: params.otpCode,
+            bio: 'Hey there! I am using WhatsApp.',
           ),
         );
       }
@@ -165,11 +167,28 @@ class AuthDatasourceImpl implements AuthDatasource {
       if (user != null) {
         await _userDataSource.saveUserDataEmail(
           user,
-          LoginParams(email: params.email, password: params.password),
+          RegisterParams(
+            bio: 'Hey there! I am using WhatsApp.',
+            name: params.name,
+            email: params.email,
+            password: params.password,
+            confirmPassword: params.confirmPassword,
+          ),
         );
       }
 
       return user?.uid ?? '';
+    } catch (e) {
+      getIt<Talker>().handle(e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<String?> getCurrentUser() async {
+    try {
+      final user = _firebaseAuth.currentUser;
+      return user?.uid;
     } catch (e) {
       getIt<Talker>().handle(e);
       rethrow;

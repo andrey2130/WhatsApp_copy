@@ -3,7 +3,7 @@ import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
 
 class AppTheme {
-  static const Color backgroundLight = Color(0xFFF7F7F7);
+  static const Color backgroundLight = Color(0xFFFFFFFF);
   static const Color backgroundDark = Color(0xFF0E1621);
   static const Color surfaceLight = Colors.white;
   static const Color surfaceDark = Color(0xFF17212B);
@@ -25,12 +25,12 @@ class AppTheme {
         primaryContainer: AppColors.secondaryBlue,
         secondary: AppColors.primaryGreen,
         surface: surfaceLight,
-        background: backgroundLight,
+        surfaceContainerLow: backgroundLight,
         error: AppColors.errorColor,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
         onSurface: textPrimaryLight,
-        onBackground: textPrimaryLight,
+        surfaceContainer: textPrimaryLight,
         onError: Colors.white,
       ),
       scaffoldBackgroundColor: backgroundLight,
@@ -184,12 +184,12 @@ class AppTheme {
         primaryContainer: AppColors.secondaryBlue,
         secondary: AppColors.primaryGreen,
         surface: surfaceDark,
-        background: backgroundDark,
+        surfaceContainerLow: backgroundDark,
         error: AppColors.errorColor,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
         onSurface: textPrimaryDark,
-        onBackground: textPrimaryDark,
+        surfaceContainer: textPrimaryDark,
         onError: Colors.white,
       ),
       scaffoldBackgroundColor: backgroundDark,
