@@ -17,7 +17,7 @@ _MessageParams _$MessageParamsFromJson(Map<String, dynamic> json) =>
       message: json['message'] as String,
       createdAt: json['createdAt'] as String,
       updatedAt: json['updatedAt'] as String,
-      isRead: json['isRead'] as bool?,
+      isRead: json['isRead'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$MessageParamsToJson(_MessageParams instance) =>

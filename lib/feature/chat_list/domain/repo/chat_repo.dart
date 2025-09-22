@@ -14,6 +14,12 @@ abstract class ChatRepo {
     DeleteMessageParams params,
   );
   Future<Either<Failure, MessageParams>> readMessage(MessageParams params);
+  Future<Either<Failure, void>> updateUnreadCount(
+    String chatId,
+    String userId,
+    int count,
+  );
+  Future<Either<Failure, Map<String, int>>> calculateUnreadCount(String chatId);
   Stream<List<MessageParams>> watchMessages(String chatId);
   Stream<List<ChatParams>> watchChats(String currentUserId);
 }

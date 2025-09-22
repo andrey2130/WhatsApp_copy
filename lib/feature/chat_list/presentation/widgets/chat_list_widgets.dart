@@ -71,7 +71,21 @@ class ChatListWidgets extends StatelessWidget {
           color: const Color(0xFF959595),
         ),
       ),
-      badge: null,
+      badge:
+          chat.unreadCount[currentUserId] != null &&
+              chat.unreadCount[currentUserId]! > 0
+          ? Container(
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+              decoration: BoxDecoration(
+                color: AppColors.primaryGreen,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Text(
+                chat.unreadCount[currentUserId]!.toString(),
+                style: AppTextStyle.getRegularBlack().copyWith(fontSize: 12.sp),
+              ),
+            )
+          : null,
     );
   }
 
