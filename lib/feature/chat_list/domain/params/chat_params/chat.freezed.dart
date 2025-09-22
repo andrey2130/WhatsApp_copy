@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ChatParams {
 
- String get id; String get fistUserName; String get secondUserName; String get firstUserId; String get secondUserId; String get createdAt; String? get lastMessage; String get updatedAt;
+ String get id; String get fistUserName; String get secondUserName; String get firstUserId; String get secondUserId; String get createdAt; String? get lastMessage; String get updatedAt; Map<String, int> get unreadCount;
 /// Create a copy of ChatParams
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ChatParamsCopyWith<ChatParams> get copyWith => _$ChatParamsCopyWithImpl<ChatPar
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChatParams&&(identical(other.id, id) || other.id == id)&&(identical(other.fistUserName, fistUserName) || other.fistUserName == fistUserName)&&(identical(other.secondUserName, secondUserName) || other.secondUserName == secondUserName)&&(identical(other.firstUserId, firstUserId) || other.firstUserId == firstUserId)&&(identical(other.secondUserId, secondUserId) || other.secondUserId == secondUserId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.lastMessage, lastMessage) || other.lastMessage == lastMessage)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChatParams&&(identical(other.id, id) || other.id == id)&&(identical(other.fistUserName, fistUserName) || other.fistUserName == fistUserName)&&(identical(other.secondUserName, secondUserName) || other.secondUserName == secondUserName)&&(identical(other.firstUserId, firstUserId) || other.firstUserId == firstUserId)&&(identical(other.secondUserId, secondUserId) || other.secondUserId == secondUserId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.lastMessage, lastMessage) || other.lastMessage == lastMessage)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other.unreadCount, unreadCount));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,fistUserName,secondUserName,firstUserId,secondUserId,createdAt,lastMessage,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,fistUserName,secondUserName,firstUserId,secondUserId,createdAt,lastMessage,updatedAt,const DeepCollectionEquality().hash(unreadCount));
 
 @override
 String toString() {
-  return 'ChatParams(id: $id, fistUserName: $fistUserName, secondUserName: $secondUserName, firstUserId: $firstUserId, secondUserId: $secondUserId, createdAt: $createdAt, lastMessage: $lastMessage, updatedAt: $updatedAt)';
+  return 'ChatParams(id: $id, fistUserName: $fistUserName, secondUserName: $secondUserName, firstUserId: $firstUserId, secondUserId: $secondUserId, createdAt: $createdAt, lastMessage: $lastMessage, updatedAt: $updatedAt, unreadCount: $unreadCount)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ChatParamsCopyWith<$Res>  {
   factory $ChatParamsCopyWith(ChatParams value, $Res Function(ChatParams) _then) = _$ChatParamsCopyWithImpl;
 @useResult
 $Res call({
- String id, String fistUserName, String secondUserName, String firstUserId, String secondUserId, String createdAt, String? lastMessage, String updatedAt
+ String id, String fistUserName, String secondUserName, String firstUserId, String secondUserId, String createdAt, String? lastMessage, String updatedAt, Map<String, int> unreadCount
 });
 
 
@@ -65,7 +65,7 @@ class _$ChatParamsCopyWithImpl<$Res>
 
 /// Create a copy of ChatParams
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? fistUserName = null,Object? secondUserName = null,Object? firstUserId = null,Object? secondUserId = null,Object? createdAt = null,Object? lastMessage = freezed,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? fistUserName = null,Object? secondUserName = null,Object? firstUserId = null,Object? secondUserId = null,Object? createdAt = null,Object? lastMessage = freezed,Object? updatedAt = null,Object? unreadCount = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,fistUserName: null == fistUserName ? _self.fistUserName : fistUserName // ignore: cast_nullable_to_non_nullable
@@ -75,7 +75,8 @@ as String,secondUserId: null == secondUserId ? _self.secondUserId : secondUserId
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String,lastMessage: freezed == lastMessage ? _self.lastMessage : lastMessage // ignore: cast_nullable_to_non_nullable
 as String?,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as String,
+as String,unreadCount: null == unreadCount ? _self.unreadCount : unreadCount // ignore: cast_nullable_to_non_nullable
+as Map<String, int>,
   ));
 }
 
@@ -160,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String fistUserName,  String secondUserName,  String firstUserId,  String secondUserId,  String createdAt,  String? lastMessage,  String updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String fistUserName,  String secondUserName,  String firstUserId,  String secondUserId,  String createdAt,  String? lastMessage,  String updatedAt,  Map<String, int> unreadCount)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ChatParams() when $default != null:
-return $default(_that.id,_that.fistUserName,_that.secondUserName,_that.firstUserId,_that.secondUserId,_that.createdAt,_that.lastMessage,_that.updatedAt);case _:
+return $default(_that.id,_that.fistUserName,_that.secondUserName,_that.firstUserId,_that.secondUserId,_that.createdAt,_that.lastMessage,_that.updatedAt,_that.unreadCount);case _:
   return orElse();
 
 }
@@ -181,10 +182,10 @@ return $default(_that.id,_that.fistUserName,_that.secondUserName,_that.firstUser
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String fistUserName,  String secondUserName,  String firstUserId,  String secondUserId,  String createdAt,  String? lastMessage,  String updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String fistUserName,  String secondUserName,  String firstUserId,  String secondUserId,  String createdAt,  String? lastMessage,  String updatedAt,  Map<String, int> unreadCount)  $default,) {final _that = this;
 switch (_that) {
 case _ChatParams():
-return $default(_that.id,_that.fistUserName,_that.secondUserName,_that.firstUserId,_that.secondUserId,_that.createdAt,_that.lastMessage,_that.updatedAt);case _:
+return $default(_that.id,_that.fistUserName,_that.secondUserName,_that.firstUserId,_that.secondUserId,_that.createdAt,_that.lastMessage,_that.updatedAt,_that.unreadCount);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +202,10 @@ return $default(_that.id,_that.fistUserName,_that.secondUserName,_that.firstUser
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String fistUserName,  String secondUserName,  String firstUserId,  String secondUserId,  String createdAt,  String? lastMessage,  String updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String fistUserName,  String secondUserName,  String firstUserId,  String secondUserId,  String createdAt,  String? lastMessage,  String updatedAt,  Map<String, int> unreadCount)?  $default,) {final _that = this;
 switch (_that) {
 case _ChatParams() when $default != null:
-return $default(_that.id,_that.fistUserName,_that.secondUserName,_that.firstUserId,_that.secondUserId,_that.createdAt,_that.lastMessage,_that.updatedAt);case _:
+return $default(_that.id,_that.fistUserName,_that.secondUserName,_that.firstUserId,_that.secondUserId,_that.createdAt,_that.lastMessage,_that.updatedAt,_that.unreadCount);case _:
   return null;
 
 }
@@ -216,7 +217,7 @@ return $default(_that.id,_that.fistUserName,_that.secondUserName,_that.firstUser
 @JsonSerializable()
 
 class _ChatParams implements ChatParams {
-  const _ChatParams({required this.id, required this.fistUserName, required this.secondUserName, required this.firstUserId, required this.secondUserId, required this.createdAt, this.lastMessage, required this.updatedAt});
+  const _ChatParams({required this.id, required this.fistUserName, required this.secondUserName, required this.firstUserId, required this.secondUserId, required this.createdAt, this.lastMessage, required this.updatedAt, final  Map<String, int> unreadCount = const {}}): _unreadCount = unreadCount;
   factory _ChatParams.fromJson(Map<String, dynamic> json) => _$ChatParamsFromJson(json);
 
 @override final  String id;
@@ -227,6 +228,13 @@ class _ChatParams implements ChatParams {
 @override final  String createdAt;
 @override final  String? lastMessage;
 @override final  String updatedAt;
+ final  Map<String, int> _unreadCount;
+@override@JsonKey() Map<String, int> get unreadCount {
+  if (_unreadCount is EqualUnmodifiableMapView) return _unreadCount;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(_unreadCount);
+}
+
 
 /// Create a copy of ChatParams
 /// with the given fields replaced by the non-null parameter values.
@@ -241,16 +249,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChatParams&&(identical(other.id, id) || other.id == id)&&(identical(other.fistUserName, fistUserName) || other.fistUserName == fistUserName)&&(identical(other.secondUserName, secondUserName) || other.secondUserName == secondUserName)&&(identical(other.firstUserId, firstUserId) || other.firstUserId == firstUserId)&&(identical(other.secondUserId, secondUserId) || other.secondUserId == secondUserId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.lastMessage, lastMessage) || other.lastMessage == lastMessage)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChatParams&&(identical(other.id, id) || other.id == id)&&(identical(other.fistUserName, fistUserName) || other.fistUserName == fistUserName)&&(identical(other.secondUserName, secondUserName) || other.secondUserName == secondUserName)&&(identical(other.firstUserId, firstUserId) || other.firstUserId == firstUserId)&&(identical(other.secondUserId, secondUserId) || other.secondUserId == secondUserId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.lastMessage, lastMessage) || other.lastMessage == lastMessage)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other._unreadCount, _unreadCount));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,fistUserName,secondUserName,firstUserId,secondUserId,createdAt,lastMessage,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,fistUserName,secondUserName,firstUserId,secondUserId,createdAt,lastMessage,updatedAt,const DeepCollectionEquality().hash(_unreadCount));
 
 @override
 String toString() {
-  return 'ChatParams(id: $id, fistUserName: $fistUserName, secondUserName: $secondUserName, firstUserId: $firstUserId, secondUserId: $secondUserId, createdAt: $createdAt, lastMessage: $lastMessage, updatedAt: $updatedAt)';
+  return 'ChatParams(id: $id, fistUserName: $fistUserName, secondUserName: $secondUserName, firstUserId: $firstUserId, secondUserId: $secondUserId, createdAt: $createdAt, lastMessage: $lastMessage, updatedAt: $updatedAt, unreadCount: $unreadCount)';
 }
 
 
@@ -261,7 +269,7 @@ abstract mixin class _$ChatParamsCopyWith<$Res> implements $ChatParamsCopyWith<$
   factory _$ChatParamsCopyWith(_ChatParams value, $Res Function(_ChatParams) _then) = __$ChatParamsCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String fistUserName, String secondUserName, String firstUserId, String secondUserId, String createdAt, String? lastMessage, String updatedAt
+ String id, String fistUserName, String secondUserName, String firstUserId, String secondUserId, String createdAt, String? lastMessage, String updatedAt, Map<String, int> unreadCount
 });
 
 
@@ -278,7 +286,7 @@ class __$ChatParamsCopyWithImpl<$Res>
 
 /// Create a copy of ChatParams
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? fistUserName = null,Object? secondUserName = null,Object? firstUserId = null,Object? secondUserId = null,Object? createdAt = null,Object? lastMessage = freezed,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? fistUserName = null,Object? secondUserName = null,Object? firstUserId = null,Object? secondUserId = null,Object? createdAt = null,Object? lastMessage = freezed,Object? updatedAt = null,Object? unreadCount = null,}) {
   return _then(_ChatParams(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,fistUserName: null == fistUserName ? _self.fistUserName : fistUserName // ignore: cast_nullable_to_non_nullable
@@ -288,7 +296,8 @@ as String,secondUserId: null == secondUserId ? _self.secondUserId : secondUserId
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String,lastMessage: freezed == lastMessage ? _self.lastMessage : lastMessage // ignore: cast_nullable_to_non_nullable
 as String?,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as String,
+as String,unreadCount: null == unreadCount ? _self._unreadCount : unreadCount // ignore: cast_nullable_to_non_nullable
+as Map<String, int>,
   ));
 }
 

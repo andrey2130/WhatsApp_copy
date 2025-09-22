@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MessageParams {
 
- String get id; String get chatId; String get senderId; String get receiverId; String get senderName; String get receiverName; String get message; String get createdAt; String get updatedAt; bool? get isRead;
+ String get id; String get chatId; String get senderId; String get receiverId; String get senderName; String get receiverName; String get message; String get createdAt; String get updatedAt; bool get isRead;
 /// Create a copy of MessageParams
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $MessageParamsCopyWith<$Res>  {
   factory $MessageParamsCopyWith(MessageParams value, $Res Function(MessageParams) _then) = _$MessageParamsCopyWithImpl;
 @useResult
 $Res call({
- String id, String chatId, String senderId, String receiverId, String senderName, String receiverName, String message, String createdAt, String updatedAt, bool? isRead
+ String id, String chatId, String senderId, String receiverId, String senderName, String receiverName, String message, String createdAt, String updatedAt, bool isRead
 });
 
 
@@ -65,7 +65,7 @@ class _$MessageParamsCopyWithImpl<$Res>
 
 /// Create a copy of MessageParams
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? chatId = null,Object? senderId = null,Object? receiverId = null,Object? senderName = null,Object? receiverName = null,Object? message = null,Object? createdAt = null,Object? updatedAt = null,Object? isRead = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? chatId = null,Object? senderId = null,Object? receiverId = null,Object? senderName = null,Object? receiverName = null,Object? message = null,Object? createdAt = null,Object? updatedAt = null,Object? isRead = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,chatId: null == chatId ? _self.chatId : chatId // ignore: cast_nullable_to_non_nullable
@@ -76,8 +76,8 @@ as String,receiverName: null == receiverName ? _self.receiverName : receiverName
 as String,message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as String,isRead: freezed == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable
-as bool?,
+as String,isRead: null == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -162,7 +162,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String chatId,  String senderId,  String receiverId,  String senderName,  String receiverName,  String message,  String createdAt,  String updatedAt,  bool? isRead)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String chatId,  String senderId,  String receiverId,  String senderName,  String receiverName,  String message,  String createdAt,  String updatedAt,  bool isRead)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MessageParams() when $default != null:
 return $default(_that.id,_that.chatId,_that.senderId,_that.receiverId,_that.senderName,_that.receiverName,_that.message,_that.createdAt,_that.updatedAt,_that.isRead);case _:
@@ -183,7 +183,7 @@ return $default(_that.id,_that.chatId,_that.senderId,_that.receiverId,_that.send
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String chatId,  String senderId,  String receiverId,  String senderName,  String receiverName,  String message,  String createdAt,  String updatedAt,  bool? isRead)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String chatId,  String senderId,  String receiverId,  String senderName,  String receiverName,  String message,  String createdAt,  String updatedAt,  bool isRead)  $default,) {final _that = this;
 switch (_that) {
 case _MessageParams():
 return $default(_that.id,_that.chatId,_that.senderId,_that.receiverId,_that.senderName,_that.receiverName,_that.message,_that.createdAt,_that.updatedAt,_that.isRead);case _:
@@ -203,7 +203,7 @@ return $default(_that.id,_that.chatId,_that.senderId,_that.receiverId,_that.send
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String chatId,  String senderId,  String receiverId,  String senderName,  String receiverName,  String message,  String createdAt,  String updatedAt,  bool? isRead)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String chatId,  String senderId,  String receiverId,  String senderName,  String receiverName,  String message,  String createdAt,  String updatedAt,  bool isRead)?  $default,) {final _that = this;
 switch (_that) {
 case _MessageParams() when $default != null:
 return $default(_that.id,_that.chatId,_that.senderId,_that.receiverId,_that.senderName,_that.receiverName,_that.message,_that.createdAt,_that.updatedAt,_that.isRead);case _:
@@ -218,7 +218,7 @@ return $default(_that.id,_that.chatId,_that.senderId,_that.receiverId,_that.send
 @JsonSerializable()
 
 class _MessageParams implements MessageParams {
-  const _MessageParams({required this.id, required this.chatId, required this.senderId, required this.receiverId, required this.senderName, required this.receiverName, required this.message, required this.createdAt, required this.updatedAt, this.isRead});
+  const _MessageParams({required this.id, required this.chatId, required this.senderId, required this.receiverId, required this.senderName, required this.receiverName, required this.message, required this.createdAt, required this.updatedAt, this.isRead = false});
   factory _MessageParams.fromJson(Map<String, dynamic> json) => _$MessageParamsFromJson(json);
 
 @override final  String id;
@@ -230,7 +230,7 @@ class _MessageParams implements MessageParams {
 @override final  String message;
 @override final  String createdAt;
 @override final  String updatedAt;
-@override final  bool? isRead;
+@override@JsonKey() final  bool isRead;
 
 /// Create a copy of MessageParams
 /// with the given fields replaced by the non-null parameter values.
@@ -265,7 +265,7 @@ abstract mixin class _$MessageParamsCopyWith<$Res> implements $MessageParamsCopy
   factory _$MessageParamsCopyWith(_MessageParams value, $Res Function(_MessageParams) _then) = __$MessageParamsCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String chatId, String senderId, String receiverId, String senderName, String receiverName, String message, String createdAt, String updatedAt, bool? isRead
+ String id, String chatId, String senderId, String receiverId, String senderName, String receiverName, String message, String createdAt, String updatedAt, bool isRead
 });
 
 
@@ -282,7 +282,7 @@ class __$MessageParamsCopyWithImpl<$Res>
 
 /// Create a copy of MessageParams
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? chatId = null,Object? senderId = null,Object? receiverId = null,Object? senderName = null,Object? receiverName = null,Object? message = null,Object? createdAt = null,Object? updatedAt = null,Object? isRead = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? chatId = null,Object? senderId = null,Object? receiverId = null,Object? senderName = null,Object? receiverName = null,Object? message = null,Object? createdAt = null,Object? updatedAt = null,Object? isRead = null,}) {
   return _then(_MessageParams(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,chatId: null == chatId ? _self.chatId : chatId // ignore: cast_nullable_to_non_nullable
@@ -293,8 +293,8 @@ as String,receiverName: null == receiverName ? _self.receiverName : receiverName
 as String,message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as String,isRead: freezed == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable
-as bool?,
+as String,isRead: null == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

@@ -18,6 +18,12 @@ abstract class ChatDatasource {
     DeleteMessageParams params,
   );
   Future<Either<Failure, MessageParams>> readMessage(MessageParams params);
+  Future<Either<Failure, void>> updateUnreadCount(
+    String chatId,
+    String userId,
+    int count,
+  );
+  Future<Either<Failure, Map<String, int>>> calculateUnreadCount(String chatId);
   Stream<List<MessageParams>> watchMessages(String chatId);
   Stream<List<ChatParams>> watchChats(String currentUserId);
 }
@@ -83,6 +89,9 @@ class ChatDatasourceImpl implements ChatDatasource {
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
+      // Update unread count for the receiver
+      await updateUnreadCount(chatId, params.receiverId, 1);
+
       getIt<Talker>().info('Message sent to chat $chatId: ${params.toJson()}');
 
       final updatedParams = params.copyWith(chatId: chatId);
@@ -109,25 +118,34 @@ class ChatDatasourceImpl implements ChatDatasource {
         return const Right([]);
       }
 
-      final chatList = chatsSnapshot.docs.map((doc) {
+      final chatList = <ChatParams>[];
+
+      for (final doc in chatsSnapshot.docs) {
         final data = doc.data();
-        return ChatParams(
-          id: doc.id,
-          fistUserName: data['fistUserName'] ?? 'Unknown',
-          secondUserName: data['secondUserName'] ?? 'Unknown',
-          firstUserId:
-              (data['participants'] != null && data['participants'].isNotEmpty)
-              ? data['participants'][0]
-              : '',
-          secondUserId:
-              (data['participants'] != null && data['participants'].length > 1)
-              ? data['participants'][1]
-              : '',
-          createdAt: _parseTimestamp(data['createdAt']),
-          lastMessage: data['lastMessage'] ?? '',
-          updatedAt: _parseTimestamp(data['updatedAt']),
+        final unreadCount = await calculateUnreadCount(doc.id);
+
+        chatList.add(
+          ChatParams(
+            id: doc.id,
+            fistUserName: data['fistUserName'] ?? 'Unknown',
+            secondUserName: data['secondUserName'] ?? 'Unknown',
+            firstUserId:
+                (data['participants'] != null &&
+                    data['participants'].isNotEmpty)
+                ? data['participants'][0]
+                : '',
+            secondUserId:
+                (data['participants'] != null &&
+                    data['participants'].length > 1)
+                ? data['participants'][1]
+                : '',
+            createdAt: _parseTimestamp(data['createdAt']),
+            lastMessage: data['lastMessage'] ?? '',
+            updatedAt: _parseTimestamp(data['updatedAt']),
+            unreadCount: unreadCount.fold((l) => {}, (r) => r),
+          ),
         );
-      }).toList();
+      }
 
       getIt<Talker>().info(
         'Loaded ${chatList.length} chats for $currentUserId',
@@ -195,7 +213,92 @@ class ChatDatasourceImpl implements ChatDatasource {
           .collection('messages')
           .doc(params.id)
           .update({'isRead': true});
+
+      // Update unread count for the receiver
+      await updateUnreadCount(params.chatId, params.receiverId, -1);
+
       return Right(params);
+    } catch (e) {
+      getIt<Talker>().handle(e);
+      return Left(Failure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> updateUnreadCount(
+    String chatId,
+    String userId,
+    int count,
+  ) async {
+    try {
+      final chatRef = _firestore.collection('chats').doc(chatId);
+      final chatDoc = await chatRef.get();
+
+      if (chatDoc.exists) {
+        final data = chatDoc.data()!;
+        final unreadCount = Map<String, int>.from(data['unreadCount'] ?? {});
+        final currentCount = unreadCount[userId] ?? 0;
+        final newCount = (currentCount + count)
+            .clamp(0, double.infinity)
+            .toInt();
+        unreadCount[userId] = newCount;
+
+        await chatRef.update({'unreadCount': unreadCount});
+      }
+
+      return const Right(null);
+    } catch (e) {
+      getIt<Talker>().handle(e);
+      return Left(Failure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Map<String, int>>> calculateUnreadCount(
+    String chatId,
+  ) async {
+    try {
+      final chatRef = _firestore.collection('chats').doc(chatId);
+      final chatDoc = await chatRef.get();
+
+      if (!chatDoc.exists) {
+        return const Right({});
+      }
+
+      final data = chatDoc.data()!;
+      final participants = List<String>.from(data['participants'] ?? []);
+
+      if (participants.isEmpty) {
+        return const Right({});
+      }
+
+      // Get all unread messages for this chat
+      final unreadMessages = await _firestore
+          .collection('chats')
+          .doc(chatId)
+          .collection('messages')
+          .where('isRead', isEqualTo: false)
+          .get();
+
+      // Count unread messages per user
+      final Map<String, int> unreadCount = {};
+      for (final participant in participants) {
+        unreadCount[participant] = 0;
+      }
+
+      for (final doc in unreadMessages.docs) {
+        final messageData = doc.data();
+        final receiverId = messageData['receiverId'] as String?;
+        if (receiverId != null && unreadCount.containsKey(receiverId)) {
+          unreadCount[receiverId] = (unreadCount[receiverId] ?? 0) + 1;
+        }
+      }
+
+      getIt<Talker>().info(
+        'Calculated unread count for chat $chatId: $unreadCount',
+      );
+
+      return Right(unreadCount);
     } catch (e) {
       getIt<Talker>().handle(e);
       return Left(Failure(message: e.toString()));
@@ -209,28 +312,37 @@ class ChatDatasourceImpl implements ChatDatasource {
         .where('participants', arrayContains: currentUserId)
         .orderBy('updatedAt', descending: true)
         .snapshots()
-        .map((snapshot) {
-          return snapshot.docs.map((doc) {
+        .asyncMap((snapshot) async {
+          final chatList = <ChatParams>[];
+
+          for (final doc in snapshot.docs) {
             final data = doc.data();
-            return ChatParams(
-              id: doc.id,
-              fistUserName: data['fistUserName'] ?? 'Unknown',
-              secondUserName: data['secondUserName'] ?? 'Unknown',
-              firstUserId:
-                  (data['participants'] != null &&
-                      data['participants'].isNotEmpty)
-                  ? data['participants'][0]
-                  : '',
-              secondUserId:
-                  (data['participants'] != null &&
-                      data['participants'].length > 1)
-                  ? data['participants'][1]
-                  : '',
-              createdAt: _parseTimestamp(data['createdAt']),
-              lastMessage: data['lastMessage'] ?? '',
-              updatedAt: _parseTimestamp(data['updatedAt']),
+            final unreadCount = await calculateUnreadCount(doc.id);
+
+            chatList.add(
+              ChatParams(
+                id: doc.id,
+                fistUserName: data['fistUserName'] ?? 'Unknown',
+                secondUserName: data['secondUserName'] ?? 'Unknown',
+                firstUserId:
+                    (data['participants'] != null &&
+                        data['participants'].isNotEmpty)
+                    ? data['participants'][0]
+                    : '',
+                secondUserId:
+                    (data['participants'] != null &&
+                        data['participants'].length > 1)
+                    ? data['participants'][1]
+                    : '',
+                createdAt: _parseTimestamp(data['createdAt']),
+                lastMessage: data['lastMessage'] ?? '',
+                updatedAt: _parseTimestamp(data['updatedAt']),
+                unreadCount: unreadCount.fold((l) => {}, (r) => r),
+              ),
             );
-          }).toList();
+          }
+
+          return chatList;
         });
   }
 
