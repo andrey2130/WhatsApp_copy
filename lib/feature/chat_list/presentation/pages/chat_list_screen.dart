@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/bloc/chats/chats_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/bloc/users/users_bloc.dart';
-import 'package:telegram_copy/feature/chat_list/presentation/pages/android_screen.dart';
-import 'package:telegram_copy/feature/chat_list/presentation/pages/ios_screen.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/pages/android/chat_list_android_screen.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/pages/ios/chat_list_ios_screen.dart';
 import 'package:telegram_copy/injections.dart';
 
 class ChatListScreen extends StatefulWidget {

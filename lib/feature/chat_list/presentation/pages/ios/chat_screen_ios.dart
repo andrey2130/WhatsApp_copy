@@ -114,7 +114,7 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
                       Container(
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: і('assets/images/whatsAppBack.jpg'),
+                            image: AssetImage('assets/images/whatsAppBack.jpg'),
                             fit: BoxFit.cover,
                           ),
                         ),
