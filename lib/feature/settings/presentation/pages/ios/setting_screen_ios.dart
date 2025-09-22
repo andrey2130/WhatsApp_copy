@@ -37,7 +37,7 @@ class _SettingScreenIosState extends State<SettingScreenIos> {
 
   Widget _buildMainContent(BuildContext context, SettingsState state) {
     if (state is Loading) {
-      return _buildLoadingState();
+      return Center(child: CircularProgressIndicator.adaptive());
     }
 
     if (state is Failure) {
@@ -45,10 +45,6 @@ class _SettingScreenIosState extends State<SettingScreenIos> {
     }
 
     return _buildSettingsContent(context, state);
-  }
-
-  Widget _buildLoadingState() {
-    return const Center(child: CircularProgressIndicator.adaptive());
   }
 
   void _showErrorSnackBar(BuildContext context, String error) {

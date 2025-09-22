@@ -1,15 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:talker_flutter/talker_flutter.dart';
+import 'package:telegram_copy/core/theme/text_style.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:telegram_copy/core/theme/app_colors.dart';
-import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
-import 'package:telegram_copy/core/utils/widgets/custom_textfield.dart';
-import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params/delete_messaga.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params/message.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/bloc/chats/chats_bloc.dart';
@@ -95,19 +95,7 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
           body: SafeArea(
             child: Column(
               children: [
-                CustomAppBar(
-                  leftWidget: IconButton(
-                    onPressed: () => context.pop(),
-                    icon: Icon(Icons.arrow_back),
-                  ),
-                  avatarWidget: CircleAvatar(
-                    backgroundImage: widget.avatarUrl != null
-                        ? NetworkImage(widget.avatarUrl!)
-                        : null,
-                    child: widget.avatarUrl == null ? Icon(Icons.person) : null,
-                  ),
-                  left2Widget: Text(widget.userName),
-                ),
+                _buildNavigationBar(),
                 Expanded(
                   child: Stack(
                     children: [
@@ -145,6 +133,67 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildNavigationBar() {
+    return CupertinoNavigationBar(
+      backgroundColor: Colors.white,
+      border: null,
+      padding: const EdgeInsetsDirectional.only(start: 0, end: 8),
+      leading: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => context.pop(),
+        child: const Icon(CupertinoIcons.back, size: 26),
+      ),
+      middle: Align(
+        alignment: Alignment.centerLeft,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircleAvatar(
+              radius: 18.r,
+              backgroundImage: widget.avatarUrl != null
+                  ? NetworkImage(widget.avatarUrl!)
+                  : null,
+              child: widget.avatarUrl == null
+                  ? const Icon(Icons.person, size: 18)
+                  : null,
+            ),
+            SizedBox(width: 8.w),
+            Flexible(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.userName,
+                    maxLines: 1,
+                    style: AppTextStyle.getRegularBlack().copyWith(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    'tap here for contact info',
+                    maxLines: 1,
+
+                    style: AppTextStyle.getGreySettingsText(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset('assets/icons/video_camera.svg'),
+          SizedBox(width: 16.w),
+          SvgPicture.asset('assets/icons/phone_icon.svg'),
+        ],
+      ),
     );
   }
 
@@ -207,55 +256,82 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
   Widget _buildMessageInput(TextEditingController messageController) {
     return Container(
       color: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 8.h),
       child: Row(
         children: [
+          CupertinoButton(
+            padding: EdgeInsets.zero,
+            onPressed: () {},
+            child: const Icon(
+              CupertinoIcons.add,
+              size: 32,
+              color: Colors.black,
+            ),
+          ),
+          SizedBox(width: 6.w),
           Expanded(
-            child: CustomTextField(
+            child: CupertinoTextField(
               controller: messageController,
-              hintText: 'Message',
-              prefixIcon: Icon(Icons.emoji_emotions_outlined),
-              sufixIcon: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.attach_file),
-                    padding: EdgeInsets.zero,
-                    constraints: BoxConstraints(),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.camera_alt),
-                    padding: EdgeInsets.zero,
-                    constraints: BoxConstraints(),
-                  ),
-                ],
+              placeholder: 'Message',
+              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(22.r),
+                border: Border.all(color: Colors.black12),
+              ),
+              cursorColor: Colors.black,
+              onChanged: (_) => setState(() {}),
+              onSubmitted: (value) => _sendMessage(value, messageController),
+              suffix: Padding(
+                padding: EdgeInsets.only(right: 8.w),
+                child: CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () {},
+                  child: SvgPicture.asset('assets/icons/sufix_icon.svg'),
+                ),
               ),
             ),
           ),
-          SizedBox(width: 8.w),
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.primaryGreen,
-              borderRadius: BorderRadius.circular(28.r),
-            ),
-            child: BlocBuilder<AuthBloc, AuthBlocState>(
-              builder: (context, authState) {
-                authState.maybeWhen(
-                  authenticated: (userId) => userId,
-                  orElse: () => null,
-                );
-
-                return IconButton(
-                  color: Colors.white,
+          SizedBox(width: 10.w),
+          messageController.text.isEmpty
+              ? Row(
+                  children: [
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {},
+                      child: const Icon(
+                        CupertinoIcons.camera,
+                        color: Colors.black,
+                        size: 22,
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {},
+                      child: const Icon(
+                        CupertinoIcons.mic_solid,
+                        color: Colors.black,
+                        size: 22,
+                      ),
+                    ),
+                  ],
+                )
+              : CupertinoButton(
+                  padding: EdgeInsets.zero,
                   onPressed: () =>
                       _sendMessage(messageController.text, messageController),
-                  icon: Icon(Icons.send),
-                );
-              },
-            ),
-          ),
+                  child: Container(
+                    width: 32.w,
+                    height: 32.w,
+                    decoration: BoxDecoration(
+                      color: AppColors.buttonGreen,
+                      shape: BoxShape.circle,
+                    ),
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset('assets/icons/send_icon.svg'),
+                  ),
+                ),
         ],
       ),
     );

@@ -10,4 +10,5 @@ class AppColors {
   static const thumbColor = Color.fromARGB(255, 255, 255, 255);
   static const iconGrey = Color(0xFFB2B2B2);
   static const messageBubleColor = Color(0xFFD0FECF);
+  static const buttonGreen = Color(0xFF1DAB61);
 }
