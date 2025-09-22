@@ -8,7 +8,8 @@ import 'package:telegram_copy/feature/auth/pages/screens/sign_via_phone.dart';
 import 'package:telegram_copy/feature/auth/pages/screens/sign_in_screen.dart';
 import 'package:telegram_copy/feature/auth/pages/screens/opt_screen.dart';
 import 'package:telegram_copy/feature/auth/pages/screens/register_screen.dart';
-import 'package:telegram_copy/feature/chat_list/presentation/pages/chat_list_screen.dart';
+
+import 'package:telegram_copy/feature/chat_list/presentation/pages/main_screen.dart';
 import 'package:telegram_copy/feature/settings/presentation/pages/about_screen.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/pages/chat_screen.dart';
 import 'package:telegram_copy/feature/settings/presentation/pages/change_user_name.dart';
@@ -42,7 +43,7 @@ final GoRouter appRouter = GoRouter(
         );
       },
     ),
-    GoRoute(path: '/home', builder: (context, state) => const ChatListScreen()),
+    GoRoute(path: '/home', builder: (context, state) => const MainScreen()),
     GoRoute(
       path: '/email_auth',
       builder: (context, state) => const EmailAuthScreen(),

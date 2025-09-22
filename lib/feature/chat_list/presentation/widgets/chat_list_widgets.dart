@@ -29,63 +29,79 @@ class ChatListWidgets extends StatelessWidget {
   }
 
   Widget _buildChatItem(BuildContext context, String currentUserId) {
-    return UserListItem(
-      onTap: () {
-        // Navigate to chat screen
-        context.push(
-          '/chat_list/user/${chat.id}',
-          extra: {
-            'name': getDisplayName(currentUserId),
-            'conversationId': chat.id,
-            'photoUrl': '',
-            'receiverIds': [getReceiverId(currentUserId)],
+    return Column(
+      children: [
+        UserListItem(
+          onTap: () {
+            // Navigate to chat screen
+            context.push(
+              '/chat_list/user/${chat.id}',
+              extra: {
+                'name': getDisplayName(currentUserId),
+                'conversationId': chat.id,
+                'photoUrl': '',
+                'receiverIds': [getReceiverId(currentUserId)],
+              },
+            );
           },
-        );
-      },
-      leading: Container(
-        width: 50.r,
-        height: 50.r,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(27.5.r),
-          border: Border.all(color: AppColors.borderColor),
+          leading: Container(
+            width: 50.r,
+            height: 50.r,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(27.5.r),
+              border: Border.all(color: AppColors.borderColor),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(27.5.r),
+              child: Icon(Icons.person, color: Colors.black, size: 24.r),
+            ),
+          ),
+          title: Text(
+            getDisplayName(currentUserId),
+            style: AppTextStyle.getRegularBlack().copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          subtitle: Text(
+            '${chat.lastMessage}',
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyle.getFilterText(),
+          ),
+          meta: Text(
+            _formatTime(chat.updatedAt),
+            style: AppTextStyle.getFilterText().copyWith(
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF959595),
+            ),
+          ),
+          badge:
+              chat.unreadCount[currentUserId] != null &&
+                  chat.unreadCount[currentUserId]! > 0
+              ? Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryGreen,
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: Text(
+                    chat.unreadCount[currentUserId]!.toString(),
+                    style: AppTextStyle.getRegularBlack().copyWith(
+                      fontSize: 12.sp,
+                    ),
+                  ),
+                )
+              : null,
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(27.5.r),
-          child: Icon(Icons.person, color: Colors.black, size: 24.r),
+        Padding(
+          padding: EdgeInsets.only(left: 62.w),
+          child: Divider(
+            height: 1,
+            thickness: 0.5,
+            color: AppColors.borderColor,
+          ),
         ),
-      ),
-      title: Text(
-        getDisplayName(currentUserId),
-        style: AppTextStyle.getRegularBlack(),
-      ),
-      subtitle: Text(
-        '${chat.lastMessage}',
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        style: AppTextStyle.getFilterText(),
-      ),
-      meta: Text(
-        _formatTime(chat.updatedAt),
-        style: AppTextStyle.getFilterText().copyWith(
-          fontWeight: FontWeight.w600,
-          color: const Color(0xFF959595),
-        ),
-      ),
-      badge:
-          chat.unreadCount[currentUserId] != null &&
-              chat.unreadCount[currentUserId]! > 0
-          ? Container(
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-              decoration: BoxDecoration(
-                color: AppColors.primaryGreen,
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Text(
-                chat.unreadCount[currentUserId]!.toString(),
-                style: AppTextStyle.getRegularBlack().copyWith(fontSize: 12.sp),
-              ),
-            )
-          : null,
+      ],
     );
   }
 
