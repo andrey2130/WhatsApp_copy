@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/pages/chat_list_screen.dart';
-import 'package:telegram_copy/feature/settings/presentation/pages/ios/setting_screen_ios.dart';
+import 'package:telegram_copy/feature/settings/presentation/pages/setting_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -22,7 +22,7 @@ class _MainScreenState extends State<MainScreen> {
         children: const [
           CommunitiesScreen(),
           ChatListScreen(),
-          SettingScreenIos(),
+          SettingScreen(),
         ],
       ),
       bottomNavigationBar: Platform.isAndroid
