@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:telegram_copy/core/theme/app_colors.dart';
+import 'package:telegram_copy/core/theme/text_style.dart';
 
 class MessageBuble extends StatelessWidget {
   const MessageBuble({
@@ -10,6 +13,7 @@ class MessageBuble extends StatelessWidget {
     this.messageId,
     this.doubleTap,
     this.id,
+    this.isRead = false,
   });
   final String? id;
   final String message;
@@ -17,7 +21,7 @@ class MessageBuble extends StatelessWidget {
   final String? time;
   final String? messageId;
   final VoidCallback? doubleTap;
-
+  final bool isRead;
   @override
   Widget build(BuildContext context) {
     return Align(
@@ -33,7 +37,7 @@ class MessageBuble extends StatelessWidget {
           ),
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
           decoration: BoxDecoration(
-            color: isMe ? const Color(0xFFDCF8C6) : Colors.white,
+            color: isMe ? AppColors.messageBubleColor : AppColors.whiteColor,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(8.r),
               topRight: Radius.circular(8.r),
@@ -51,24 +55,31 @@ class MessageBuble extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                message,
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  color: Colors.black87,
-                  height: 1.3,
-                ),
+              Text(message, style: AppTextStyle.getMessageBubleText()),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  if (time != null) ...[
+                    SizedBox(height: 2.h),
+                    Text(
+                      time!,
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    if (isMe) ...[
+                      SvgPicture.asset(
+                        'assets/icons/check_mark.svg',
+                        colorFilter: ColorFilter.mode(
+                          isRead ? AppColors.primaryBlue : AppColors.iconGrey,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                    ],
+                  ],
+                ],
               ),
-              if (time != null) ...[
-                SizedBox(height: 2.h),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: Text(
-                    time!,
-                    style: TextStyle(fontSize: 11.sp, color: Colors.grey[600]),
-                  ),
-                ),
-              ],
             ],
           ),
         ),

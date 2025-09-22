@@ -194,6 +194,7 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
             message: message.message,
             isMe: isMe,
             time: _dateFormat(message.createdAt),
+            isRead: message.isRead,
             doubleTap: () {
               _deleteMessage(message.id);
             },
