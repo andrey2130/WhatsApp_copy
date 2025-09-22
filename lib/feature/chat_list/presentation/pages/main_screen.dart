@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/pages/chat_list_screen.dart';
-import 'package:telegram_copy/feature/settings/presentation/pages/setting_screen.dart';
+import 'package:telegram_copy/feature/settings/presentation/pages/ios/setting_screen_ios.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -22,7 +22,7 @@ class _MainScreenState extends State<MainScreen> {
         children: const [
           CommunitiesScreen(),
           ChatListScreen(),
-          SettingScreen(),
+          SettingScreenIos(),
         ],
       ),
       bottomNavigationBar: Platform.isAndroid
@@ -54,9 +54,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _buildBottomNavBarIos() {
-    return BottomNavigationBar(
-      selectedItemColor: Colors.black,
-      selectedIconTheme: IconThemeData(color: Colors.black),
+    return CupertinoTabBar(
       currentIndex: _currentIndex,
       onTap: (index) {
         setState(() {

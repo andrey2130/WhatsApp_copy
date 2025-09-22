@@ -35,6 +35,24 @@ class AppTextStyle {
     );
   }
 
+static TextStyle getSettingsText() {
+    return TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      fontFamily: 'SF Pro Text',
+      color: Color(0xFF0A0A0A),
+    );
+  }
+
+  static TextStyle getGreySettingsText() {
+    return TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      fontFamily: 'SF Pro Text',
+      color: Color(0xFF767779),
+    );
+  }
+
   static TextStyle getSubtitle() {
     return const TextStyle(
       fontSize: 16,

@@ -10,11 +10,11 @@ import 'package:telegram_copy/feature/auth/pages/screens/opt_screen.dart';
 import 'package:telegram_copy/feature/auth/pages/screens/register_screen.dart';
 
 import 'package:telegram_copy/feature/chat_list/presentation/pages/main_screen.dart';
-import 'package:telegram_copy/feature/settings/presentation/pages/about_screen.dart';
+import 'package:telegram_copy/feature/settings/presentation/pages/ios/about_screen_ios.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/pages/chat_screen.dart';
-import 'package:telegram_copy/feature/settings/presentation/pages/change_user_name.dart';
-import 'package:telegram_copy/feature/settings/presentation/pages/setting_screen.dart';
-import 'package:telegram_copy/feature/settings/presentation/pages/user_setting_screen.dart';
+import 'package:telegram_copy/feature/settings/presentation/pages/ios/change_user_name_ios.dart';
+import 'package:telegram_copy/feature/settings/presentation/pages/ios/setting_screen_ios.dart';
+import 'package:telegram_copy/feature/settings/presentation/pages/ios/user_setting_screen_ios.dart';
 import 'package:telegram_copy/injections.dart';
 
 class OtpRouteData {
@@ -54,15 +54,15 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/settings',
-      builder: (context, state) => const SettingScreen(),
+      builder: (context, state) => const SettingScreenIos(),
     ),
     GoRoute(
       path: '/settings/user',
-      builder: (context, state) => const UserSettingScreen(),
+      builder: (context, state) => const UserSettingScreenIos(),
     ),
     GoRoute(
       path: '/settings/user/change_name',
-      builder: (context, state) => const ChangeUserName(),
+      builder: (context, state) => const ChangeUserNameIos(),
     ),
     GoRoute(
       path: '/chat_list/user/:uid',
@@ -108,7 +108,7 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/settings/user/about',
-      builder: (context, state) => const AboutScreen(),
+      builder: (context, state) => const AboutScreenIos(),
     ),
   ],
   onException: (context, state, router) {

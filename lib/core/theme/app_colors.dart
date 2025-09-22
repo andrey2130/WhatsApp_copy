@@ -7,4 +7,5 @@ class AppColors {
   static const borderColor = Color(0xFFD8D8D8);
   static const errorColor = Color(0xFFFF3B30);
   static const thumbColor = Color.fromARGB(255, 255, 255, 255);
+  static const iconGrey = Color(0xFFB2B2B2);
 }
