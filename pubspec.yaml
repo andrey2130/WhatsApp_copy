@@ -38,6 +38,7 @@ dependencies:
   talker_flutter: ^5.0.0
   visibility_detector: ^0.4.0+2
   flutter_svg: ^2.2.1
+  swipe_to: ^1.0.6
   
   
 

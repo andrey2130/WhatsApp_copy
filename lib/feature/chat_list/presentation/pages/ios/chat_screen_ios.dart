@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/widgets/reply_message.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:telegram_copy/core/theme/app_colors.dart';
@@ -40,6 +41,9 @@ class ChatScreenIos extends StatefulWidget {
 class _ChatScreenIosState extends State<ChatScreenIos> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
+  bool _isReply = false;
+  final FocusNode _focusNode = FocusNode();
+  MessageParams? _replyToMessage;
 
   @override
   void initState() {
@@ -57,6 +61,7 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
   void dispose() {
     _scrollController.dispose();
     _messageController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -123,7 +128,12 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
                         bottom: 0,
                         left: 0,
                         right: 0,
-                        child: _buildMessageInput(_messageController),
+                        child: _buildMessageInput(
+                          _messageController,
+                          _focusNode,
+                          _replyToMessage,
+                          _isReply,
+                        ),
                       ),
                     ],
                   ),
@@ -227,6 +237,16 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
       itemBuilder: (context, index) {
         final message = messages[index];
         final isMe = message.senderId == widget.userId;
+        MessageParams? replyAuthor;
+        if (message.replyToMessageId != null) {
+          try {
+            replyAuthor = messages.firstWhere(
+              (m) => m.id == message.replyToMessageId,
+            );
+          } catch (_) {
+            replyAuthor = null;
+          }
+        }
 
         return VisibilityDetector(
           key: Key(message.id),
@@ -238,12 +258,16 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
             }
           },
           child: MessageBuble(
+            swipe: (details) => _replyMessage(message),
             id: message.id,
             messageId: message.id,
             message: message.message,
             isMe: isMe,
             time: _dateFormat(message.createdAt),
             isRead: message.isRead,
+            isReply: message.replyToMessageId != null,
+            replyAuthor: replyAuthor,
+            repliedText: message.replyText,
             doubleTap: () {
               _deleteMessage(message.id);
             },
@@ -253,85 +277,125 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
     );
   }
 
-  Widget _buildMessageInput(TextEditingController messageController) {
+  void _replyMessage(MessageParams message) {
+    setState(() {
+      _isReply = true;
+      _replyToMessage = message;
+      _focusNode.requestFocus();
+    });
+  }
+
+  Widget _buildMessageInput(
+    TextEditingController messageController,
+    FocusNode focusNode,
+    MessageParams? message,
+    bool isReply,
+  ) {
     return Container(
       color: Colors.white,
       padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 8.h),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          CupertinoButton(
-            padding: EdgeInsets.zero,
-            onPressed: () {},
-            child: const Icon(
-              CupertinoIcons.add,
-              size: 32,
-              color: Colors.black,
+          if (isReply)
+            ReplyMessageWidget(
+              message: _replyToMessage!,
+              onTap: () {
+                setState(() {
+                  _isReply = false;
+                  _replyToMessage = null;
+                });
+              },
             ),
-          ),
-          SizedBox(width: 6.w),
-          Expanded(
-            child: CupertinoTextField(
-              controller: messageController,
-              placeholder: 'Message',
-              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(22.r),
-                border: Border.all(color: Colors.black12),
-              ),
-              cursorColor: Colors.black,
-              onChanged: (_) => setState(() {}),
-              onSubmitted: (value) => _sendMessage(value, messageController),
-              suffix: Padding(
-                padding: EdgeInsets.only(right: 8.w),
-                child: CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {},
-                  child: SvgPicture.asset('assets/icons/sufix_icon.svg'),
+          if (isReply) SizedBox(height: 8.h),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                onPressed: () {},
+                child: const Icon(
+                  CupertinoIcons.add,
+                  size: 32,
+                  color: Colors.black,
                 ),
               ),
-            ),
-          ),
-          SizedBox(width: 10.w),
-          messageController.text.isEmpty
-              ? Row(
-                  children: [
-                    CupertinoButton(
+              SizedBox(width: 6.w),
+              Expanded(
+                child: CupertinoTextField(
+                  maxLines: null,
+                  focusNode: focusNode,
+                  controller: messageController,
+                  placeholder: 'Message',
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 14.w,
+                    vertical: 12.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(22.r),
+                    border: Border.fromBorderSide(
+                      BorderSide(color: Colors.black12),
+                    ),
+                  ),
+                  cursorColor: Colors.black,
+                  onChanged: (_) => setState(() {}),
+                  onSubmitted: (value) =>
+                      _sendMessage(value, messageController),
+                  suffix: Padding(
+                    padding: EdgeInsets.only(right: 8.w),
+                    child: CupertinoButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {},
-                      child: const Icon(
-                        CupertinoIcons.camera,
-                        color: Colors.black,
-                        size: 22,
-                      ),
+                      child: SvgPicture.asset('assets/icons/sufix_icon.svg'),
                     ),
-                    SizedBox(width: 10.w),
-                    CupertinoButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: () {},
-                      child: const Icon(
-                        CupertinoIcons.mic_solid,
-                        color: Colors.black,
-                        size: 22,
-                      ),
-                    ),
-                  ],
-                )
-              : CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () =>
-                      _sendMessage(messageController.text, messageController),
-                  child: Container(
-                    width: 32.w,
-                    height: 32.w,
-                    decoration: BoxDecoration(
-                      color: AppColors.buttonGreen,
-                      shape: BoxShape.circle,
-                    ),
-                    alignment: Alignment.center,
-                    child: SvgPicture.asset('assets/icons/send_icon.svg'),
                   ),
                 ),
+              ),
+              SizedBox(width: 10.w),
+              messageController.text.isEmpty
+                  ? Row(
+                      children: [
+                        CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: () {},
+                          child: const Icon(
+                            CupertinoIcons.camera,
+                            color: Colors.black,
+                            size: 22,
+                          ),
+                        ),
+                        SizedBox(width: 10.w),
+                        CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: () {},
+                          child: const Icon(
+                            CupertinoIcons.mic_solid,
+                            color: Colors.black,
+                            size: 22,
+                          ),
+                        ),
+                      ],
+                    )
+                  : CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () => _sendMessage(
+                        messageController.text,
+                        messageController,
+                      ),
+                      child: Container(
+                        width: 32.w,
+                        height: 32.w,
+                        decoration: BoxDecoration(
+                          color: AppColors.buttonGreen,
+                          shape: BoxShape.circle,
+                        ),
+                        alignment: Alignment.center,
+                        child: SvgPicture.asset('assets/icons/send_icon.svg'),
+                      ),
+                    ),
+            ],
+          ),
         ],
       ),
     );
@@ -340,11 +404,13 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
   void _sendMessage(String message, TextEditingController messageController) {
     if (message.trim().isEmpty) return;
 
+    final String newMessageId = const Uuid().v4();
+
     context.read<ChatsBloc>().add(
       ChatsEvent.sendMessage(
         MessageParams(
-          id: const Uuid().v4(),
-          senderName: _getCurrentUserName(),
+          id: newMessageId,
+          senderName: widget.userName,
           receiverName: widget.userName,
           message: message.trim(),
           senderId: widget.userId,
@@ -352,11 +418,17 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
           chatId: widget.conversationId,
           createdAt: DateTime.now().toIso8601String(),
           updatedAt: DateTime.now().toIso8601String(),
+          replyToMessageId: _replyToMessage?.id,
+          replyText: _replyToMessage?.message,
         ),
       ),
     );
 
     messageController.clear();
+    setState(() {
+      _isReply = false;
+      _replyToMessage = null;
+    });
     _scrollToBottom();
   }
 
@@ -387,14 +459,6 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
           senderId: widget.userId,
         ),
       ),
-    );
-  }
-
-  String _getCurrentUserName() {
-    final settingsState = context.read<SettingsBloc>().state;
-    return settingsState.maybeWhen(
-      success: (user) => user.name.isNotEmpty ? user.name : 'Unknown User',
-      orElse: () => 'Unknown User',
     );
   }
 

@@ -11,4 +11,6 @@ class AppColors {
   static const iconGrey = Color(0xFFB2B2B2);
   static const messageBubleColor = Color(0xFFD0FECF);
   static const buttonGreen = Color(0xFF1DAB61);
+  static const replyBorderColor = Color(0xFFD42A66);
+  static const inputBorderColor = Color(0xFFB2B2B2);
 }

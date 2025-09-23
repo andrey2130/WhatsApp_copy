@@ -16,6 +16,9 @@ abstract class MessageParams with _$MessageParams {
     required String createdAt,
     required String updatedAt,
     @Default(false) bool isRead,
+    String? replyToMessageId,
+    String? replyText,
+    
   }) = _MessageParams;
 
   factory MessageParams.fromJson(Map<String, dynamic> json) =>
