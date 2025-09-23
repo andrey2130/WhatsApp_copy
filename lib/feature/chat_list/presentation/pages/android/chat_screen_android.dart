@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:talker_flutter/talker_flutter.dart';
-import 'package:uuid/uuid.dart';
 
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
@@ -112,9 +111,6 @@ class _ChatScreenAndroidState extends State<ChatScreenAndroid> {
       },
     );
   }
-
-
-
 
   Widget _buildAppBar() {
     return CustomAppBar(
@@ -278,20 +274,13 @@ class _ChatScreenAndroidState extends State<ChatScreenAndroid> {
   void _sendMessage(String message, TextEditingController messageController) {
     if (message.trim().isEmpty) return;
 
-    context.read<ChatsBloc>().add(
-      ChatsEvent.sendMessage(
-        MessageParams(
-          id: const Uuid().v4(),
-          senderName: _getCurrentUserName(),
-          receiverName: widget.userName,
-          message: message.trim(),
-          senderId: widget.userId,
-          receiverId: widget.receiverIds.first,
-          chatId: widget.conversationId,
-          createdAt: DateTime.now().toIso8601String(),
-          updatedAt: DateTime.now().toIso8601String(),
-        ),
-      ),
+    context.read<ChatsBloc>().requestSendMessage(
+      chatId: widget.conversationId,
+      senderId: widget.userId,
+      receiverId: widget.receiverIds.first,
+      senderName: _getCurrentUserName(),
+      receiverName: widget.userName,
+      message: message,
     );
 
     messageController.clear();

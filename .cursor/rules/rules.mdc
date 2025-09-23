@@ -1,0 +1,39 @@
+---
+description: 
+Architecture & Structure
+	•	Clean Architecture: Separate layers clearly: domain, data, presentation.
+	•	Domain Layer: Contains business logic (UseCase, Entities).
+	•	Data Layer: Implements data sources (Firebase, Firestore, API, local storage) via Repositories and DataSources.
+	•	Presentation Layer: UI widgets, screens, state management (Bloc/Cubit).
+	•	Bloc / Cubit: All state management goes through flutter_bloc; UI should be “dumb” and only render state.
+	•	Navigation: Use only go_router for routing, avoid direct Navigator calls.
+
+Principles
+	•	Follow SOLID principles strictly.
+	•	Avoid code duplication (DRY).
+	•	Business logic should never depend on UI.
+	•	Use dependency injection with get_it + injectable.
+	•	Use freezed + json_serializable for immutable models and serialization.
+	•	Use dartz for functional error handling and Either types.
+	•	Write unit tests for UseCases and Repositories.
+
+Packages & Usage
+	•	firebase_core, firebase_auth, cloud_firestore: Implement authentication and Firestore data sources.
+	•	flutter_screenutil: Responsive layouts.
+	•	phone_text_field, intl_phone_field, pin_code_fields: Consistent phone input and verification.
+	•	flutter_hooks: Hooks for cleaner widget state handling.
+	•	talker, talker_flutter: Centralized logging and error handling.
+	•	flutter_svg: Use for scalable vector assets.
+	•	swipe_to: Swipe gestures where applicable.
+	•	visibility_detector: Track widget visibility for analytics or lazy-loading.
+
+Code Style & Qualit
+	• UI must be lightweight; avoid embedding business logic in widgets.
+	• Create utility functions for repeated patterns (validation, formatting, constants).
+	•	Keep dependencies explicit and inject wherever possible.
+	•	Maintain readability; code should be self-documenting.
+	•	Use build_runner for code generation.
+
+globs:
+alwaysApply: true
+---

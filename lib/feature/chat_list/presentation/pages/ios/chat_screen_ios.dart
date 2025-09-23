@@ -3,13 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:talker_flutter/talker_flutter.dart';
+import 'package:telegram_copy/core/utils/date_formatter.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/chat_navigation_bar.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_input.dart';
 import 'package:telegram_copy/injections.dart';
-import 'package:uuid/uuid.dart';
-import 'package:telegram_copy/feature/chat_list/domain/params/message_params/delete_messaga.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params/message.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/bloc/chats/chats_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_buble.dart';
@@ -257,7 +255,7 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
               messageId: message.id,
               message: message.message,
               isMe: isMe,
-              time: _dateFormat(message.createdAt),
+              time: DateFormatter.timeHm(message.createdAt),
               isRead: message.isRead,
               isReply: message.replyToMessageId != null,
               replyAuthor: replyAuthor,
@@ -283,24 +281,15 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
   void _sendMessage(String message, TextEditingController messageController) {
     if (message.trim().isEmpty) return;
 
-    final String newMessageId = const Uuid().v4();
-
-    context.read<ChatsBloc>().add(
-      ChatsEvent.sendMessage(
-        MessageParams(
-          id: newMessageId,
-          senderName: widget.userName,
-          receiverName: widget.userName,
-          message: message.trim(),
-          senderId: widget.userId,
-          receiverId: widget.receiverIds.first,
-          chatId: widget.conversationId,
-          createdAt: DateTime.now().toIso8601String(),
-          updatedAt: DateTime.now().toIso8601String(),
-          replyToMessageId: _replyToMessage?.id,
-          replyText: _replyToMessage?.message,
-        ),
-      ),
+    context.read<ChatsBloc>().requestSendMessage(
+      chatId: widget.conversationId,
+      senderId: widget.userId,
+      receiverId: widget.receiverIds.first,
+      senderName: widget.userName,
+      receiverName: widget.userName,
+      message: message,
+      replyToMessageId: _replyToMessage?.id,
+      replyText: _replyToMessage?.message,
     );
 
     messageController.clear();
@@ -325,19 +314,11 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
     }
   }
 
-  String _dateFormat(String date) {
-    return DateFormat('HH:mm').format(DateTime.parse(date));
-  }
-
   void _deleteMessage(String messageId) {
-    context.read<ChatsBloc>().add(
-      ChatsEvent.deleteMessage(
-        DeleteMessageParams(
-          messageId: messageId,
-          chatId: widget.conversationId,
-          senderId: widget.userId,
-        ),
-      ),
+    context.read<ChatsBloc>().requestDeleteMessage(
+      chatId: widget.conversationId,
+      senderId: widget.userId,
+      messageId: messageId,
     );
   }
 
