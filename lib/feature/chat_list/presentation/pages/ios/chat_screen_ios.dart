@@ -1,21 +1,17 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:talker_flutter/talker_flutter.dart';
-import 'package:uuid/uuid.dart';
-
-import 'package:telegram_copy/core/theme/app_colors.dart';
-import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
-import 'package:telegram_copy/core/utils/widgets/custom_textfield.dart';
-import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
-import 'package:telegram_copy/feature/chat_list/domain/params/message_params/delete_messaga.dart';
+import 'package:telegram_copy/core/utils/date_formatter.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/widgets/chat_navigation_bar.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_input.dart';
+import 'package:telegram_copy/injections.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params/message.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/bloc/chats/chats_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_buble.dart';
 import 'package:telegram_copy/feature/settings/presentation/bloc/settings_bloc.dart';
-import 'package:telegram_copy/injections.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class ChatScreenIos extends StatefulWidget {
@@ -40,6 +36,21 @@ class ChatScreenIos extends StatefulWidget {
 class _ChatScreenIosState extends State<ChatScreenIos> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+  final Map<String, GlobalKey> _messageKeys = {};
+
+  bool _isReply = false;
+  MessageParams? _replyToMessage;
+  String? _highlightMessageId;
+  bool _suppressAutoScroll = false;
+  static const double _autoScrollThreshold = 120.0;
+
+  bool _isNearBottom() {
+    if (!_scrollController.hasClients) return true;
+    final max = _scrollController.position.maxScrollExtent;
+    final offset = _scrollController.offset;
+    return (max - offset) <= _autoScrollThreshold;
+  }
 
   @override
   void initState() {
@@ -57,6 +68,7 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
   void dispose() {
     _scrollController.dispose();
     _messageController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -66,13 +78,20 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
       listener: (context, state) {
         state.maybeWhen(
           loaded: (chats) {
-            _scrollToBottom();
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _scrollToBottom();
+            });
           },
           messagesLoaded: (messages) {
-            _scrollToBottom();
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _scrollToBottom();
+            });
+            _suppressAutoScroll = false;
           },
           chatWithMessages: (chats, messages) {
-            _scrollToBottom();
+            if (!_suppressAutoScroll && _isNearBottom()) {
+              _scrollToBottom();
+            }
           },
           loading: () {
             Center(child: CircularProgressIndicator.adaptive());
@@ -95,18 +114,10 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
           body: SafeArea(
             child: Column(
               children: [
-                CustomAppBar(
-                  leftWidget: IconButton(
-                    onPressed: () => context.pop(),
-                    icon: Icon(Icons.arrow_back),
-                  ),
-                  avatarWidget: CircleAvatar(
-                    backgroundImage: widget.avatarUrl != null
-                        ? NetworkImage(widget.avatarUrl!)
-                        : null,
-                    child: widget.avatarUrl == null ? Icon(Icons.person) : null,
-                  ),
-                  left2Widget: Text(widget.userName),
+                ChatNavigationBar(
+                  userName: widget.userName,
+                  avatarUrl: widget.avatarUrl,
+                  onBack: () => context.pop(),
                 ),
                 Expanded(
                   child: Stack(
@@ -123,11 +134,12 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
                             child: CircularProgressIndicator.adaptive(),
                           ),
                           error: (message) => Center(child: Text(message)),
-                          loaded: (chats) => _buildMessagesList(),
-                          messagesLoaded: (messages) => _buildMessagesList(),
+                          loaded: (chats) => _buildMessagesListView([]),
+                          messagesLoaded: (messages) =>
+                              _buildMessagesListView(messages),
                           chatWithMessages: (chats, messages) =>
-                              _buildMessagesList(),
-                          success: () => _buildMessagesList(),
+                              _buildMessagesListView(messages),
+                          success: () => _buildMessagesListView([]),
                           orElse: () => const SizedBox.shrink(),
                         ),
                       ),
@@ -135,7 +147,21 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
                         bottom: 0,
                         left: 0,
                         right: 0,
-                        child: _buildMessageInput(_messageController),
+                        child: MessageInput(
+                          messageController: _messageController,
+                          focusNode: _focusNode,
+                          isReply: _isReply,
+                          replyToMessage: _replyToMessage,
+                          onClearReply: () {
+                            setState(() {
+                              _isReply = false;
+                              _replyToMessage = null;
+                            });
+                          },
+                          onChanged: (_) => setState(() {}),
+                          onSubmit: (value) =>
+                              _sendMessage(value, _messageController),
+                        ),
                       ),
                     ],
                   ),
@@ -148,25 +174,35 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
     );
   }
 
-  Widget _buildMessagesList() {
-    return BlocBuilder<ChatsBloc, ChatsState>(
-      builder: (context, state) {
-        return state.maybeWhen(
-          messagesLoaded: (messages) => _buildMessagesListView(messages),
-          chatWithMessages: (chats, messages) =>
-              _buildMessagesListView(messages),
-          success: () => _buildMessagesListView([]),
-          loading: () => const SizedBox.shrink(),
-          error: (message) => const SizedBox.shrink(),
-          orElse: () => const SizedBox.shrink(),
-        );
-      },
-    );
+  void _scrollToMessage(String id) {
+    final key = _messageKeys[id];
+    final ctx = key?.currentContext;
+    if (ctx != null) {
+      _suppressAutoScroll = true;
+      Scrollable.ensureVisible(
+        ctx,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        alignment: 0.5,
+      ).then((_) {
+        setState(() {
+          _highlightMessageId = id;
+        });
+        Future.delayed(const Duration(milliseconds: 900), () {
+          if (mounted && _highlightMessageId == id) {
+            setState(() {
+              _highlightMessageId = null;
+              _suppressAutoScroll = false;
+            });
+          }
+        });
+      });
+    }
   }
 
   Widget _buildMessagesListView(List<MessageParams> messages) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (messages.isNotEmpty) {
+      if (!_suppressAutoScroll && messages.isNotEmpty && _isNearBottom()) {
         _scrollToBottom();
       }
     });
@@ -178,7 +214,17 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
       itemBuilder: (context, index) {
         final message = messages[index];
         final isMe = message.senderId == widget.userId;
-
+        MessageParams? replyAuthor;
+        if (message.replyToMessageId != null) {
+          try {
+            replyAuthor = messages.firstWhere(
+              (m) => m.id == message.replyToMessageId,
+            );
+          } catch (_) {
+            replyAuthor = null;
+          }
+        }
+        final key = _messageKeys.putIfAbsent(message.id, () => GlobalKey());
         return VisibilityDetector(
           key: Key(message.id),
           onVisibilityChanged: (visibility) {
@@ -188,98 +234,69 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
               _readMessage(message);
             }
           },
-          child: MessageBuble(
-            id: message.id,
-            messageId: message.id,
-            message: message.message,
-            isMe: isMe,
-            time: _dateFormat(message.createdAt),
-            doubleTap: () {
-              _deleteMessage(message.id);
-            },
+
+          child: AnimatedContainer(
+            key: key,
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
+            margin: EdgeInsets.symmetric(vertical: 2.h),
+            decoration: BoxDecoration(
+              color: _highlightMessageId == message.id
+                  ? Colors.green.withOpacity(0.2)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: MessageBuble(
+              swipe: (details) => _replyMessage(message),
+              onTapReply: message.replyToMessageId != null
+                  ? () => _scrollToMessage(message.replyToMessageId!)
+                  : null,
+              id: message.id,
+              messageId: message.id,
+              message: message.message,
+              isMe: isMe,
+              time: DateFormatter.timeHm(message.createdAt),
+              isRead: message.isRead,
+              isReply: message.replyToMessageId != null,
+              replyAuthor: replyAuthor,
+              repliedText: message.replyText,
+              doubleTap: () {
+                _deleteMessage(message.id);
+              },
+            ),
           ),
         );
       },
     );
   }
 
-  Widget _buildMessageInput(TextEditingController messageController) {
-    return Container(
-      color: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-      child: Row(
-        children: [
-          Expanded(
-            child: CustomTextField(
-              controller: messageController,
-              hintText: 'Message',
-              prefixIcon: Icon(Icons.emoji_emotions_outlined),
-              sufixIcon: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.attach_file),
-                    padding: EdgeInsets.zero,
-                    constraints: BoxConstraints(),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.camera_alt),
-                    padding: EdgeInsets.zero,
-                    constraints: BoxConstraints(),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(width: 8.w),
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.primaryGreen,
-              borderRadius: BorderRadius.circular(28.r),
-            ),
-            child: BlocBuilder<AuthBloc, AuthBlocState>(
-              builder: (context, authState) {
-                authState.maybeWhen(
-                  authenticated: (userId) => userId,
-                  orElse: () => null,
-                );
-
-                return IconButton(
-                  color: Colors.white,
-                  onPressed: () =>
-                      _sendMessage(messageController.text, messageController),
-                  icon: Icon(Icons.send),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
+  void _replyMessage(MessageParams message) {
+    setState(() {
+      _isReply = true;
+      _replyToMessage = message;
+      _focusNode.requestFocus();
+    });
   }
 
   void _sendMessage(String message, TextEditingController messageController) {
     if (message.trim().isEmpty) return;
 
-    context.read<ChatsBloc>().add(
-      ChatsEvent.sendMessage(
-        MessageParams(
-          id: const Uuid().v4(),
-          senderName: _getCurrentUserName(),
-          receiverName: widget.userName,
-          message: message.trim(),
-          senderId: widget.userId,
-          receiverId: widget.receiverIds.first,
-          chatId: widget.conversationId,
-          createdAt: DateTime.now().toIso8601String(),
-          updatedAt: DateTime.now().toIso8601String(),
-        ),
-      ),
+    context.read<ChatsBloc>().requestSendMessage(
+      chatId: widget.conversationId,
+      senderId: widget.userId,
+      receiverId: widget.receiverIds.first,
+      senderName: widget.userName,
+      receiverName: widget.userName,
+      message: message,
+      replyToMessageId: _replyToMessage?.id,
+      replyText: _replyToMessage?.message,
     );
 
     messageController.clear();
+    setState(() {
+      _isReply = false;
+      _replyToMessage = null;
+    });
     _scrollToBottom();
   }
 
@@ -297,27 +314,11 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
     }
   }
 
-  String _dateFormat(String date) {
-    return DateFormat('HH:mm').format(DateTime.parse(date));
-  }
-
   void _deleteMessage(String messageId) {
-    context.read<ChatsBloc>().add(
-      ChatsEvent.deleteMessage(
-        DeleteMessageParams(
-          messageId: messageId,
-          chatId: widget.conversationId,
-          senderId: widget.userId,
-        ),
-      ),
-    );
-  }
-
-  String _getCurrentUserName() {
-    final settingsState = context.read<SettingsBloc>().state;
-    return settingsState.maybeWhen(
-      success: (user) => user.name.isNotEmpty ? user.name : 'Unknown User',
-      orElse: () => 'Unknown User',
+    context.read<ChatsBloc>().requestDeleteMessage(
+      chatId: widget.conversationId,
+      senderId: widget.userId,
+      messageId: messageId,
     );
   }
 

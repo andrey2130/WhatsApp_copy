@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppTextStyle {
   static TextStyle getHeader() {
@@ -35,7 +36,7 @@ class AppTextStyle {
     );
   }
 
-static TextStyle getSettingsText() {
+  static TextStyle getSettingsText() {
     return TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.w400,
@@ -76,6 +77,15 @@ static TextStyle getSettingsText() {
       fontWeight: FontWeight.w400,
       fontFamily: 'SF Pro Text',
       color: Color(0xFF007AFF),
+    );
+  }
+
+  static TextStyle getMessageBubleText() {
+    return TextStyle(
+      fontSize: 15.8.sp,
+      fontWeight: FontWeight.w400,
+      fontFamily: 'SF Pro Text',
+      color: Color(0xFF0A0A0A),
     );
   }
 }
