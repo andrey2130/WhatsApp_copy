@@ -72,7 +72,8 @@ class _ReplyMessageWidgetState extends State<ReplyMessageWidget> {
                 ),
               ),
             ),
-            SizedBox(width: 8.w),
+
+            Spacer(),
             CupertinoButton(
               padding: EdgeInsets.zero,
               onPressed: widget.onTap,
