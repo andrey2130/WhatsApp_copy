@@ -10,10 +10,11 @@ import 'package:telegram_copy/feature/chat_list/domain/params/message_params/mes
 
 class MessageBuble extends StatelessWidget {
   const MessageBuble({
-    Key? key,
+    super.key,
     this.id,
     required this.message,
     required this.isMe,
+    this.onTapReply,
     this.time,
     this.messageId,
     this.doubleTap,
@@ -22,7 +23,7 @@ class MessageBuble extends StatelessWidget {
     this.swipe,
     this.replyAuthor,
     this.repliedText,
-  }) : super(key: key);
+  });
 
   final String? id;
   final String message;
@@ -35,6 +36,7 @@ class MessageBuble extends StatelessWidget {
   final GestureDragUpdateCallback? swipe;
   final MessageParams? replyAuthor;
   final String? repliedText;
+  final VoidCallback? onTapReply;
 
   @override
   Widget build(BuildContext context) {
@@ -43,143 +45,159 @@ class MessageBuble extends StatelessWidget {
       child: GestureDetector(
         onDoubleTap: doubleTap,
         child: SwipeTo(
-          onRightSwipe: swipe,
+          onLeftSwipe: (details) {
+            if (isMe) {
+              swipe?.call(details);
+            }
+          },
+          onRightSwipe: (details) {
+            if (!isMe) {
+              swipe?.call(details);
+            }
+          },
           child: Column(
             children: [
               (isReply ?? false)
-                  ? Container(
-                      margin: EdgeInsets.only(
-                        top: 4.h,
-                        bottom: 4.h,
-                        left: isMe ? 50.w : 8.w,
-                        right: isMe ? 8.w : 50.w,
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 8.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isMe
-                            ? AppColors.messageBubleColor
-                            : AppColors.whiteColor,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(12.r),
-                          topRight: Radius.circular(12.r),
-                          bottomLeft: isMe
-                              ? Radius.circular(12.r)
-                              : Radius.circular(8.r),
-                          bottomRight: isMe
-                              ? Radius.circular(8.r)
-                              : Radius.circular(12.r),
+                  ? GestureDetector(
+                      onTap: onTapReply,
+                      child: AnimatedContainer(
+                        margin: EdgeInsets.only(
+                          top: 4.h,
+                          bottom: 4.h,
+                          left: isMe ? 50.w : 8.w,
+                          right: isMe ? 8.w : 50.w,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 1,
-                            offset: const Offset(0, 1),
+                        padding: EdgeInsets.only(
+                          left: 10.w,
+                          right: 10.w,
+                          top: 6.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: (isMe
+                              ? AppColors.messageBubleColor
+                              : AppColors.whiteColor),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(12.r),
+                            topRight: Radius.circular(12.r),
+                            bottomLeft: isMe
+                                ? Radius.circular(12.r)
+                                : Radius.circular(8.r),
+                            bottomRight: isMe
+                                ? Radius.circular(8.r)
+                                : Radius.circular(12.r),
                           ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          IntrinsicHeight(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Container(
-                                  width: 4.w,
-                                  margin: EdgeInsets.only(right: 8.w),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.replyBorderColor,
-                                    borderRadius: BorderRadius.circular(2.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 1,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                        duration: const Duration(milliseconds: 250),
+                        curve: Curves.easeInOut,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            IntrinsicHeight(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Container(
+                                    width: 4.w,
+                                    margin: EdgeInsets.only(right: 8.w),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.replyBorderColor,
+                                      borderRadius: BorderRadius.circular(2.r),
+                                    ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        replyAuthor?.senderName ?? '',
-                                        maxLines: 1,
-
-                                        style:
-                                            AppTextStyle.getMessageBubleText()
-                                                .copyWith(
-                                                  fontWeight: FontWeight.w600,
-                                                  color: const Color(
-                                                    0xFF128C7E,
-                                                  ),
-                                                ),
-                                      ),
-                                      SizedBox(height: 2.h),
-                                      if ((repliedText ?? '').isNotEmpty)
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
                                         Text(
-                                          repliedText!,
+                                          replyAuthor?.senderName ?? '',
+                                          maxLines: 1,
                                           style:
                                               AppTextStyle.getMessageBubleText()
                                                   .copyWith(
-                                                    color: Colors.black87,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: const Color(
+                                                      0xFF128C7E,
+                                                    ),
                                                   ),
-                                          maxLines: 4,
-                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 8.h),
-                          Text(
-                            message,
-                            style: AppTextStyle.getMessageBubleText(),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              if (time != null) ...[
-                                SizedBox(height: 2.h),
-                                Text(
-                                  time!,
-                                  style: TextStyle(
-                                    fontSize: 11.sp,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                                if (isMe) ...[
-                                  SvgPicture.asset(
-                                    'assets/icons/check_mark.svg',
-                                    colorFilter: ColorFilter.mode(
-                                      isRead
-                                          ? AppColors.primaryBlue
-                                          : AppColors.iconGrey,
-                                      BlendMode.srcIn,
+                                        SizedBox(height: 2.h),
+                                        if ((repliedText ?? '').isNotEmpty)
+                                          Text(
+                                            repliedText!,
+                                            style:
+                                                AppTextStyle.getMessageBubleText()
+                                                    .copyWith(
+                                                      color: Colors.black87,
+                                                    ),
+                                            maxLines: 4,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                      ],
                                     ),
                                   ),
                                 ],
+                              ),
+                            ),
+                            SizedBox(height: 8.h),
+                            Text(
+                              message,
+                              style: AppTextStyle.getMessageBubleText(),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                if (time != null) ...[
+                                  SizedBox(height: 2.h),
+                                  Text(
+                                    time!,
+                                    style: TextStyle(
+                                      fontSize: 11.sp,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  if (isMe) ...[
+                                    SvgPicture.asset(
+                                      'assets/icons/check_mark.svg',
+                                      colorFilter: ColorFilter.mode(
+                                        isRead
+                                            ? AppColors.primaryBlue
+                                            : AppColors.iconGrey,
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                                  ],
+                                ],
                               ],
-                            ],
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
                     )
-                  : Container(
+                  : AnimatedContainer(
                       margin: EdgeInsets.only(
                         top: 4.h,
                         bottom: 4.h,
                         left: isMe ? 50.w : 8.w,
                         right: isMe ? 8.w : 50.w,
                       ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 8.h,
+                      padding: EdgeInsets.only(
+                        left: 10.w,
+                        right: 10.w,
+                        top: 6.h,
+                        bottom: 2.h,
                       ),
                       decoration: BoxDecoration(
-                        color: isMe
+                        color: (isMe
                             ? AppColors.messageBubleColor
-                            : AppColors.whiteColor,
+                            : AppColors.whiteColor),
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(8.r),
                           topRight: Radius.circular(8.r),
@@ -198,6 +216,8 @@ class MessageBuble extends StatelessWidget {
                           ),
                         ],
                       ),
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeInOut,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

@@ -113,6 +113,9 @@ class _ChatScreenAndroidState extends State<ChatScreenAndroid> {
     );
   }
 
+
+
+
   Widget _buildAppBar() {
     return CustomAppBar(
       leftWidget: IconButton(

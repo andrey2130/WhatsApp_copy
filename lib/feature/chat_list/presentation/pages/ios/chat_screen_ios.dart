@@ -2,21 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:talker_flutter/talker_flutter.dart';
-import 'package:telegram_copy/core/theme/text_style.dart';
-import 'package:telegram_copy/feature/chat_list/presentation/widgets/reply_message.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/widgets/chat_navigation_bar.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_input.dart';
+import 'package:telegram_copy/injections.dart';
 import 'package:uuid/uuid.dart';
-
-import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params/delete_messaga.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params/message.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/bloc/chats/chats_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_buble.dart';
 import 'package:telegram_copy/feature/settings/presentation/bloc/settings_bloc.dart';
-import 'package:telegram_copy/injections.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class ChatScreenIos extends StatefulWidget {
@@ -41,9 +38,21 @@ class ChatScreenIos extends StatefulWidget {
 class _ChatScreenIosState extends State<ChatScreenIos> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
-  bool _isReply = false;
   final FocusNode _focusNode = FocusNode();
+  final Map<String, GlobalKey> _messageKeys = {};
+
+  bool _isReply = false;
   MessageParams? _replyToMessage;
+  String? _highlightMessageId;
+  bool _suppressAutoScroll = false;
+  static const double _autoScrollThreshold = 120.0;
+
+  bool _isNearBottom() {
+    if (!_scrollController.hasClients) return true;
+    final max = _scrollController.position.maxScrollExtent;
+    final offset = _scrollController.offset;
+    return (max - offset) <= _autoScrollThreshold;
+  }
 
   @override
   void initState() {
@@ -71,13 +80,20 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
       listener: (context, state) {
         state.maybeWhen(
           loaded: (chats) {
-            _scrollToBottom();
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _scrollToBottom();
+            });
           },
           messagesLoaded: (messages) {
-            _scrollToBottom();
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _scrollToBottom();
+            });
+            _suppressAutoScroll = false;
           },
           chatWithMessages: (chats, messages) {
-            _scrollToBottom();
+            if (!_suppressAutoScroll && _isNearBottom()) {
+              _scrollToBottom();
+            }
           },
           loading: () {
             Center(child: CircularProgressIndicator.adaptive());
@@ -100,7 +116,11 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
           body: SafeArea(
             child: Column(
               children: [
-                _buildNavigationBar(),
+                ChatNavigationBar(
+                  userName: widget.userName,
+                  avatarUrl: widget.avatarUrl,
+                  onBack: () => context.pop(),
+                ),
                 Expanded(
                   child: Stack(
                     children: [
@@ -116,11 +136,12 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
                             child: CircularProgressIndicator.adaptive(),
                           ),
                           error: (message) => Center(child: Text(message)),
-                          loaded: (chats) => _buildMessagesList(),
-                          messagesLoaded: (messages) => _buildMessagesList(),
+                          loaded: (chats) => _buildMessagesListView([]),
+                          messagesLoaded: (messages) =>
+                              _buildMessagesListView(messages),
                           chatWithMessages: (chats, messages) =>
-                              _buildMessagesList(),
-                          success: () => _buildMessagesList(),
+                              _buildMessagesListView(messages),
+                          success: () => _buildMessagesListView([]),
                           orElse: () => const SizedBox.shrink(),
                         ),
                       ),
@@ -128,11 +149,20 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
                         bottom: 0,
                         left: 0,
                         right: 0,
-                        child: _buildMessageInput(
-                          _messageController,
-                          _focusNode,
-                          _replyToMessage,
-                          _isReply,
+                        child: MessageInput(
+                          messageController: _messageController,
+                          focusNode: _focusNode,
+                          isReply: _isReply,
+                          replyToMessage: _replyToMessage,
+                          onClearReply: () {
+                            setState(() {
+                              _isReply = false;
+                              _replyToMessage = null;
+                            });
+                          },
+                          onChanged: (_) => setState(() {}),
+                          onSubmit: (value) =>
+                              _sendMessage(value, _messageController),
                         ),
                       ),
                     ],
@@ -146,86 +176,35 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
     );
   }
 
-  Widget _buildNavigationBar() {
-    return CupertinoNavigationBar(
-      backgroundColor: Colors.white,
-      border: null,
-      padding: const EdgeInsetsDirectional.only(start: 0, end: 8),
-      leading: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => context.pop(),
-        child: const Icon(CupertinoIcons.back, size: 26),
-      ),
-      middle: Align(
-        alignment: Alignment.centerLeft,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircleAvatar(
-              radius: 18.r,
-              backgroundImage: widget.avatarUrl != null
-                  ? NetworkImage(widget.avatarUrl!)
-                  : null,
-              child: widget.avatarUrl == null
-                  ? const Icon(Icons.person, size: 18)
-                  : null,
-            ),
-            SizedBox(width: 8.w),
-            Flexible(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.userName,
-                    maxLines: 1,
-                    style: AppTextStyle.getRegularBlack().copyWith(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    'tap here for contact info',
-                    maxLines: 1,
-
-                    style: AppTextStyle.getGreySettingsText(),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SvgPicture.asset('assets/icons/video_camera.svg'),
-          SizedBox(width: 16.w),
-          SvgPicture.asset('assets/icons/phone_icon.svg'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMessagesList() {
-    return BlocBuilder<ChatsBloc, ChatsState>(
-      builder: (context, state) {
-        return state.maybeWhen(
-          messagesLoaded: (messages) => _buildMessagesListView(messages),
-          chatWithMessages: (chats, messages) =>
-              _buildMessagesListView(messages),
-          success: () => _buildMessagesListView([]),
-          loading: () => const SizedBox.shrink(),
-          error: (message) => const SizedBox.shrink(),
-          orElse: () => const SizedBox.shrink(),
-        );
-      },
-    );
+  void _scrollToMessage(String id) {
+    final key = _messageKeys[id];
+    final ctx = key?.currentContext;
+    if (ctx != null) {
+      _suppressAutoScroll = true;
+      Scrollable.ensureVisible(
+        ctx,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        alignment: 0.5,
+      ).then((_) {
+        setState(() {
+          _highlightMessageId = id;
+        });
+        Future.delayed(const Duration(milliseconds: 900), () {
+          if (mounted && _highlightMessageId == id) {
+            setState(() {
+              _highlightMessageId = null;
+              _suppressAutoScroll = false;
+            });
+          }
+        });
+      });
+    }
   }
 
   Widget _buildMessagesListView(List<MessageParams> messages) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (messages.isNotEmpty) {
+      if (!_suppressAutoScroll && messages.isNotEmpty && _isNearBottom()) {
         _scrollToBottom();
       }
     });
@@ -247,7 +226,7 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
             replyAuthor = null;
           }
         }
-
+        final key = _messageKeys.putIfAbsent(message.id, () => GlobalKey());
         return VisibilityDetector(
           key: Key(message.id),
           onVisibilityChanged: (visibility) {
@@ -257,20 +236,36 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
               _readMessage(message);
             }
           },
-          child: MessageBuble(
-            swipe: (details) => _replyMessage(message),
-            id: message.id,
-            messageId: message.id,
-            message: message.message,
-            isMe: isMe,
-            time: _dateFormat(message.createdAt),
-            isRead: message.isRead,
-            isReply: message.replyToMessageId != null,
-            replyAuthor: replyAuthor,
-            repliedText: message.replyText,
-            doubleTap: () {
-              _deleteMessage(message.id);
-            },
+
+          child: AnimatedContainer(
+            key: key,
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
+            margin: EdgeInsets.symmetric(vertical: 2.h),
+            decoration: BoxDecoration(
+              color: _highlightMessageId == message.id
+                  ? Colors.green.withOpacity(0.2)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: MessageBuble(
+              swipe: (details) => _replyMessage(message),
+              onTapReply: message.replyToMessageId != null
+                  ? () => _scrollToMessage(message.replyToMessageId!)
+                  : null,
+              id: message.id,
+              messageId: message.id,
+              message: message.message,
+              isMe: isMe,
+              time: _dateFormat(message.createdAt),
+              isRead: message.isRead,
+              isReply: message.replyToMessageId != null,
+              replyAuthor: replyAuthor,
+              repliedText: message.replyText,
+              doubleTap: () {
+                _deleteMessage(message.id);
+              },
+            ),
           ),
         );
       },
@@ -283,122 +278,6 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
       _replyToMessage = message;
       _focusNode.requestFocus();
     });
-  }
-
-  Widget _buildMessageInput(
-    TextEditingController messageController,
-    FocusNode focusNode,
-    MessageParams? message,
-    bool isReply,
-  ) {
-    return Container(
-      color: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 8.h),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (isReply)
-            ReplyMessageWidget(
-              message: _replyToMessage!,
-              onTap: () {
-                setState(() {
-                  _isReply = false;
-                  _replyToMessage = null;
-                });
-              },
-            ),
-          if (isReply) SizedBox(height: 8.h),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                onPressed: () {},
-                child: const Icon(
-                  CupertinoIcons.add,
-                  size: 32,
-                  color: Colors.black,
-                ),
-              ),
-              SizedBox(width: 6.w),
-              Expanded(
-                child: CupertinoTextField(
-                  maxLines: null,
-                  focusNode: focusNode,
-                  controller: messageController,
-                  placeholder: 'Message',
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 14.w,
-                    vertical: 12.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(22.r),
-                    border: Border.fromBorderSide(
-                      BorderSide(color: Colors.black12),
-                    ),
-                  ),
-                  cursorColor: Colors.black,
-                  onChanged: (_) => setState(() {}),
-                  onSubmitted: (value) =>
-                      _sendMessage(value, messageController),
-                  suffix: Padding(
-                    padding: EdgeInsets.only(right: 8.w),
-                    child: CupertinoButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: () {},
-                      child: SvgPicture.asset('assets/icons/sufix_icon.svg'),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 10.w),
-              messageController.text.isEmpty
-                  ? Row(
-                      children: [
-                        CupertinoButton(
-                          padding: EdgeInsets.zero,
-                          onPressed: () {},
-                          child: const Icon(
-                            CupertinoIcons.camera,
-                            color: Colors.black,
-                            size: 22,
-                          ),
-                        ),
-                        SizedBox(width: 10.w),
-                        CupertinoButton(
-                          padding: EdgeInsets.zero,
-                          onPressed: () {},
-                          child: const Icon(
-                            CupertinoIcons.mic_solid,
-                            color: Colors.black,
-                            size: 22,
-                          ),
-                        ),
-                      ],
-                    )
-                  : CupertinoButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: () => _sendMessage(
-                        messageController.text,
-                        messageController,
-                      ),
-                      child: Container(
-                        width: 32.w,
-                        height: 32.w,
-                        decoration: BoxDecoration(
-                          color: AppColors.buttonGreen,
-                          shape: BoxShape.circle,
-                        ),
-                        alignment: Alignment.center,
-                        child: SvgPicture.asset('assets/icons/send_icon.svg'),
-                      ),
-                    ),
-            ],
-          ),
-        ],
-      ),
-    );
   }
 
   void _sendMessage(String message, TextEditingController messageController) {
