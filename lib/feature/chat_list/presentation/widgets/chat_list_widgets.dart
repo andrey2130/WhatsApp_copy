@@ -122,7 +122,7 @@ class ChatListWidgets extends StatelessWidget {
     if (currentUserId == chat.firstUserId) {
       return chat.secondUserName;
     } else {
-      return chat.fistUserName;
+      return chat.firstUserName;
     }
   }
 

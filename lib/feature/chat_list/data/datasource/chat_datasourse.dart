@@ -129,7 +129,7 @@ class ChatDatasourceImpl implements ChatDatasource {
         chatList.add(
           ChatParams(
             id: doc.id,
-            fistUserName: data['fistUserName'] ?? 'Unknown',
+            firstUserName: data['firstUserName'] ?? 'Unknown',
             secondUserName: data['secondUserName'] ?? 'Unknown',
             firstUserId:
                 (data['participants'] != null &&
@@ -145,8 +145,6 @@ class ChatDatasourceImpl implements ChatDatasource {
             lastMessage: data['lastMessage'] ?? '',
             updatedAt: _parseTimestamp(data['updatedAt']),
             unreadCount: unreadCount.fold((l) => {}, (r) => r),
-            firstUserAvatar: data['firstUserAvatar'] ?? '',
-            secondUserAvatar: data['secondUserAvatar'] ?? '',
           ),
         );
       }
@@ -326,7 +324,7 @@ class ChatDatasourceImpl implements ChatDatasource {
             chatList.add(
               ChatParams(
                 id: doc.id,
-                fistUserName: data['fistUserName'] ?? 'Unknown',
+                firstUserName: data['firstUserName'] ?? 'Unknown',
                 secondUserName: data['secondUserName'] ?? 'Unknown',
                 firstUserId:
                     (data['participants'] != null &&

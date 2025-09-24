@@ -8,7 +8,7 @@ part of 'chat.dart';
 
 _ChatParams _$ChatParamsFromJson(Map<String, dynamic> json) => _ChatParams(
   id: json['id'] as String,
-  fistUserName: json['fistUserName'] as String,
+  firstUserName: json['firstUserName'] as String,
   secondUserName: json['secondUserName'] as String,
   firstUserId: json['firstUserId'] as String,
   secondUserId: json['secondUserId'] as String,
@@ -27,7 +27,7 @@ _ChatParams _$ChatParamsFromJson(Map<String, dynamic> json) => _ChatParams(
 Map<String, dynamic> _$ChatParamsToJson(_ChatParams instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'fistUserName': instance.fistUserName,
+      'firstUserName': instance.firstUserName,
       'secondUserName': instance.secondUserName,
       'firstUserId': instance.firstUserId,
       'secondUserId': instance.secondUserId,

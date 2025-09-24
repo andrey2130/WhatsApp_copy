@@ -7,7 +7,7 @@ part 'chat.g.dart';
 abstract class ChatParams with _$ChatParams {
   const factory ChatParams({
     required String id,
-    required String fistUserName,
+    required String firstUserName,
     required String secondUserName,
     required String firstUserId,
     required String secondUserId,
