@@ -36,6 +36,8 @@ class _IosScreenState extends State<IosScreen> {
               ),
             ),
           );
+
+          context.read<UsersBloc>().add(const UsersEvent.loadUsers());
         },
         child: CustomScrollView(
           controller: _scrollController,
@@ -70,7 +72,9 @@ class _IosScreenState extends State<IosScreen> {
               ),
             ),
             const SliverPadding(padding: EdgeInsets.only(top: 20)),
-            SliverToBoxAdapter(child: FilterWidgets(selectedFilter: 'All')),
+            const SliverToBoxAdapter(
+              child: FilterWidgets(selectedFilter: 'All'),
+            ),
 
             BlocBuilder<ChatsBloc, ChatsState>(
               builder: (context, state) {
@@ -109,9 +113,9 @@ class _IosScreenState extends State<IosScreen> {
                     delegate: SliverChildBuilderDelegate(
                       (context, index) => SuggestUser(
                         index: index,
-                        uid: chats[index]['uid'],
-                        name: chats[index]['name'],
-                        bio: chats[index]['bio'],
+                        uid: chats[index]['uid'] as String? ?? '',
+                        name: chats[index]['name'] as String? ?? '',
+                        bio: chats[index]['bio'] as String? ?? '',
                         user: UserParams.fromJson(chats[index]),
                       ),
                       childCount: chats.length,

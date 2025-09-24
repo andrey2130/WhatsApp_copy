@@ -21,6 +21,6 @@ void configureDependencies() {
 
   getIt.registerLazySingleton(() => FirebaseStorage.instance);
 
-  getIt.registerLazySingleton<Talker>(() => TalkerFlutter.init());
+  getIt.registerLazySingleton<Talker>(TalkerFlutter.init);
   getIt.init();
 }

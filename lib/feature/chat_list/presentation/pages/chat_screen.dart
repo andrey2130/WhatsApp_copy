@@ -5,12 +5,8 @@ import 'package:telegram_copy/feature/chat_list/presentation/pages/ios/chat_scre
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({
-    super.key,
-    required this.userId,
-    required this.userName,
+    required this.userId, required this.userName, required this.conversationId, required this.receiverIds, super.key,
     this.avatarUrl,
-    required this.conversationId,
-    required this.receiverIds,
   });
 
   final String userId;

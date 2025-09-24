@@ -46,7 +46,7 @@ class _UserSettingScreenIosState extends State<UserSettingScreenIos> {
                   CustomAppBar(
                     leftWidget: IconButton(
                       onPressed: () => context.pop(),
-                      icon: Icon(Icons.arrow_back),
+                      icon: const Icon(Icons.arrow_back),
                     ),
                     left2Widget: Text(
                       'Profile',
@@ -82,18 +82,19 @@ class _UserSettingScreenIosState extends State<UserSettingScreenIos> {
     return Hero(
       tag: 'user_avatar',
       child: GestureDetector(
-        onTap: () => _pickAndUploadAvatar(),
+        onTap: _pickAndUploadAvatar,
+
         child: UserAvatarWidget(state: state),
       ),
     );
   }
 
-  void _pickAndUploadAvatar() async {
+  Future<void> _pickAndUploadAvatar() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      setState(() {});
+      if (!mounted) return;
       context.read<SettingsBloc>().add(
         SettingsEvent.uploadAvatar(filePath: pickedFile.path),
       );
@@ -124,7 +125,7 @@ class _UserSettingScreenIosState extends State<UserSettingScreenIos> {
             _buildProfileSection(
               icon: Icons.phone_outlined,
               title: 'Phone',
-              value: user.phoneNumber?.isNotEmpty == true
+              value: user.phoneNumber?.isNotEmpty ?? false
                   ? user.phoneNumber!
                   : 'No phone number',
               onTap: () {},
@@ -152,8 +153,8 @@ class _UserSettingScreenIosState extends State<UserSettingScreenIos> {
     required IconData icon,
     required String title,
     required String value,
-    Color? valueColor,
     required VoidCallback onTap,
+    Color? valueColor,
   }) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.h),

@@ -16,12 +16,7 @@ class SuggestUser extends StatefulWidget {
   final UserParams user;
 
   const SuggestUser({
-    super.key,
-    required this.index,
-    required this.uid,
-    required this.name,
-    required this.bio,
-    required this.user,
+    required this.index, required this.uid, required this.name, required this.bio, required this.user, super.key,
   });
 
   @override

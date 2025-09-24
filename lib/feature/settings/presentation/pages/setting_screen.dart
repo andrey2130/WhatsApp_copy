@@ -9,6 +9,6 @@ class SettingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
    
-    return Platform.isAndroid ? SettingScreenAndroid() : SettingScreenIos();
+    return Platform.isAndroid ? const SettingScreenAndroid() : const SettingScreenIos();
   }
 }

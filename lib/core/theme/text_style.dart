@@ -37,7 +37,7 @@ class AppTextStyle {
   }
 
   static TextStyle getSettingsText() {
-    return TextStyle(
+    return const TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.w400,
       fontFamily: 'SF Pro Text',
@@ -46,7 +46,7 @@ class AppTextStyle {
   }
 
   static TextStyle getGreySettingsText() {
-    return TextStyle(
+    return const TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.w600,
       fontFamily: 'SF Pro Text',
@@ -85,7 +85,7 @@ class AppTextStyle {
       fontSize: 15.8.sp,
       fontWeight: FontWeight.w400,
       fontFamily: 'SF Pro Text',
-      color: Color(0xFF0A0A0A),
+      color: const Color(0xFF0A0A0A),
     );
   }
 }

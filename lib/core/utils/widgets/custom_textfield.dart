@@ -34,8 +34,7 @@ class CustomTextField extends StatelessWidget {
   final double? radius;
   final Color? floatingLabelColor;
   const CustomTextField({
-    super.key,
-    required this.controller,
+    required this.controller, super.key,
     this.labelText,
     this.hintText,
     this.keyboardType = TextInputType.text,
@@ -149,15 +148,15 @@ class CustomTextField extends StatelessWidget {
       return IconButton(
         alignment: Alignment.center,
         icon: isPasswordVisible
-            ? Icon(Icons.visibility_off)
-            : Icon(Icons.visibility),
+            ? const Icon(Icons.visibility_off)
+            : const Icon(Icons.visibility),
 
         onPressed: onTogglePasswordVisibility,
       );
     }
     if (hasClearButton) {
       return IconButton(
-        icon: Icon(Icons.close),
+        icon: const Icon(Icons.close),
 
         onPressed: () {
           controller.clear();

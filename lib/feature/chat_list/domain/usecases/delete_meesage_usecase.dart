@@ -1,8 +1,8 @@
+import 'package:injectable/injectable.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 import 'package:telegram_copy/core/usecases/usecase.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params/delete_messaga.dart';
 import 'package:telegram_copy/feature/chat_list/domain/repo/chat_repo.dart';
-import 'package:injectable/injectable.dart';
-import 'package:talker_flutter/talker_flutter.dart';
 import 'package:telegram_copy/injections.dart';
 
 @injectable

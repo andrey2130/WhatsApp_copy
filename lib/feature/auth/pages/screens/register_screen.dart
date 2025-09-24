@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
 import 'package:telegram_copy/core/utils/validators.dart';
-
-import 'package:telegram_copy/core/utils/widgets/custom_textfield.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_button.dart';
+import 'package:telegram_copy/core/utils/widgets/custom_textfield.dart';
 import 'package:telegram_copy/feature/auth/domain/params/register_params.dart';
 import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
 
@@ -70,7 +68,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     } else if (passwordController.text != confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Passwords do not match'),
           backgroundColor: Colors.red,
         ),
@@ -106,18 +104,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
           },
           builder: (context, state) {
             if (state is Loading) {
-              return Center(child: CircularProgressIndicator.adaptive());
+              return const Center(child: CircularProgressIndicator.adaptive());
             }
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(22.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _header(),
 
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     _textFieldSection(
                       _nameController,
                       _emailController,
@@ -128,7 +125,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       _togglePasswordVisibility,
                     ),
 
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     _signInSection(),
                   ],
                 ),
@@ -149,7 +146,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             shadows: [
               Shadow(
                 color: Colors.black.withValues(alpha: 0.5),
-                offset: Offset(0, 0.5),
+                offset: const Offset(0, 0.5),
                 blurRadius: 5,
               ),
             ],
@@ -158,7 +155,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             color: AppColors.primaryBlue,
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Text(
           'Create an account',
 
@@ -166,21 +163,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
             shadows: [
               Shadow(
                 color: Colors.black.withValues(alpha: 0.5),
-                offset: Offset(0, 0.5),
+                offset: const Offset(0, 0.5),
                 blurRadius: 4,
               ),
             ],
           ),
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Text(
           "Please fill in the form to create an account",
           style: AppTextStyle.getSubtitle().copyWith(
             shadows: [
               Shadow(
                 color: Colors.black.withValues(alpha: 0.5),
-                offset: Offset(0, 0.5),
+                offset: const Offset(0, 0.5),
                 blurRadius: 4,
               ),
             ],
@@ -205,17 +202,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
           controller: nameController,
           labelText: 'Name',
           keyboardType: TextInputType.name,
-          isPassword: false,
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         CustomTextField(
           hintText: 'Enter your email',
           controller: emailController,
           labelText: 'Email',
           keyboardType: TextInputType.emailAddress,
-          isPassword: false,
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         CustomTextField(
           hintText: 'Enter your password',
           controller: passwordController,
@@ -224,7 +219,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           isPasswordVisible: isPasswordVisible,
           onTogglePasswordVisibility: togglePasswordVisibility,
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         CustomTextField(
           hintText: 'Confirm your password',
           controller: confirmPasswordController,
@@ -233,14 +228,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
           isPasswordVisible: isPasswordVisible,
           onTogglePasswordVisibility: togglePasswordVisibility,
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
 
         CustomButton(
-          showAnimation: true,
           backgroundColor: AppColors.primaryBlue,
           textColor: Colors.white,
           height: 50,
-          hasShadow: true,
           width: double.infinity,
           borderRadius: 10,
           text: 'Sign up',
@@ -267,7 +260,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           shadows: [
             Shadow(
               color: Colors.black.withValues(alpha: 0.2),
-              offset: Offset(0, 0.2),
+              offset: const Offset(0, 0.2),
               blurRadius: 4,
             ),
           ],

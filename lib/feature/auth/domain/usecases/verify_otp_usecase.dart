@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 import 'package:telegram_copy/core/error/failure.dart';
 import 'package:telegram_copy/core/usecases/usecase.dart';
-import 'package:injectable/injectable.dart';
 import 'package:telegram_copy/feature/auth/domain/params/auth_via_phone/verify_otp_params.dart';
 import 'package:telegram_copy/feature/auth/domain/repo/auth_repo.dart';
 

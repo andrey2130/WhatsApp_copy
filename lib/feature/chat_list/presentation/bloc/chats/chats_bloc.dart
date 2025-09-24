@@ -8,17 +8,17 @@ import 'package:telegram_copy/feature/chat_list/domain/params/message_params/del
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params/message.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/create_chat_usecase.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/delete_meesage_usecase.dart';
-import 'package:telegram_copy/feature/chat_list/domain/usecases/load_chat_usecase.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/load_chat_messages_usecase.dart';
+import 'package:telegram_copy/feature/chat_list/domain/usecases/load_chat_usecase.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/read_message.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/send_message_usecase.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/watch_chats_usecase.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/watch_message_usecase.dart';
 import 'package:telegram_copy/injections.dart';
 
+part 'chats_bloc.freezed.dart';
 part 'chats_event.dart';
 part 'chats_state.dart';
-part 'chats_bloc.freezed.dart';
 
 @Injectable()
 class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {

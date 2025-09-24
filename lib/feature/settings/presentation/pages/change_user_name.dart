@@ -8,6 +8,6 @@ class ChangeUserName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Platform.isAndroid ? ChangeUserNameAndroid() : ChangeUserNameIos();
+    return Platform.isAndroid ? const ChangeUserNameAndroid() : const ChangeUserNameIos();
   }
 }

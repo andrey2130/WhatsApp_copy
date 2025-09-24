@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
@@ -9,9 +8,7 @@ class ReplyMessageWidget extends StatefulWidget {
   final MessageParams message;
   final VoidCallback onTap;
   const ReplyMessageWidget({
-    super.key,
-    required this.message,
-    required this.onTap,
+    required this.message, required this.onTap, super.key,
   });
 
   @override
@@ -28,7 +25,7 @@ class _ReplyMessageWidgetState extends State<ReplyMessageWidget> {
       width: double.infinity,
       margin: EdgeInsets.symmetric(horizontal: 6.w),
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
-      decoration: BoxDecoration(borderRadius: BorderRadius.zero),
+      decoration: const BoxDecoration(borderRadius: BorderRadius.zero),
       child: IntrinsicHeight(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,7 +33,7 @@ class _ReplyMessageWidgetState extends State<ReplyMessageWidget> {
             Container(
               width: 6.r,
               height: double.infinity,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.replyBorderColor,
                 borderRadius: BorderRadius.zero,
               ),
@@ -73,7 +70,7 @@ class _ReplyMessageWidgetState extends State<ReplyMessageWidget> {
               ),
             ),
 
-            Spacer(),
+            const Spacer(),
             CupertinoButton(
               padding: EdgeInsets.zero,
               onPressed: widget.onTap,

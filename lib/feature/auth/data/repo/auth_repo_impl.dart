@@ -41,7 +41,7 @@ class AuthRepoImpl implements AuthRepo {
   }) async {
     try {
       await _authDatasource.verifyOtp(params: params);
-      return Right(null);
+      return const Right(null);
     } catch (e) {
       getIt<Talker>().handle(e);
       return Left(Failure(message: e.toString()));

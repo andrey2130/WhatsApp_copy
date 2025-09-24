@@ -13,6 +13,6 @@ class GetCurrentUserUsecase
 
   @override
   Future<Either<Failure, String?>> call(NoParams params) async {
-    return await _authRepo.getCurrentUser();
+    return _authRepo.getCurrentUser();
   }
 }

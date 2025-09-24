@@ -147,7 +147,6 @@ class _SignInViaPhoneScreenState extends State<SignInViaPhoneScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 67.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             "Please confirm your country code and enter your phone number.",
@@ -165,8 +164,6 @@ class _SignInViaPhoneScreenState extends State<SignInViaPhoneScreen> {
       child: IntlPhoneField(
         controller: _phoneTextEditingController,
         initialCountryCode: 'UA',
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        disableLengthCheck: false,
         invalidNumberMessage: 'Please enter a valid phone number',
         onChanged: (phone) {
           setState(() {
@@ -202,24 +199,24 @@ class _SignInViaPhoneScreenState extends State<SignInViaPhoneScreen> {
           return null;
         },
         decoration: InputDecoration(
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: AppColors.borderColor, width: 1),
+          enabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: AppColors.borderColor),
             borderRadius: BorderRadius.zero,
           ),
-          disabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: AppColors.borderColor, width: 1),
+          disabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: AppColors.borderColor),
             borderRadius: BorderRadius.zero,
           ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: AppColors.borderColor, width: 1),
+          focusedBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: AppColors.borderColor),
             borderRadius: BorderRadius.zero,
           ),
-          errorBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: AppColors.errorColor, width: 1),
+          errorBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: AppColors.errorColor),
             borderRadius: BorderRadius.zero,
           ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: AppColors.errorColor, width: 1),
+          focusedErrorBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: AppColors.errorColor),
             borderRadius: BorderRadius.zero,
           ),
           hintText: 'Your phone number',

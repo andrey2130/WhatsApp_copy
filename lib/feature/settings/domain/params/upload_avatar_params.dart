@@ -3,10 +3,10 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'upload_avatar_params.freezed.dart';
 part 'upload_avatar_params.g.dart';
 
-@freezed 
+@freezed
 abstract class UploadAvatarParams with _$UploadAvatarParams {
   const factory UploadAvatarParams({
-    required String userId, 
+    required String userId,
     required String filePath,
   }) = _UploadAvatarParams;
 

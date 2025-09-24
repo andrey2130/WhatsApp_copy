@@ -62,7 +62,6 @@ class _AndroidScreenState extends State<AndroidScreen> {
                     switch (action) {
                       case ChatListMoreAction.settings:
                         context.push('/settings');
-                        break;
                       case ChatListMoreAction.newGroup:
                         break;
                       case ChatListMoreAction.newBroadcast:
@@ -83,7 +82,7 @@ class _AndroidScreenState extends State<AndroidScreen> {
               ),
             ),
             const SliverPadding(padding: EdgeInsets.only(top: 12)),
-            SliverToBoxAdapter(child: FilterWidgets(selectedFilter: 'All')),
+            const SliverToBoxAdapter(child: FilterWidgets(selectedFilter: 'All')),
 
             BlocBuilder<ChatsBloc, ChatsState>(
               builder: (context, state) {
@@ -122,9 +121,9 @@ class _AndroidScreenState extends State<AndroidScreen> {
                     delegate: SliverChildBuilderDelegate(
                       (context, index) => SuggestUser(
                         index: index,
-                        uid: chats[index]['uid'],
-                        name: chats[index]['name'],
-                        bio: chats[index]['bio'],
+                        uid: chats[index]['uid'] as String? ?? '',
+                        name: chats[index]['name'] as String? ?? '',
+                        bio: chats[index]['bio'] as String? ?? '',
                         user: UserParams.fromJson(chats[index]),
                       ),
                       childCount: chats.length,

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
 
+// ignore: public_member_api_docs
 class Common {
   static InputDecoration getInputDecoration(
     BuildContext context,
@@ -10,22 +11,20 @@ class Common {
     Widget? suffixIcon, Widget? prefixIcon,
   }) {
     const borderRadius = BorderRadius.all(Radius.circular(8.0));
-    const borderWidthValue = 1.0;
 
     const errorBorder = OutlineInputBorder(
       borderRadius: borderRadius,
-      borderSide: BorderSide(color: AppColors.primaryBlue, width: borderWidthValue),
+      borderSide: BorderSide(color: AppColors.primaryBlue),
     );
     const defaultBorder = OutlineInputBorder(
       borderRadius: borderRadius,
-      borderSide: BorderSide(color: AppColors.borderColor, width: borderWidthValue),
+      borderSide: BorderSide(color: AppColors.borderColor),
     );
 
     return InputDecoration(
       enabledBorder: defaultBorder,
       focusedBorder: defaultBorder,
       border: defaultBorder,
-      errorText: null,
       focusedErrorBorder: errorBorder,
       errorBorder: errorBorder,
       filled: true,
@@ -34,7 +33,7 @@ class Common {
       ),
       hintText: hintText,
       fillColor: Colors.white,
-      contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 15.w),
+      contentPadding: EdgeInsets.symmetric(horizontal: 15.w),
       suffixIcon: suffixIcon,
     );
   }

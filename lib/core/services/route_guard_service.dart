@@ -7,8 +7,9 @@ class RouteGuardService {
 
   RouteGuardService(this.authService);
 
-  static RouteGuardService get instance =>
-      RouteGuardService(getIt<AuthService>());
+  static final RouteGuardService instance = RouteGuardService(
+    getIt<AuthService>(),
+  );
 
   Future<String?> checkAuthRedirect(GoRouterState state) async {
     final userResult = await authService.getCurrentUserId();

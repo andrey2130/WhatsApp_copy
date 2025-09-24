@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:talker_flutter/talker_flutter.dart';
@@ -17,7 +16,6 @@ class ChatRepoImpl implements ChatRepo {
 
   ChatRepoImpl({
     required ChatDatasource chatDatasource,
-    required FirebaseFirestore firestore,
   }) : _chatDatasource = chatDatasource;
 
   @override

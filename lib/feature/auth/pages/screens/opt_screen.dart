@@ -13,9 +13,7 @@ class OptScreen extends StatefulWidget {
   final String verificationId;
 
   const OptScreen({
-    super.key,
-    required this.phoneNumber,
-    required this.verificationId,
+    required this.phoneNumber, required this.verificationId, super.key,
   });
 
   @override
@@ -35,7 +33,7 @@ class _OptScreenState extends State<OptScreen> {
               initial: () {},
               authenticated: (userId) {},
               loading: () {
-                Center(child: CircularProgressIndicator.adaptive());
+                const Center(child: CircularProgressIndicator.adaptive());
               },
               otpSent: (phoneNumber, verificationId) {},
               otpVerified: () {
@@ -61,11 +59,11 @@ class _OptScreenState extends State<OptScreen> {
               onPressed: () {
                 context.pop();
               },
-              icon: Icon(Icons.arrow_back_ios_new_outlined),
+              icon: const Icon(Icons.arrow_back_ios_new_outlined),
             ),
           ),
-          Icon(Icons.mobile_friendly_outlined, size: 80),
-          SizedBox(height: 10),
+          const Icon(Icons.mobile_friendly_outlined, size: 80),
+          const SizedBox(height: 10),
           Text(
             'Enter code',
             style: AppTextStyle.getHeader().copyWith(
@@ -73,25 +71,24 @@ class _OptScreenState extends State<OptScreen> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
-            'We\'ve sent an SMS with an activation code to your phone number',
+            "We've sent an SMS with an activation code to your phone number",
             style: AppTextStyle.getSubtitle(),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Text(
             widget.phoneNumber,
             style: AppTextStyle.getSubtitle().copyWith(
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           Padding(
             padding: const EdgeInsets.only(left: 25, right: 25),
             child: PinCodeTextField(
               backgroundColor: Colors.transparent,
-              errorTextDirection: TextDirection.ltr,
               appContext: context,
               length: 6,
               keyboardType: TextInputType.number,

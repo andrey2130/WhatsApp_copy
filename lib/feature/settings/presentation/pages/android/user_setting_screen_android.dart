@@ -38,7 +38,7 @@ class _UserSettingScreenAndroidState extends State<UserSettingScreenAndroid> {
                 CustomAppBar(
                   leftWidget: IconButton(
                     onPressed: () => context.pop(),
-                    icon: Icon(Icons.arrow_back),
+                    icon: const Icon(Icons.arrow_back),
                   ),
                   left2Widget: Text(
                     'Profile',
@@ -93,7 +93,7 @@ class _UserSettingScreenAndroidState extends State<UserSettingScreenAndroid> {
             _buildProfileSection(
               icon: Icons.phone_outlined,
               title: 'Phone',
-              value: user.phoneNumber?.isNotEmpty == true
+              value: user.phoneNumber?.isNotEmpty ?? false
                   ? user.phoneNumber!
                   : 'No phone number',
               onTap: () {},
@@ -121,8 +121,7 @@ class _UserSettingScreenAndroidState extends State<UserSettingScreenAndroid> {
     required IconData icon,
     required String title,
     required String value,
-    Color? valueColor,
-    required VoidCallback onTap,
+    required VoidCallback onTap, Color? valueColor,
   }) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.h),

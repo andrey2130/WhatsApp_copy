@@ -9,6 +9,6 @@ class AboutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Platform.isAndroid ? AboutScreenAndroid() : AboutScreenIos();
+    return Platform.isAndroid ? const AboutScreenAndroid() : const AboutScreenIos();
   }
 }

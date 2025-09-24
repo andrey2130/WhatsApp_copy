@@ -81,16 +81,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i449.ChatListDatasource>(
       () => _i449.ChatListDatasourceImpl(gh<_i974.FirebaseFirestore>()),
     );
-    gh.factory<_i402.ChatRepo>(
-      () => _i921.ChatRepoImpl(
-        chatDatasource: gh<_i330.ChatDatasource>(),
-        firestore: gh<_i974.FirebaseFirestore>(),
-      ),
-    );
     gh.factory<_i920.SettingsRepo>(
       () => _i757.SettingsRepoImpl(
         settingsDatasource: gh<_i1000.SettingsDatasource>(),
       ),
+    );
+    gh.factory<_i402.ChatRepo>(
+      () => _i921.ChatRepoImpl(chatDatasource: gh<_i330.ChatDatasource>()),
     );
     gh.factory<_i274.AuthDatasource>(
       () => _i274.AuthDatasourceImpl(

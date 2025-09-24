@@ -10,6 +10,7 @@ sealed class AuthBlocState with _$AuthBlocState {
   }) = OtpSent;
   const factory AuthBlocState.otpVerified() = OtpVerified;
   const factory AuthBlocState.unauthenticated() = Unauthenticated;
-  const factory AuthBlocState.authenticated({required String userId}) = Authenticated;
+  const factory AuthBlocState.authenticated({required String userId}) =
+      Authenticated;
   const factory AuthBlocState.failure({required String message}) = Failure;
 }
