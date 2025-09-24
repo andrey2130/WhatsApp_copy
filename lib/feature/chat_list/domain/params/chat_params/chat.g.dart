@@ -8,13 +8,15 @@ part of 'chat.dart';
 
 _ChatParams _$ChatParamsFromJson(Map<String, dynamic> json) => _ChatParams(
   id: json['id'] as String,
-  fistUserName: json['fistUserName'] as String,
+  firstUserName: json['firstUserName'] as String,
   secondUserName: json['secondUserName'] as String,
   firstUserId: json['firstUserId'] as String,
   secondUserId: json['secondUserId'] as String,
   createdAt: json['createdAt'] as String,
-  lastMessage: json['lastMessage'] as String?,
   updatedAt: json['updatedAt'] as String,
+  lastMessage: json['lastMessage'] as String?,
+  firstUserAvatar: json['firstUserAvatar'] as String,
+  secondUserAvatar: json['secondUserAvatar'] as String,
   unreadCount:
       (json['unreadCount'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(k, (e as num).toInt()),
@@ -25,12 +27,14 @@ _ChatParams _$ChatParamsFromJson(Map<String, dynamic> json) => _ChatParams(
 Map<String, dynamic> _$ChatParamsToJson(_ChatParams instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'fistUserName': instance.fistUserName,
+      'firstUserName': instance.firstUserName,
       'secondUserName': instance.secondUserName,
       'firstUserId': instance.firstUserId,
       'secondUserId': instance.secondUserId,
       'createdAt': instance.createdAt,
-      'lastMessage': instance.lastMessage,
       'updatedAt': instance.updatedAt,
+      'lastMessage': instance.lastMessage,
+      'firstUserAvatar': instance.firstUserAvatar,
+      'secondUserAvatar': instance.secondUserAvatar,
       'unreadCount': instance.unreadCount,
     };

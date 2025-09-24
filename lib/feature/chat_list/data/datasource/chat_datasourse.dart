@@ -42,8 +42,10 @@ class ChatDatasourceImpl implements ChatDatasource {
       final docRef = _firestore.collection('chats').doc();
       await docRef.set({
         'participants': [params.firstUserId, params.secondUserId],
-        'fistUserName': params.firstUserName,
+        'firstUserName': params.firstUserName,
         'secondUserName': params.secondUserName,
+        'firstUserAvatar': params.firstUserAvatar,
+        'secondUserAvatar': params.secondUserAvatar,
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       });
@@ -71,8 +73,10 @@ class ChatDatasourceImpl implements ChatDatasource {
         chatId = chatDoc.id;
         await chatDoc.set({
           'participants': [params.senderId, params.receiverId],
-          'fistUserName': params.senderName,
+          'firstUserName': params.senderName,
           'secondUserName': params.receiverName,
+          'firstUserAvatar': params.firstUserAvatar,
+          'secondUserAvatar': params.secondUserAvatar,
           'createdAt': FieldValue.serverTimestamp(),
           'updatedAt': FieldValue.serverTimestamp(),
         });
@@ -127,7 +131,7 @@ class ChatDatasourceImpl implements ChatDatasource {
         chatList.add(
           ChatParams(
             id: doc.id,
-            fistUserName: data['fistUserName'] ?? 'Unknown',
+            firstUserName: data['firstUserName'] ?? 'Unknown',
             secondUserName: data['secondUserName'] ?? 'Unknown',
             firstUserId:
                 (data['participants'] != null &&
@@ -142,6 +146,8 @@ class ChatDatasourceImpl implements ChatDatasource {
             createdAt: _parseTimestamp(data['createdAt']),
             lastMessage: data['lastMessage'] ?? '',
             updatedAt: _parseTimestamp(data['updatedAt']),
+            firstUserAvatar: data['firstUserAvatar'] ?? '',
+            secondUserAvatar: data['secondUserAvatar'] ?? '',
             unreadCount: unreadCount.fold((l) => {}, (r) => r),
           ),
         );
@@ -322,7 +328,7 @@ class ChatDatasourceImpl implements ChatDatasource {
             chatList.add(
               ChatParams(
                 id: doc.id,
-                fistUserName: data['fistUserName'] ?? 'Unknown',
+                firstUserName: data['firstUserName'] ?? 'Unknown',
                 secondUserName: data['secondUserName'] ?? 'Unknown',
                 firstUserId:
                     (data['participants'] != null &&
@@ -338,6 +344,8 @@ class ChatDatasourceImpl implements ChatDatasource {
                 lastMessage: data['lastMessage'] ?? '',
                 updatedAt: _parseTimestamp(data['updatedAt']),
                 unreadCount: unreadCount.fold((l) => {}, (r) => r),
+                firstUserAvatar: data['firstUserAvatar'] ?? '',
+                secondUserAvatar: data['secondUserAvatar'] ?? '',
               ),
             );
           }

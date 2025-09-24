@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
+import 'package:telegram_copy/core/utils/widgets/user_avatar_widget.dart';
 import 'package:telegram_copy/feature/settings/presentation/bloc/settings_bloc.dart';
 
 class SettingScreenIos extends StatefulWidget {
@@ -189,7 +190,7 @@ class _SettingScreenIosState extends State<SettingScreenIos> {
         padding: const EdgeInsets.all(8),
         child: Row(
           children: [
-            _buildUserAvatar(),
+            _buildUserAvatar(state),
             const SizedBox(width: 16),
             Expanded(child: _buildUserInfo(state)),
             _buildQRCodeIcon(),
@@ -199,18 +200,10 @@ class _SettingScreenIosState extends State<SettingScreenIos> {
     );
   }
 
-  Widget _buildUserAvatar() {
+  Widget _buildUserAvatar(SettingsState state) {
     return Hero(
       tag: 'user_avatar',
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(50),
-        child: Image.asset(
-          'assets/images/avatar.jpg',
-          fit: BoxFit.cover,
-          width: 56,
-          height: 56,
-        ),
-      ),
+      child: UserAvatarWidget(state: state, height: 56, width: 56),
     );
   }
 

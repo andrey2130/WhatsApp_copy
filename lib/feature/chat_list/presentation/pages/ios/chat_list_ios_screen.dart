@@ -1,9 +1,5 @@
-import 'package:flutter/cupertino.dart'
-    show
-        CupertinoSliverNavigationBar,
-        CupertinoIcons,
-        CupertinoButton,
-        CupertinoSearchTextField;
+import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
@@ -13,6 +9,7 @@ import 'package:telegram_copy/feature/chat_list/presentation/bloc/users/users_bl
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/chat_list_widgets.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/filter_widgets.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/suggest_user.dart';
+import 'package:telegram_copy/feature/settings/domain/params/user_params.dart';
 
 class IosScreen extends StatefulWidget {
   const IosScreen({super.key});
@@ -24,6 +21,7 @@ class IosScreen extends StatefulWidget {
 class _IosScreenState extends State<IosScreen> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -83,7 +81,6 @@ class _IosScreenState extends State<IosScreen> {
                           ChatListWidgets(index: index, chat: chats[index]),
                       childCount: chats.length,
                     ),
-                    
                   ),
                   error: (message) => SliverToBoxAdapter(
                     child: Center(child: Text('Error: $message')),
@@ -115,6 +112,7 @@ class _IosScreenState extends State<IosScreen> {
                         uid: chats[index]['uid'],
                         name: chats[index]['name'],
                         bio: chats[index]['bio'],
+                        user: UserParams.fromJson(chats[index]),
                       ),
                       childCount: chats.length,
                     ),

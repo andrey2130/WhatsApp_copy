@@ -5,14 +5,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 import 'package:telegram_copy/core/utils/date_formatter.dart';
+import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/chat.dart';
+import 'package:telegram_copy/feature/chat_list/domain/params/message_params/delete_messaga.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/bloc/chats/chats_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/chat_navigation_bar.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_input.dart';
+
+import 'package:telegram_copy/feature/settings/presentation/bloc/settings_bloc.dart';
 import 'package:telegram_copy/injections.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params/message.dart';
-import 'package:telegram_copy/feature/chat_list/presentation/bloc/chats/chats_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_buble.dart';
-import 'package:telegram_copy/feature/settings/presentation/bloc/settings_bloc.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import 'package:uuid/uuid.dart';
 
 class ChatScreenIos extends StatefulWidget {
   const ChatScreenIos({
@@ -93,14 +97,15 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
               _scrollToBottom();
             }
           },
-          loading: () {
-            Center(child: CircularProgressIndicator.adaptive());
-          },
+
           error: (message) {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text('Error: $message')));
           },
+          loading: () => Center(
+            child: Center(child: CircularProgressIndicator.adaptive()),
+          ),
           success: () {},
           orElse: () {
             getIt<Talker>().handle(
@@ -278,18 +283,40 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
     });
   }
 
+  String getReceiverPhotoUrl(String currentUserId, ChatParams chat) {
+    if (currentUserId == chat.firstUserId) {
+      return chat.secondUserAvatar;
+    } else {
+      return chat.firstUserAvatar;
+    }
+  }
+
+  String _getCurrentAvatar() {
+    return context.read<SettingsBloc>().state.maybeWhen(
+      success: (user) => user.photoUrl,
+      orElse: () => '',
+    );
+  }
+
   void _sendMessage(String message, TextEditingController messageController) {
     if (message.trim().isEmpty) return;
 
-    context.read<ChatsBloc>().requestSendMessage(
-      chatId: widget.conversationId,
-      senderId: widget.userId,
-      receiverId: widget.receiverIds.first,
-      senderName: widget.userName,
-      receiverName: widget.userName,
-      message: message,
-      replyToMessageId: _replyToMessage?.id,
-      replyText: _replyToMessage?.message,
+    context.read<ChatsBloc>().add(
+      ChatsEvent.sendMessage(
+        MessageParams(
+          id: const Uuid().v4(),
+          senderName: _getCurrentUserName(),
+          receiverName: widget.userName,
+          message: message.trim(),
+          firstUserAvatar: _getCurrentAvatar(),
+          secondUserAvatar: widget.avatarUrl ?? '',
+          senderId: widget.userId,
+          receiverId: widget.receiverIds.first,
+          chatId: widget.conversationId,
+          createdAt: DateTime.now().toIso8601String(),
+          updatedAt: DateTime.now().toIso8601String(),
+        ),
+      ),
     );
 
     messageController.clear();
@@ -315,14 +342,26 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
   }
 
   void _deleteMessage(String messageId) {
-    context.read<ChatsBloc>().requestDeleteMessage(
-      chatId: widget.conversationId,
-      senderId: widget.userId,
-      messageId: messageId,
+    context.read<ChatsBloc>().add(
+      ChatsEvent.deleteMessage(
+        DeleteMessageParams(
+          messageId: messageId,
+          chatId: widget.conversationId,
+          senderId: widget.userId,
+        ),
+      ),
     );
   }
 
   void _readMessage(MessageParams message) {
     context.read<ChatsBloc>().add(ChatsEvent.readMessage(message));
+  }
+
+  String _getCurrentUserName() {
+    final settingsState = context.read<SettingsBloc>().state;
+    return settingsState.maybeWhen(
+      success: (user) => user.name.isNotEmpty ? user.name : 'Unknown User',
+      orElse: () => 'Unknown User',
+    );
   }
 }

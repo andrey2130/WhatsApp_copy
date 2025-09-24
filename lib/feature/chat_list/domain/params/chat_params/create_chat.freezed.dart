@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CreateChatParams {
 
- String get firstUserId; String get secondUserId; String get firstUserName; String get secondUserName;
+ String get firstUserId; String get secondUserId; String get firstUserName; String get secondUserName; String? get firstUserAvatar; String? get secondUserAvatar;
 /// Create a copy of CreateChatParams
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $CreateChatParamsCopyWith<CreateChatParams> get copyWith => _$CreateChatParamsCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateChatParams&&(identical(other.firstUserId, firstUserId) || other.firstUserId == firstUserId)&&(identical(other.secondUserId, secondUserId) || other.secondUserId == secondUserId)&&(identical(other.firstUserName, firstUserName) || other.firstUserName == firstUserName)&&(identical(other.secondUserName, secondUserName) || other.secondUserName == secondUserName));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateChatParams&&(identical(other.firstUserId, firstUserId) || other.firstUserId == firstUserId)&&(identical(other.secondUserId, secondUserId) || other.secondUserId == secondUserId)&&(identical(other.firstUserName, firstUserName) || other.firstUserName == firstUserName)&&(identical(other.secondUserName, secondUserName) || other.secondUserName == secondUserName)&&(identical(other.firstUserAvatar, firstUserAvatar) || other.firstUserAvatar == firstUserAvatar)&&(identical(other.secondUserAvatar, secondUserAvatar) || other.secondUserAvatar == secondUserAvatar));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,firstUserId,secondUserId,firstUserName,secondUserName);
+int get hashCode => Object.hash(runtimeType,firstUserId,secondUserId,firstUserName,secondUserName,firstUserAvatar,secondUserAvatar);
 
 @override
 String toString() {
-  return 'CreateChatParams(firstUserId: $firstUserId, secondUserId: $secondUserId, firstUserName: $firstUserName, secondUserName: $secondUserName)';
+  return 'CreateChatParams(firstUserId: $firstUserId, secondUserId: $secondUserId, firstUserName: $firstUserName, secondUserName: $secondUserName, firstUserAvatar: $firstUserAvatar, secondUserAvatar: $secondUserAvatar)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $CreateChatParamsCopyWith<$Res>  {
   factory $CreateChatParamsCopyWith(CreateChatParams value, $Res Function(CreateChatParams) _then) = _$CreateChatParamsCopyWithImpl;
 @useResult
 $Res call({
- String firstUserId, String secondUserId, String firstUserName, String secondUserName
+ String firstUserId, String secondUserId, String firstUserName, String secondUserName, String? firstUserAvatar, String? secondUserAvatar
 });
 
 
@@ -65,13 +65,15 @@ class _$CreateChatParamsCopyWithImpl<$Res>
 
 /// Create a copy of CreateChatParams
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? firstUserId = null,Object? secondUserId = null,Object? firstUserName = null,Object? secondUserName = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? firstUserId = null,Object? secondUserId = null,Object? firstUserName = null,Object? secondUserName = null,Object? firstUserAvatar = freezed,Object? secondUserAvatar = freezed,}) {
   return _then(_self.copyWith(
 firstUserId: null == firstUserId ? _self.firstUserId : firstUserId // ignore: cast_nullable_to_non_nullable
 as String,secondUserId: null == secondUserId ? _self.secondUserId : secondUserId // ignore: cast_nullable_to_non_nullable
 as String,firstUserName: null == firstUserName ? _self.firstUserName : firstUserName // ignore: cast_nullable_to_non_nullable
 as String,secondUserName: null == secondUserName ? _self.secondUserName : secondUserName // ignore: cast_nullable_to_non_nullable
-as String,
+as String,firstUserAvatar: freezed == firstUserAvatar ? _self.firstUserAvatar : firstUserAvatar // ignore: cast_nullable_to_non_nullable
+as String?,secondUserAvatar: freezed == secondUserAvatar ? _self.secondUserAvatar : secondUserAvatar // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -156,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String firstUserId,  String secondUserId,  String firstUserName,  String secondUserName)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String firstUserId,  String secondUserId,  String firstUserName,  String secondUserName,  String? firstUserAvatar,  String? secondUserAvatar)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CreateChatParams() when $default != null:
-return $default(_that.firstUserId,_that.secondUserId,_that.firstUserName,_that.secondUserName);case _:
+return $default(_that.firstUserId,_that.secondUserId,_that.firstUserName,_that.secondUserName,_that.firstUserAvatar,_that.secondUserAvatar);case _:
   return orElse();
 
 }
@@ -177,10 +179,10 @@ return $default(_that.firstUserId,_that.secondUserId,_that.firstUserName,_that.s
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String firstUserId,  String secondUserId,  String firstUserName,  String secondUserName)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String firstUserId,  String secondUserId,  String firstUserName,  String secondUserName,  String? firstUserAvatar,  String? secondUserAvatar)  $default,) {final _that = this;
 switch (_that) {
 case _CreateChatParams():
-return $default(_that.firstUserId,_that.secondUserId,_that.firstUserName,_that.secondUserName);case _:
+return $default(_that.firstUserId,_that.secondUserId,_that.firstUserName,_that.secondUserName,_that.firstUserAvatar,_that.secondUserAvatar);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -197,10 +199,10 @@ return $default(_that.firstUserId,_that.secondUserId,_that.firstUserName,_that.s
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String firstUserId,  String secondUserId,  String firstUserName,  String secondUserName)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String firstUserId,  String secondUserId,  String firstUserName,  String secondUserName,  String? firstUserAvatar,  String? secondUserAvatar)?  $default,) {final _that = this;
 switch (_that) {
 case _CreateChatParams() when $default != null:
-return $default(_that.firstUserId,_that.secondUserId,_that.firstUserName,_that.secondUserName);case _:
+return $default(_that.firstUserId,_that.secondUserId,_that.firstUserName,_that.secondUserName,_that.firstUserAvatar,_that.secondUserAvatar);case _:
   return null;
 
 }
@@ -212,13 +214,15 @@ return $default(_that.firstUserId,_that.secondUserId,_that.firstUserName,_that.s
 @JsonSerializable()
 
 class _CreateChatParams implements CreateChatParams {
-  const _CreateChatParams({required this.firstUserId, required this.secondUserId, required this.firstUserName, required this.secondUserName});
+  const _CreateChatParams({required this.firstUserId, required this.secondUserId, required this.firstUserName, required this.secondUserName, this.firstUserAvatar, this.secondUserAvatar});
   factory _CreateChatParams.fromJson(Map<String, dynamic> json) => _$CreateChatParamsFromJson(json);
 
 @override final  String firstUserId;
 @override final  String secondUserId;
 @override final  String firstUserName;
 @override final  String secondUserName;
+@override final  String? firstUserAvatar;
+@override final  String? secondUserAvatar;
 
 /// Create a copy of CreateChatParams
 /// with the given fields replaced by the non-null parameter values.
@@ -233,16 +237,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateChatParams&&(identical(other.firstUserId, firstUserId) || other.firstUserId == firstUserId)&&(identical(other.secondUserId, secondUserId) || other.secondUserId == secondUserId)&&(identical(other.firstUserName, firstUserName) || other.firstUserName == firstUserName)&&(identical(other.secondUserName, secondUserName) || other.secondUserName == secondUserName));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateChatParams&&(identical(other.firstUserId, firstUserId) || other.firstUserId == firstUserId)&&(identical(other.secondUserId, secondUserId) || other.secondUserId == secondUserId)&&(identical(other.firstUserName, firstUserName) || other.firstUserName == firstUserName)&&(identical(other.secondUserName, secondUserName) || other.secondUserName == secondUserName)&&(identical(other.firstUserAvatar, firstUserAvatar) || other.firstUserAvatar == firstUserAvatar)&&(identical(other.secondUserAvatar, secondUserAvatar) || other.secondUserAvatar == secondUserAvatar));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,firstUserId,secondUserId,firstUserName,secondUserName);
+int get hashCode => Object.hash(runtimeType,firstUserId,secondUserId,firstUserName,secondUserName,firstUserAvatar,secondUserAvatar);
 
 @override
 String toString() {
-  return 'CreateChatParams(firstUserId: $firstUserId, secondUserId: $secondUserId, firstUserName: $firstUserName, secondUserName: $secondUserName)';
+  return 'CreateChatParams(firstUserId: $firstUserId, secondUserId: $secondUserId, firstUserName: $firstUserName, secondUserName: $secondUserName, firstUserAvatar: $firstUserAvatar, secondUserAvatar: $secondUserAvatar)';
 }
 
 
@@ -253,7 +257,7 @@ abstract mixin class _$CreateChatParamsCopyWith<$Res> implements $CreateChatPara
   factory _$CreateChatParamsCopyWith(_CreateChatParams value, $Res Function(_CreateChatParams) _then) = __$CreateChatParamsCopyWithImpl;
 @override @useResult
 $Res call({
- String firstUserId, String secondUserId, String firstUserName, String secondUserName
+ String firstUserId, String secondUserId, String firstUserName, String secondUserName, String? firstUserAvatar, String? secondUserAvatar
 });
 
 
@@ -270,13 +274,15 @@ class __$CreateChatParamsCopyWithImpl<$Res>
 
 /// Create a copy of CreateChatParams
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? firstUserId = null,Object? secondUserId = null,Object? firstUserName = null,Object? secondUserName = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? firstUserId = null,Object? secondUserId = null,Object? firstUserName = null,Object? secondUserName = null,Object? firstUserAvatar = freezed,Object? secondUserAvatar = freezed,}) {
   return _then(_CreateChatParams(
 firstUserId: null == firstUserId ? _self.firstUserId : firstUserId // ignore: cast_nullable_to_non_nullable
 as String,secondUserId: null == secondUserId ? _self.secondUserId : secondUserId // ignore: cast_nullable_to_non_nullable
 as String,firstUserName: null == firstUserName ? _self.firstUserName : firstUserName // ignore: cast_nullable_to_non_nullable
 as String,secondUserName: null == secondUserName ? _self.secondUserName : secondUserName // ignore: cast_nullable_to_non_nullable
-as String,
+as String,firstUserAvatar: freezed == firstUserAvatar ? _self.firstUserAvatar : firstUserAvatar // ignore: cast_nullable_to_non_nullable
+as String?,secondUserAvatar: freezed == secondUserAvatar ? _self.secondUserAvatar : secondUserAvatar // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

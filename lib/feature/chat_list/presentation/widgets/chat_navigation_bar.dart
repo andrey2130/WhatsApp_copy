@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
+import 'package:telegram_copy/core/utils/widgets/user_avatar_widget.dart';
 
 class ChatNavigationBar extends StatelessWidget
     implements ObstructingPreferredSizeWidget {
@@ -37,15 +38,7 @@ class ChatNavigationBar extends StatelessWidget
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircleAvatar(
-              radius: 18.r,
-              backgroundImage: avatarUrl != null
-                  ? NetworkImage(avatarUrl!)
-                  : null,
-              child: avatarUrl == null
-                  ? const Icon(Icons.person, size: 18)
-                  : null,
-            ),
+            UserAvatarWidget(height: 36, width: 36, photoUrl: avatarUrl),
             SizedBox(width: 8.w),
             Flexible(
               child: Column(

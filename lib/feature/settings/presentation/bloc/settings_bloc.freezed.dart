@@ -55,13 +55,14 @@ extension SettingsEventPatterns on SettingsEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( LoadRequested value)?  loadRequested,TResult Function( UpdateUserName value)?  updateUserName,TResult Function( UpdateAbout value)?  updateAbout,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( LoadRequested value)?  loadRequested,TResult Function( UpdateUserName value)?  updateUserName,TResult Function( UpdateAbout value)?  updateAbout,TResult Function( UploadAvatar value)?  uploadAvatar,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case LoadRequested() when loadRequested != null:
 return loadRequested(_that);case UpdateUserName() when updateUserName != null:
 return updateUserName(_that);case UpdateAbout() when updateAbout != null:
-return updateAbout(_that);case _:
+return updateAbout(_that);case UploadAvatar() when uploadAvatar != null:
+return uploadAvatar(_that);case _:
   return orElse();
 
 }
@@ -79,13 +80,14 @@ return updateAbout(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( LoadRequested value)  loadRequested,required TResult Function( UpdateUserName value)  updateUserName,required TResult Function( UpdateAbout value)  updateAbout,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( LoadRequested value)  loadRequested,required TResult Function( UpdateUserName value)  updateUserName,required TResult Function( UpdateAbout value)  updateAbout,required TResult Function( UploadAvatar value)  uploadAvatar,}){
 final _that = this;
 switch (_that) {
 case LoadRequested():
 return loadRequested(_that);case UpdateUserName():
 return updateUserName(_that);case UpdateAbout():
-return updateAbout(_that);case _:
+return updateAbout(_that);case UploadAvatar():
+return uploadAvatar(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -102,13 +104,14 @@ return updateAbout(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( LoadRequested value)?  loadRequested,TResult? Function( UpdateUserName value)?  updateUserName,TResult? Function( UpdateAbout value)?  updateAbout,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( LoadRequested value)?  loadRequested,TResult? Function( UpdateUserName value)?  updateUserName,TResult? Function( UpdateAbout value)?  updateAbout,TResult? Function( UploadAvatar value)?  uploadAvatar,}){
 final _that = this;
 switch (_that) {
 case LoadRequested() when loadRequested != null:
 return loadRequested(_that);case UpdateUserName() when updateUserName != null:
 return updateUserName(_that);case UpdateAbout() when updateAbout != null:
-return updateAbout(_that);case _:
+return updateAbout(_that);case UploadAvatar() when uploadAvatar != null:
+return uploadAvatar(_that);case _:
   return null;
 
 }
@@ -125,12 +128,13 @@ return updateAbout(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loadRequested,TResult Function( String name)?  updateUserName,TResult Function( String about)?  updateAbout,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loadRequested,TResult Function( String name)?  updateUserName,TResult Function( String about)?  updateAbout,TResult Function( String filePath)?  uploadAvatar,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case LoadRequested() when loadRequested != null:
 return loadRequested();case UpdateUserName() when updateUserName != null:
 return updateUserName(_that.name);case UpdateAbout() when updateAbout != null:
-return updateAbout(_that.about);case _:
+return updateAbout(_that.about);case UploadAvatar() when uploadAvatar != null:
+return uploadAvatar(_that.filePath);case _:
   return orElse();
 
 }
@@ -148,12 +152,13 @@ return updateAbout(_that.about);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loadRequested,required TResult Function( String name)  updateUserName,required TResult Function( String about)  updateAbout,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loadRequested,required TResult Function( String name)  updateUserName,required TResult Function( String about)  updateAbout,required TResult Function( String filePath)  uploadAvatar,}) {final _that = this;
 switch (_that) {
 case LoadRequested():
 return loadRequested();case UpdateUserName():
 return updateUserName(_that.name);case UpdateAbout():
-return updateAbout(_that.about);case _:
+return updateAbout(_that.about);case UploadAvatar():
+return uploadAvatar(_that.filePath);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -170,12 +175,13 @@ return updateAbout(_that.about);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loadRequested,TResult? Function( String name)?  updateUserName,TResult? Function( String about)?  updateAbout,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loadRequested,TResult? Function( String name)?  updateUserName,TResult? Function( String about)?  updateAbout,TResult? Function( String filePath)?  uploadAvatar,}) {final _that = this;
 switch (_that) {
 case LoadRequested() when loadRequested != null:
 return loadRequested();case UpdateUserName() when updateUserName != null:
 return updateUserName(_that.name);case UpdateAbout() when updateAbout != null:
-return updateAbout(_that.about);case _:
+return updateAbout(_that.about);case UploadAvatar() when uploadAvatar != null:
+return uploadAvatar(_that.filePath);case _:
   return null;
 
 }
@@ -340,6 +346,72 @@ class _$UpdateAboutCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') $Res call({Object? about = null,}) {
   return _then(UpdateAbout(
 about: null == about ? _self.about : about // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class UploadAvatar implements SettingsEvent {
+  const UploadAvatar({required this.filePath});
+  
+
+ final  String filePath;
+
+/// Create a copy of SettingsEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$UploadAvatarCopyWith<UploadAvatar> get copyWith => _$UploadAvatarCopyWithImpl<UploadAvatar>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UploadAvatar&&(identical(other.filePath, filePath) || other.filePath == filePath));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,filePath);
+
+@override
+String toString() {
+  return 'SettingsEvent.uploadAvatar(filePath: $filePath)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $UploadAvatarCopyWith<$Res> implements $SettingsEventCopyWith<$Res> {
+  factory $UploadAvatarCopyWith(UploadAvatar value, $Res Function(UploadAvatar) _then) = _$UploadAvatarCopyWithImpl;
+@useResult
+$Res call({
+ String filePath
+});
+
+
+
+
+}
+/// @nodoc
+class _$UploadAvatarCopyWithImpl<$Res>
+    implements $UploadAvatarCopyWith<$Res> {
+  _$UploadAvatarCopyWithImpl(this._self, this._then);
+
+  final UploadAvatar _self;
+  final $Res Function(UploadAvatar) _then;
+
+/// Create a copy of SettingsEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? filePath = null,}) {
+  return _then(UploadAvatar(
+filePath: null == filePath ? _self.filePath : filePath // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

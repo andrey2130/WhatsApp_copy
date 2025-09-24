@@ -12,6 +12,8 @@ _CreateChatParams _$CreateChatParamsFromJson(Map<String, dynamic> json) =>
       secondUserId: json['secondUserId'] as String,
       firstUserName: json['firstUserName'] as String,
       secondUserName: json['secondUserName'] as String,
+      firstUserAvatar: json['firstUserAvatar'] as String?,
+      secondUserAvatar: json['secondUserAvatar'] as String?,
     );
 
 Map<String, dynamic> _$CreateChatParamsToJson(_CreateChatParams instance) =>
@@ -20,4 +22,6 @@ Map<String, dynamic> _$CreateChatParamsToJson(_CreateChatParams instance) =>
       'secondUserId': instance.secondUserId,
       'firstUserName': instance.firstUserName,
       'secondUserName': instance.secondUserName,
+      'firstUserAvatar': instance.firstUserAvatar,
+      'secondUserAvatar': instance.secondUserAvatar,
     };

@@ -11,6 +11,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:cloud_firestore/cloud_firestore.dart' as _i974;
 import 'package:firebase_auth/firebase_auth.dart' as _i59;
+import 'package:firebase_storage/firebase_storage.dart' as _i457;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
@@ -52,6 +53,7 @@ import 'feature/settings/domain/usecases/get_user_data_usecase.dart' as _i481;
 import 'feature/settings/domain/usecases/update_about_usecase.dart' as _i816;
 import 'feature/settings/domain/usecases/update_user_name_usecase.dart'
     as _i577;
+import 'feature/settings/domain/usecases/upload_avatar_usecase.dart' as _i966;
 import 'feature/settings/presentation/bloc/settings_bloc.dart' as _i293;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -61,14 +63,17 @@ extension GetItInjectableX on _i174.GetIt {
     _i526.EnvironmentFilter? environmentFilter,
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
-    gh.factory<_i1000.SettingsDatasource>(
-      () => _i1000.SettingsDatasourceImpl(gh<_i974.FirebaseFirestore>()),
-    );
     gh.factory<_i630.AuthService>(
       () => _i940.AuthServiceImpl(gh<_i59.FirebaseAuth>()),
     );
     gh.factory<_i330.ChatDatasource>(
       () => _i330.ChatDatasourceImpl(gh<_i974.FirebaseFirestore>()),
+    );
+    gh.factory<_i1000.SettingsDatasource>(
+      () => _i1000.SettingsDatasourceImpl(
+        gh<_i974.FirebaseFirestore>(),
+        gh<_i457.FirebaseStorage>(),
+      ),
     );
     gh.factory<_i574.UserDataSource>(
       () => _i574.UserDataSourceImpl(gh<_i974.FirebaseFirestore>()),
@@ -149,11 +154,15 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i583.AuthRepo>(
       () => _i939.AuthRepoImpl(authDatasource: gh<_i274.AuthDatasource>()),
     );
+    gh.factory<_i966.UploadAvatarUsecase>(
+      () => _i966.UploadAvatarUsecase(gh<_i920.SettingsRepo>()),
+    );
     gh.factory<_i293.SettingsBloc>(
       () => _i293.SettingsBloc(
         getUserDataUsecase: gh<_i481.GetUserDataUsecase>(),
         updateUserNameUsecase: gh<_i577.UpdateUserNameUsecase>(),
         updateAboutUsecase: gh<_i816.UpdateAboutUsecase>(),
+        uploadAvatarUsecase: gh<_i966.UploadAvatarUsecase>(),
       ),
     );
     gh.factory<_i1027.GetCurrentUserUsecase>(

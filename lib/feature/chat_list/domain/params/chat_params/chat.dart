@@ -7,13 +7,15 @@ part 'chat.g.dart';
 abstract class ChatParams with _$ChatParams {
   const factory ChatParams({
     required String id,
-    required String fistUserName,
+    required String firstUserName,
     required String secondUserName,
     required String firstUserId,
     required String secondUserId,
     required String createdAt,
-    String? lastMessage,
     required String updatedAt,
+    String? lastMessage,
+    required String firstUserAvatar,
+    required String secondUserAvatar,
     @Default({}) Map<String, int> unreadCount,
   }) = _ChatParams;
   factory ChatParams.fromJson(Map<String, dynamic> json) =>
