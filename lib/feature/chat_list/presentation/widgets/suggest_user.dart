@@ -34,7 +34,12 @@ class _SuggestUserState extends State<SuggestUser> {
     return UserListItem(
       onTap: () => context.push(
         '/chat_list/user/${widget.uid}',
-        extra: {'name': widget.name, 'uid': widget.uid, 'bio': widget.bio},
+        extra: {
+          'name': widget.name,
+          'uid': widget.uid,
+          'bio': widget.bio,
+          'photoUrl': widget.user.photoUrl,
+        },
       ),
       leading: Container(
         width: 50.r,

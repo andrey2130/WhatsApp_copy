@@ -40,7 +40,7 @@ class ChatListWidgets extends StatelessWidget {
               extra: {
                 'name': getDisplayName(currentUserId),
                 'conversationId': chat.id,
-                'photoUrl': '',
+
                 'receiverIds': [getReceiverId(currentUserId)],
               },
             );
@@ -111,10 +111,10 @@ class ChatListWidgets extends StatelessWidget {
   }
 
   String getReceiverPhotoUrl(String currentUserId, ChatParams chat) {
-    if (currentUserId == chat.firstUserId) {
-      return chat.secondUserAvatar ?? '';
+    if(currentUserId == chat.firstUserId) {
+      return chat.secondUserAvatar;
     } else {
-      return chat.firstUserAvatar ?? '';
+      return chat.firstUserAvatar;
     }
   }
 

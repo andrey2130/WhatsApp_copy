@@ -42,7 +42,7 @@ class ChatDatasourceImpl implements ChatDatasource {
       final docRef = _firestore.collection('chats').doc();
       await docRef.set({
         'participants': [params.firstUserId, params.secondUserId],
-        'fistUserName': params.firstUserName,
+        'firstUserName': params.firstUserName,
         'secondUserName': params.secondUserName,
         'firstUserAvatar': params.firstUserAvatar,
         'secondUserAvatar': params.secondUserAvatar,
@@ -73,8 +73,10 @@ class ChatDatasourceImpl implements ChatDatasource {
         chatId = chatDoc.id;
         await chatDoc.set({
           'participants': [params.senderId, params.receiverId],
-          'fistUserName': params.senderName,
+          'firstUserName': params.senderName,
           'secondUserName': params.receiverName,
+          'firstUserAvatar': params.firstUserAvatar,
+          'secondUserAvatar': params.secondUserAvatar,
           'createdAt': FieldValue.serverTimestamp(),
           'updatedAt': FieldValue.serverTimestamp(),
         });
@@ -144,6 +146,8 @@ class ChatDatasourceImpl implements ChatDatasource {
             createdAt: _parseTimestamp(data['createdAt']),
             lastMessage: data['lastMessage'] ?? '',
             updatedAt: _parseTimestamp(data['updatedAt']),
+            firstUserAvatar: data['firstUserAvatar'] ?? '',
+            secondUserAvatar: data['secondUserAvatar'] ?? '',
             unreadCount: unreadCount.fold((l) => {}, (r) => r),
           ),
         );

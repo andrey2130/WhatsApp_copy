@@ -15,10 +15,11 @@ abstract class MessageParams with _$MessageParams {
     required String message,
     required String createdAt,
     required String updatedAt,
+    required String firstUserAvatar,
+    required String secondUserAvatar,
     @Default(false) bool isRead,
     String? replyToMessageId,
     String? replyText,
-    
   }) = _MessageParams;
 
   factory MessageParams.fromJson(Map<String, dynamic> json) =>

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ChatParams {
 
- String get id; String get firstUserName; String get secondUserName; String get firstUserId; String get secondUserId; String get createdAt; String get updatedAt; String? get lastMessage; String? get firstUserAvatar; String? get secondUserAvatar; Map<String, int> get unreadCount;
+ String get id; String get firstUserName; String get secondUserName; String get firstUserId; String get secondUserId; String get createdAt; String get updatedAt; String? get lastMessage; String get firstUserAvatar; String get secondUserAvatar; Map<String, int> get unreadCount;
 /// Create a copy of ChatParams
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $ChatParamsCopyWith<$Res>  {
   factory $ChatParamsCopyWith(ChatParams value, $Res Function(ChatParams) _then) = _$ChatParamsCopyWithImpl;
 @useResult
 $Res call({
- String id, String firstUserName, String secondUserName, String firstUserId, String secondUserId, String createdAt, String updatedAt, String? lastMessage, String? firstUserAvatar, String? secondUserAvatar, Map<String, int> unreadCount
+ String id, String firstUserName, String secondUserName, String firstUserId, String secondUserId, String createdAt, String updatedAt, String? lastMessage, String firstUserAvatar, String secondUserAvatar, Map<String, int> unreadCount
 });
 
 
@@ -65,7 +65,7 @@ class _$ChatParamsCopyWithImpl<$Res>
 
 /// Create a copy of ChatParams
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? firstUserName = null,Object? secondUserName = null,Object? firstUserId = null,Object? secondUserId = null,Object? createdAt = null,Object? updatedAt = null,Object? lastMessage = freezed,Object? firstUserAvatar = freezed,Object? secondUserAvatar = freezed,Object? unreadCount = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? firstUserName = null,Object? secondUserName = null,Object? firstUserId = null,Object? secondUserId = null,Object? createdAt = null,Object? updatedAt = null,Object? lastMessage = freezed,Object? firstUserAvatar = null,Object? secondUserAvatar = null,Object? unreadCount = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,firstUserName: null == firstUserName ? _self.firstUserName : firstUserName // ignore: cast_nullable_to_non_nullable
@@ -75,9 +75,9 @@ as String,secondUserId: null == secondUserId ? _self.secondUserId : secondUserId
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as String,lastMessage: freezed == lastMessage ? _self.lastMessage : lastMessage // ignore: cast_nullable_to_non_nullable
-as String?,firstUserAvatar: freezed == firstUserAvatar ? _self.firstUserAvatar : firstUserAvatar // ignore: cast_nullable_to_non_nullable
-as String?,secondUserAvatar: freezed == secondUserAvatar ? _self.secondUserAvatar : secondUserAvatar // ignore: cast_nullable_to_non_nullable
-as String?,unreadCount: null == unreadCount ? _self.unreadCount : unreadCount // ignore: cast_nullable_to_non_nullable
+as String?,firstUserAvatar: null == firstUserAvatar ? _self.firstUserAvatar : firstUserAvatar // ignore: cast_nullable_to_non_nullable
+as String,secondUserAvatar: null == secondUserAvatar ? _self.secondUserAvatar : secondUserAvatar // ignore: cast_nullable_to_non_nullable
+as String,unreadCount: null == unreadCount ? _self.unreadCount : unreadCount // ignore: cast_nullable_to_non_nullable
 as Map<String, int>,
   ));
 }
@@ -163,7 +163,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String firstUserName,  String secondUserName,  String firstUserId,  String secondUserId,  String createdAt,  String updatedAt,  String? lastMessage,  String? firstUserAvatar,  String? secondUserAvatar,  Map<String, int> unreadCount)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String firstUserName,  String secondUserName,  String firstUserId,  String secondUserId,  String createdAt,  String updatedAt,  String? lastMessage,  String firstUserAvatar,  String secondUserAvatar,  Map<String, int> unreadCount)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ChatParams() when $default != null:
 return $default(_that.id,_that.firstUserName,_that.secondUserName,_that.firstUserId,_that.secondUserId,_that.createdAt,_that.updatedAt,_that.lastMessage,_that.firstUserAvatar,_that.secondUserAvatar,_that.unreadCount);case _:
@@ -184,7 +184,7 @@ return $default(_that.id,_that.firstUserName,_that.secondUserName,_that.firstUse
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String firstUserName,  String secondUserName,  String firstUserId,  String secondUserId,  String createdAt,  String updatedAt,  String? lastMessage,  String? firstUserAvatar,  String? secondUserAvatar,  Map<String, int> unreadCount)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String firstUserName,  String secondUserName,  String firstUserId,  String secondUserId,  String createdAt,  String updatedAt,  String? lastMessage,  String firstUserAvatar,  String secondUserAvatar,  Map<String, int> unreadCount)  $default,) {final _that = this;
 switch (_that) {
 case _ChatParams():
 return $default(_that.id,_that.firstUserName,_that.secondUserName,_that.firstUserId,_that.secondUserId,_that.createdAt,_that.updatedAt,_that.lastMessage,_that.firstUserAvatar,_that.secondUserAvatar,_that.unreadCount);case _:
@@ -204,7 +204,7 @@ return $default(_that.id,_that.firstUserName,_that.secondUserName,_that.firstUse
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String firstUserName,  String secondUserName,  String firstUserId,  String secondUserId,  String createdAt,  String updatedAt,  String? lastMessage,  String? firstUserAvatar,  String? secondUserAvatar,  Map<String, int> unreadCount)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String firstUserName,  String secondUserName,  String firstUserId,  String secondUserId,  String createdAt,  String updatedAt,  String? lastMessage,  String firstUserAvatar,  String secondUserAvatar,  Map<String, int> unreadCount)?  $default,) {final _that = this;
 switch (_that) {
 case _ChatParams() when $default != null:
 return $default(_that.id,_that.firstUserName,_that.secondUserName,_that.firstUserId,_that.secondUserId,_that.createdAt,_that.updatedAt,_that.lastMessage,_that.firstUserAvatar,_that.secondUserAvatar,_that.unreadCount);case _:
@@ -219,7 +219,7 @@ return $default(_that.id,_that.firstUserName,_that.secondUserName,_that.firstUse
 @JsonSerializable()
 
 class _ChatParams implements ChatParams {
-  const _ChatParams({required this.id, required this.firstUserName, required this.secondUserName, required this.firstUserId, required this.secondUserId, required this.createdAt, required this.updatedAt, this.lastMessage, this.firstUserAvatar, this.secondUserAvatar, final  Map<String, int> unreadCount = const {}}): _unreadCount = unreadCount;
+  const _ChatParams({required this.id, required this.firstUserName, required this.secondUserName, required this.firstUserId, required this.secondUserId, required this.createdAt, required this.updatedAt, this.lastMessage, required this.firstUserAvatar, required this.secondUserAvatar, final  Map<String, int> unreadCount = const {}}): _unreadCount = unreadCount;
   factory _ChatParams.fromJson(Map<String, dynamic> json) => _$ChatParamsFromJson(json);
 
 @override final  String id;
@@ -230,8 +230,8 @@ class _ChatParams implements ChatParams {
 @override final  String createdAt;
 @override final  String updatedAt;
 @override final  String? lastMessage;
-@override final  String? firstUserAvatar;
-@override final  String? secondUserAvatar;
+@override final  String firstUserAvatar;
+@override final  String secondUserAvatar;
  final  Map<String, int> _unreadCount;
 @override@JsonKey() Map<String, int> get unreadCount {
   if (_unreadCount is EqualUnmodifiableMapView) return _unreadCount;
@@ -273,7 +273,7 @@ abstract mixin class _$ChatParamsCopyWith<$Res> implements $ChatParamsCopyWith<$
   factory _$ChatParamsCopyWith(_ChatParams value, $Res Function(_ChatParams) _then) = __$ChatParamsCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String firstUserName, String secondUserName, String firstUserId, String secondUserId, String createdAt, String updatedAt, String? lastMessage, String? firstUserAvatar, String? secondUserAvatar, Map<String, int> unreadCount
+ String id, String firstUserName, String secondUserName, String firstUserId, String secondUserId, String createdAt, String updatedAt, String? lastMessage, String firstUserAvatar, String secondUserAvatar, Map<String, int> unreadCount
 });
 
 
@@ -290,7 +290,7 @@ class __$ChatParamsCopyWithImpl<$Res>
 
 /// Create a copy of ChatParams
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? firstUserName = null,Object? secondUserName = null,Object? firstUserId = null,Object? secondUserId = null,Object? createdAt = null,Object? updatedAt = null,Object? lastMessage = freezed,Object? firstUserAvatar = freezed,Object? secondUserAvatar = freezed,Object? unreadCount = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? firstUserName = null,Object? secondUserName = null,Object? firstUserId = null,Object? secondUserId = null,Object? createdAt = null,Object? updatedAt = null,Object? lastMessage = freezed,Object? firstUserAvatar = null,Object? secondUserAvatar = null,Object? unreadCount = null,}) {
   return _then(_ChatParams(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,firstUserName: null == firstUserName ? _self.firstUserName : firstUserName // ignore: cast_nullable_to_non_nullable
@@ -300,9 +300,9 @@ as String,secondUserId: null == secondUserId ? _self.secondUserId : secondUserId
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as String,lastMessage: freezed == lastMessage ? _self.lastMessage : lastMessage // ignore: cast_nullable_to_non_nullable
-as String?,firstUserAvatar: freezed == firstUserAvatar ? _self.firstUserAvatar : firstUserAvatar // ignore: cast_nullable_to_non_nullable
-as String?,secondUserAvatar: freezed == secondUserAvatar ? _self.secondUserAvatar : secondUserAvatar // ignore: cast_nullable_to_non_nullable
-as String?,unreadCount: null == unreadCount ? _self._unreadCount : unreadCount // ignore: cast_nullable_to_non_nullable
+as String?,firstUserAvatar: null == firstUserAvatar ? _self.firstUserAvatar : firstUserAvatar // ignore: cast_nullable_to_non_nullable
+as String,secondUserAvatar: null == secondUserAvatar ? _self.secondUserAvatar : secondUserAvatar // ignore: cast_nullable_to_non_nullable
+as String,unreadCount: null == unreadCount ? _self._unreadCount : unreadCount // ignore: cast_nullable_to_non_nullable
 as Map<String, int>,
   ));
 }

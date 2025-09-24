@@ -20,7 +20,7 @@ class UserAvatarWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget avatar;
 
-    if (photoUrl != null && photoUrl!.isNotEmpty) {
+    if (photoUrl != null && photoUrl!.trim().isNotEmpty) {
       avatar = Image.network(
         photoUrl!,
         width: width,

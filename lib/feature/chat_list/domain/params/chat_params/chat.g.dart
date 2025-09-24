@@ -15,8 +15,8 @@ _ChatParams _$ChatParamsFromJson(Map<String, dynamic> json) => _ChatParams(
   createdAt: json['createdAt'] as String,
   updatedAt: json['updatedAt'] as String,
   lastMessage: json['lastMessage'] as String?,
-  firstUserAvatar: json['firstUserAvatar'] as String?,
-  secondUserAvatar: json['secondUserAvatar'] as String?,
+  firstUserAvatar: json['firstUserAvatar'] as String,
+  secondUserAvatar: json['secondUserAvatar'] as String,
   unreadCount:
       (json['unreadCount'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(k, (e as num).toInt()),

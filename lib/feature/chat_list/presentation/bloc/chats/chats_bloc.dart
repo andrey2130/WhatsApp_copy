@@ -2,8 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:talker_flutter/talker_flutter.dart';
-
-import 'package:uuid/uuid.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/chat.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/create_chat.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params/delete_messaga.dart';
@@ -61,54 +59,6 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
     on<DeleteMessage>(_onDeleteMessage);
     on<WatchMessage>(_onWatchMessage);
     on<ReadMessage>(_onReadMessage);
-  }
-
-  void requestSendMessage({
-    required String chatId,
-    required String senderId,
-    required String receiverId,
-    required String senderName,
-    required String receiverName,
-    required String message,
-    String? replyToMessageId,
-    String? replyText,
-  }) {
-    final String newMessageId = const Uuid().v4();
-    final String now = DateTime.now().toIso8601String();
-
-    add(
-      ChatsEvent.sendMessage(
-        MessageParams(
-          id: newMessageId,
-          chatId: chatId,
-          senderId: senderId,
-          receiverId: receiverId,
-          senderName: senderName,
-          receiverName: receiverName,
-          message: message.trim(),
-          createdAt: now,
-          updatedAt: now,
-          replyToMessageId: replyToMessageId,
-          replyText: replyText,
-        ),
-      ),
-    );
-  }
-
-  void requestDeleteMessage({
-    required String chatId,
-    required String senderId,
-    required String messageId,
-  }) {
-    add(
-      ChatsEvent.deleteMessage(
-        DeleteMessageParams(
-          senderId: senderId,
-          chatId: chatId,
-          messageId: messageId,
-        ),
-      ),
-    );
   }
 
   Future<void> _onLoadChats(LoadChats event, Emitter<ChatsState> emit) async {

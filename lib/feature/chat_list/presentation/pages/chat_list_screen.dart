@@ -57,7 +57,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
         listener: (context, authState) {
           authState.maybeWhen(
             loading: () {
-              Center(child: CircularProgressIndicator.adaptive());
+             
             },
             authenticated: (userId) {
               context.read<ChatsBloc>().add(ChatsEvent.loadChats(userId));
