@@ -12,9 +12,12 @@ abstract class ChatParams with _$ChatParams {
     required String firstUserId,
     required String secondUserId,
     required String createdAt,
-    String? lastMessage,
     required String updatedAt,
+    String? lastMessage,
+     String? firstUserAvatar,
+     String? secondUserAvatar,
     @Default({}) Map<String, int> unreadCount,
+
   }) = _ChatParams;
   factory ChatParams.fromJson(Map<String, dynamic> json) =>
       _$ChatParamsFromJson(json);

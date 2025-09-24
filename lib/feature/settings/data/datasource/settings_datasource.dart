@@ -1,7 +1,13 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:talker_flutter/talker_flutter.dart';
+import 'package:telegram_copy/core/error/failure.dart';
+import 'package:telegram_copy/feature/settings/domain/params/upload_avatar_params.dart';
 
 import 'package:telegram_copy/feature/settings/domain/params/user_params.dart';
 import 'package:telegram_copy/injections.dart';
@@ -10,13 +16,18 @@ abstract class SettingsDatasource {
   Future<UserParams> getUserData();
   Future<void> updateUserName({required String name});
   Future<void> updateAbout({required String about});
+  Future<Either<Failure, String>> uploadAvatar({
+    required UploadAvatarParams params,
+  });
+  Future<Either<Failure, void>> deleteAvatar({required String userId});
 }
 
 @Injectable(as: SettingsDatasource)
 class SettingsDatasourceImpl implements SettingsDatasource {
   final FirebaseFirestore _firestore;
+  final FirebaseStorage _storage;
 
-  SettingsDatasourceImpl(this._firestore);
+  SettingsDatasourceImpl(this._firestore, this._storage);
 
   @override
   Future<UserParams> getUserData() async {
@@ -89,5 +100,37 @@ class SettingsDatasourceImpl implements SettingsDatasource {
       getIt<Talker>().handle(e, st);
       rethrow;
     }
+  }
+
+  @override
+  Future<Either<Failure, String>> uploadAvatar({
+    required UploadAvatarParams params,
+  }) async {
+    try {
+      final ref = _storage
+          .ref()
+          .child('user_avatars')
+          .child('${params.userId}.jpg');
+      final file = File(params.filePath);
+
+      final snapshot = await ref.putFile(file); // завантажуємо
+      final downloadUrl = await snapshot.ref.getDownloadURL(); // беремо URL
+
+      // Оновлюємо Firestore
+      await _firestore.collection('users').doc(params.userId).update({
+        'photoUrl': downloadUrl,
+      });
+
+      return Right(downloadUrl); // повертаємо URL
+    } catch (e, st) {
+      getIt<Talker>().handle(e, st);
+      return Left(Failure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteAvatar({required String userId}) {
+    // TODO: implement deleteAvatar
+    throw UnimplementedError();
   }
 }

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
+import 'package:telegram_copy/core/utils/widgets/user_avatar_widget.dart';
 import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
 import 'package:telegram_copy/feature/settings/presentation/bloc/settings_bloc.dart';
 
@@ -21,52 +23,81 @@ class _UserSettingScreenIosState extends State<UserSettingScreenIos> {
     return BlocConsumer<SettingsBloc, SettingsState>(
       listener: (context, state) {
         state.maybeWhen(
-          loading: () {
-            return const Center(child: CircularProgressIndicator.adaptive());
+          failure: (failure) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(failure.toString())));
+            });
           },
-          failure: (error) {
-            return Center(child: Text(error.toString()));
-          },
+
           orElse: () {},
         );
       },
       builder: (context, state) {
         return Scaffold(
           body: SafeArea(
-            child: Column(
-              children: [
-                CustomAppBar(
-                  leftWidget: IconButton(
-                    onPressed: () => context.pop(),
-                    icon: Icon(Icons.arrow_back),
-                  ),
-                  left2Widget: Text(
-                    'Profile',
-                    style: AppTextStyle.getRegularBlack().copyWith(
-                      fontSize: 20,
+            child: state.maybeWhen(
+              orElse: () => const SizedBox.shrink(),
+              loading: () =>
+                  const Center(child: CircularProgressIndicator.adaptive()),
+              success: (user) => Column(
+                children: [
+                  CustomAppBar(
+                    leftWidget: IconButton(
+                      onPressed: () => context.pop(),
+                      icon: Icon(Icons.arrow_back),
+                    ),
+                    left2Widget: Text(
+                      'Profile',
+                      style: AppTextStyle.getRegularBlack().copyWith(
+                        fontSize: 20,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 20.h),
-                _buildAvatar(),
-                SizedBox(height: 20.h),
-                TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    'Edit',
-                    style: AppTextStyle.getButtonText().copyWith(
-                      color: AppColors.primaryGreen,
+                  SizedBox(height: 20.h),
+                  _buildAvatar(state),
+                  SizedBox(height: 20.h),
+                  TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Edit',
+                      style: AppTextStyle.getButtonText().copyWith(
+                        color: AppColors.primaryGreen,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 30.h),
-                _buildProfileSections(state),
-              ],
+                  SizedBox(height: 30.h),
+                  _buildProfileSections(state),
+                ],
+              ),
             ),
           ),
         );
       },
     );
+  }
+
+  Widget _buildAvatar(SettingsState state) {
+    return Hero(
+      tag: 'user_avatar',
+      child: GestureDetector(
+        onTap: () => _pickAndUploadAvatar(),
+        child: UserAvatarWidget(state: state),
+      ),
+    );
+  }
+
+  void _pickAndUploadAvatar() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {});
+      context.read<SettingsBloc>().add(
+        SettingsEvent.uploadAvatar(filePath: pickedFile.path),
+      );
+    }
   }
 
   Widget _buildProfileSections(SettingsState state) {
@@ -153,19 +184,4 @@ class _UserSettingScreenIosState extends State<UserSettingScreenIos> {
       ),
     );
   }
-}
-
-Widget _buildAvatar() {
-  return Hero(
-    tag: 'user_avatar',
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(100),
-      child: Image.asset(
-        'assets/images/avatar.jpg',
-        fit: BoxFit.cover,
-        width: 120.w,
-        height: 120.h,
-      ),
-    ),
-  );
 }

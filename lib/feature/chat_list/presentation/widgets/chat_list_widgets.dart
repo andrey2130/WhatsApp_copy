@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
+import 'package:telegram_copy/core/utils/widgets/user_avatar_widget.dart';
 import 'package:telegram_copy/core/utils/widgets/user_list_item.dart';
 import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/chat.dart';
@@ -53,7 +54,11 @@ class ChatListWidgets extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(27.5.r),
-              child: Icon(Icons.person, color: Colors.black, size: 24.r),
+              child: UserAvatarWidget(
+                height: 50,
+                width: 50,
+                photoUrl: getReceiverPhotoUrl(currentUserId, chat),
+              ),
             ),
           ),
           title: Text(
@@ -103,6 +108,14 @@ class ChatListWidgets extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String getReceiverPhotoUrl(String currentUserId, ChatParams chat) {
+    if (currentUserId == chat.firstUserId) {
+      return chat.secondUserAvatar ?? '';
+    } else {
+      return chat.firstUserAvatar ?? '';
+    }
   }
 
   String getDisplayName(String currentUserId) {

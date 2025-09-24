@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:talker_flutter/talker_flutter.dart';
+
 import 'package:uuid/uuid.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/chat.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/create_chat.dart';
@@ -50,6 +51,7 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
        _deleteMeesageUsecase = deleteMeesageUsecase,
        _watchMessageUsecase = watchMessageUsecase,
        _readMessageUsecase = readMessageUsecase,
+
        super(const ChatsState.initial()) {
     on<LoadChats>(_onLoadChats);
     on<CreateChat>(_onCreateChat);
@@ -125,6 +127,7 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
     try {
       await _createChatUsecase(event.params);
       final chats = await _loadChatsUsecase(event.params.firstUserId);
+
       emit(ChatsState.loaded(chats));
     } catch (e) {
       getIt<Talker>().handle(e);

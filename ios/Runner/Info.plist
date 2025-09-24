@@ -76,5 +76,11 @@
 			</array>
 		</dict>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your photo library to select an avatar.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>We need permission to save selected photos.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We need camera access to take a photo.</string>
 </dict>
 </plist>

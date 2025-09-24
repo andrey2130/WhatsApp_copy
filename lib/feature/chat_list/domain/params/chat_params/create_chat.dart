@@ -10,6 +10,8 @@ abstract class CreateChatParams with _$CreateChatParams {
     required String secondUserId,
     required String firstUserName,
     required String secondUserName,
+     String? firstUserAvatar,
+     String? secondUserAvatar,
   }) = _CreateChatParams;
 
   factory CreateChatParams.fromJson(Map<String, dynamic> json) =>

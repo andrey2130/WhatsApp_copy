@@ -7,4 +7,5 @@ class SettingsEvent with _$SettingsEvent {
       UpdateUserName;
   const factory SettingsEvent.updateAbout({required String about}) =
       UpdateAbout;
+      const factory SettingsEvent.uploadAvatar({required String filePath}) = UploadAvatar;
 }

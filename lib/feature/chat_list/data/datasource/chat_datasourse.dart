@@ -44,6 +44,8 @@ class ChatDatasourceImpl implements ChatDatasource {
         'participants': [params.firstUserId, params.secondUserId],
         'fistUserName': params.firstUserName,
         'secondUserName': params.secondUserName,
+        'firstUserAvatar': params.firstUserAvatar,
+        'secondUserAvatar': params.secondUserAvatar,
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       });
@@ -143,6 +145,8 @@ class ChatDatasourceImpl implements ChatDatasource {
             lastMessage: data['lastMessage'] ?? '',
             updatedAt: _parseTimestamp(data['updatedAt']),
             unreadCount: unreadCount.fold((l) => {}, (r) => r),
+            firstUserAvatar: data['firstUserAvatar'] ?? '',
+            secondUserAvatar: data['secondUserAvatar'] ?? '',
           ),
         );
       }
@@ -338,6 +342,8 @@ class ChatDatasourceImpl implements ChatDatasource {
                 lastMessage: data['lastMessage'] ?? '',
                 updatedAt: _parseTimestamp(data['updatedAt']),
                 unreadCount: unreadCount.fold((l) => {}, (r) => r),
+                firstUserAvatar: data['firstUserAvatar'] ?? '',
+                secondUserAvatar: data['secondUserAvatar'] ?? '',
               ),
             );
           }
