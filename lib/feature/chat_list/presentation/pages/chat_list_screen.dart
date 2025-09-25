@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
@@ -56,9 +55,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
       child: BlocListener<AuthBloc, AuthBlocState>(
         listener: (context, authState) {
           authState.maybeWhen(
-            loading: () {
-             
-            },
+            loading: () {},
             authenticated: (userId) {
               context.read<ChatsBloc>().add(ChatsEvent.loadChats(userId));
               context.read<ChatsBloc>().add(ChatsEvent.watchChats(userId));
@@ -68,7 +65,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
         },
         child: Scaffold(
           body: SafeArea(
-            child: Platform.isAndroid ? AndroidScreen() : IosScreen(),
+            child: Platform.isAndroid
+                ? const AndroidScreen()
+                : const IosScreen(),
           ),
         ),
       ),

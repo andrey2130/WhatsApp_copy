@@ -20,26 +20,20 @@ class BottomNavBar extends StatelessWidget {
     switch (currentLocation) {
       case '/home':
         currentIndex = 0;
-        break;
       case '/search':
         currentIndex = 1;
-        break;
       case '/profile':
         currentIndex = 2;
-        break;
     }
 
     void onTap(int index) {
       switch (index) {
         case 0:
           context.go('/home');
-          break;
         case 1:
           context.go('/search');
-          break;
         case 2:
           context.go('/profile');
-          break;
       }
     }
 
@@ -64,26 +58,20 @@ class BottomNavBar extends StatelessWidget {
     switch (currentLocation) {
       case '/home':
         currentIndex = 0;
-        break;
       case '/settings':
         currentIndex = 1;
-        break;
       case '/profile':
         currentIndex = 2;
-        break;
     }
 
     void onTap(int index) {
       switch (index) {
         case 0:
           context.go('/home');
-          break;
         case 1:
           context.go('/chat_list/user/:uid');
-          break;
         case 2:
           context.go('/settings');
-          break;
       }
     }
 

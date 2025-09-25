@@ -4,7 +4,7 @@ import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
 
 class FilterWidgets extends StatelessWidget {
-  const FilterWidgets({super.key, required this.selectedFilter});
+  const FilterWidgets({required this.selectedFilter, super.key});
   final String selectedFilter;
 
   @override
@@ -54,14 +54,14 @@ class FilterWidgets extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
                   border: Border.all(color: AppColors.borderColor),
-                  color: isSelected ? Color(0xFFCCFFCC) : Colors.white,
+                  color: isSelected ? const Color(0xFFCCFFCC) : Colors.white,
                   borderRadius: BorderRadius.circular(16.r),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      filter['name'] as String,
+                      filter['name']! as String,
                       style: AppTextStyle.getFilterText(),
                     ),
                     if (count != null) ...[

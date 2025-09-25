@@ -31,7 +31,7 @@ class SettingsRepoImpl implements SettingsRepo {
   Future<Either<Failure, void>> updateUserName({required String name}) async {
     try {
       await _settingsDatasource.updateUserName(name: name);
-      return Right(null);
+      return const Right(null);
     } catch (e) {
       getIt<Talker>().handle(e);
       return Left(Failure(message: e.toString()));
@@ -42,7 +42,7 @@ class SettingsRepoImpl implements SettingsRepo {
   Future<Either<Failure, void>> updateAbout({required String about}) async {
     try {
       await _settingsDatasource.updateAbout(about: about);
-      return Right(null);
+      return const Right(null);
     } catch (e) {
       getIt<Talker>().handle(e);
       return Left(Failure(message: e.toString()));

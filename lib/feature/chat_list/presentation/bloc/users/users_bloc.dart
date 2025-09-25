@@ -25,7 +25,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
   Future<void> _onLoadUsers(UsersEvent event, Emitter<UsersState> emit) async {
     emit(const UsersState.loading());
     try {
-      final users = await _getUsersUsecase(NoParams());
+      final users = await _getUsersUsecase(const NoParams());
       emit(UsersState.loaded(users));
     } catch (e, st) {
       getIt<Talker>().handle(e, st);

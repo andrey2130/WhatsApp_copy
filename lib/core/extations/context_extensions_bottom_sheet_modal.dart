@@ -36,7 +36,6 @@ extension BottomSheetExtension on BuildContext {
         final sheetHeight = height != null ? min(height, maxSheet) : maxSheet;
 
         return SafeArea(
-          top: true,
           bottom: false,
           child: Padding(
             padding: EdgeInsets.only(bottom: inset),
@@ -179,7 +178,7 @@ class _CustomBottomSheetContentState extends State<_CustomBottomSheetContent> {
                         width: 40.w,
                         height: 40.h,
                         alignment: Alignment.center,
-                        child: Icon(Icons.arrow_back),
+                        child: const Icon(Icons.arrow_back),
                       ),
                     )
                   else

@@ -42,7 +42,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   ) async {
     emit(const SettingsState.loading());
     try {
-      final user = await _getUserDataUsecase(NoParams());
+      final user = await _getUserDataUsecase(const NoParams());
       getIt<Talker>().info('Settings user: $user');
       emit(SettingsState.success(user));
     } catch (e, st) {
@@ -58,7 +58,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     emit(const SettingsState.loading());
     try {
       await _updateUserNameUsecase(event.name);
-      final user = await _getUserDataUsecase(NoParams());
+      final user = await _getUserDataUsecase(const NoParams());
       emit(SettingsState.success(user));
     } catch (e, st) {
       getIt<Talker>().handle(e, st);
@@ -74,7 +74,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
     try {
       await _updateAboutUsecase(event.about);
-      final user = await _getUserDataUsecase(NoParams());
+      final user = await _getUserDataUsecase(const NoParams());
       emit(SettingsState.success(user));
     } catch (e, st) {
       getIt<Talker>().handle(e, st);
@@ -96,7 +96,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       );
       if (r.isLeft()) {
       } else {
-        final updatedUser = await _getUserDataUsecase(NoParams());
+        final updatedUser = await _getUserDataUsecase(const NoParams());
         emit(SettingsState.success(updatedUser));
       }
     } catch (e, st) {

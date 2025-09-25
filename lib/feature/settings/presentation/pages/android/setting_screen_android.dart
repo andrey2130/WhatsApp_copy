@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
-import 'package:telegram_copy/core/theme/text_style.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
+import 'package:telegram_copy/core/theme/text_style.dart';
+import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
 import 'package:telegram_copy/core/utils/widgets/user_list_item.dart';
-
 import 'package:telegram_copy/feature/settings/presentation/bloc/settings_bloc.dart';
 
 class SettingScreenAndroid extends StatefulWidget {
@@ -42,7 +41,7 @@ class _SettingScreenAndroidState extends State<SettingScreenAndroid> {
                 CustomAppBar(
                   leftWidget: IconButton(
                     onPressed: () => context.pop(),
-                    icon: Icon(Icons.arrow_back),
+                    icon: const Icon(Icons.arrow_back),
                   ),
                   left2Widget: Text(
                     'Setting',
@@ -52,10 +51,10 @@ class _SettingScreenAndroidState extends State<SettingScreenAndroid> {
                   ),
                   right3Widget: IconButton(
                     onPressed: () => {},
-                    icon: Icon(Icons.search),
+                    icon: const Icon(Icons.search),
                   ),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: UserListItem(

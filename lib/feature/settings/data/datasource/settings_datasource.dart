@@ -42,13 +42,8 @@ class SettingsDatasourceImpl implements SettingsDatasource {
         return UserParams(
           uid: uid,
           email: FirebaseAuth.instance.currentUser?.email,
-          name: '',
           bio: 'Hey there! I am using WhatsApp.',
-          photoUrl: '',
           phoneNumber: FirebaseAuth.instance.currentUser?.phoneNumber,
-          links: const <String>[],
-          createdAt: null,
-          updatedAt: null,
         );
       }
       final safe = {

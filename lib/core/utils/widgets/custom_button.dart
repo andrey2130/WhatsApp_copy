@@ -21,11 +21,12 @@ class CustomButton extends StatelessWidget {
   final bool? showAnimation;
 
   const CustomButton({
-    super.key,
-    this.width,
     required this.height,
     required this.text,
     required this.borderRadius,
+    required this.onPressed,
+    super.key,
+    this.width,
     this.padding,
     this.borderColor,
     this.borderWidth,
@@ -33,7 +34,6 @@ class CustomButton extends StatelessWidget {
     this.textColor = Colors.black,
     this.icon,
     this.iconColor,
-    required this.onPressed,
     this.textStyle,
     this.hasShadow = true,
     this.svgPicture,
@@ -54,7 +54,6 @@ class CustomButton extends StatelessWidget {
                   color: Colors.black.withAlpha(26),
                   offset: const Offset(0, 1),
                   blurRadius: 4,
-                  spreadRadius: 0,
                 ),
               ]
             : null,

@@ -15,7 +15,7 @@ import 'package:telegram_copy/firebase_options.dart';
 import 'package:telegram_copy/injections.dart';
 
 void main() async {
-  runZonedGuarded(
+  await runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
       await Firebase.initializeApp(
@@ -51,8 +51,6 @@ class MyApp extends StatelessWidget {
           child: MaterialApp.router(
             routerConfig: appRouter,
             theme: AppTheme.lightTheme(context),
-
-            themeMode: ThemeMode.system,
             debugShowCheckedModeBanner: false,
           ),
         ),

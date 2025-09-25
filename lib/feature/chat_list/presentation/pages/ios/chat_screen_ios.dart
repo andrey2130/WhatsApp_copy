@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,25 +7,24 @@ import 'package:talker_flutter/talker_flutter.dart';
 import 'package:telegram_copy/core/utils/date_formatter.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/chat.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params/delete_messaga.dart';
+import 'package:telegram_copy/feature/chat_list/domain/params/message_params/message.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/bloc/chats/chats_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/chat_navigation_bar.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_buble.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_input.dart';
-
 import 'package:telegram_copy/feature/settings/presentation/bloc/settings_bloc.dart';
 import 'package:telegram_copy/injections.dart';
-import 'package:telegram_copy/feature/chat_list/domain/params/message_params/message.dart';
-import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_buble.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 import 'package:uuid/uuid.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class ChatScreenIos extends StatefulWidget {
   const ChatScreenIos({
-    super.key,
     required this.userId,
     required this.userName,
-    this.avatarUrl,
     required this.conversationId,
     required this.receiverIds,
+    super.key,
+    this.avatarUrl,
   });
   final String userId;
   final String userName;
@@ -103,14 +102,12 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
               context,
             ).showSnackBar(SnackBar(content: Text('Error: $message')));
           },
-          loading: () => Center(
+          loading: () => const Center(
             child: Center(child: CircularProgressIndicator.adaptive()),
           ),
           success: () {},
           orElse: () {
-            getIt<Talker>().handle(
-              'ChatScreen unexpected state: ${state.toString()}',
-            );
+            getIt<Talker>().handle('ChatScreen unexpected state: $state');
           },
         );
       },
@@ -127,8 +124,8 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
                 Expanded(
                   child: Stack(
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
+                      DecoratedBox(
+                        decoration: const BoxDecoration(
                           image: DecorationImage(
                             image: AssetImage('assets/images/whatsAppBack.jpg'),
                             fit: BoxFit.cover,
@@ -140,8 +137,7 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
                           ),
                           error: (message) => Center(child: Text(message)),
                           loaded: (chats) => _buildMessagesListView([]),
-                          messagesLoaded: (messages) =>
-                              _buildMessagesListView(messages),
+                          messagesLoaded: _buildMessagesListView,
                           chatWithMessages: (chats, messages) =>
                               _buildMessagesListView(messages),
                           success: () => _buildMessagesListView([]),
@@ -229,7 +225,7 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
             replyAuthor = null;
           }
         }
-        final key = _messageKeys.putIfAbsent(message.id, () => GlobalKey());
+        final key = _messageKeys.putIfAbsent(message.id, GlobalKey.new);
         return VisibilityDetector(
           key: Key(message.id),
           onVisibilityChanged: (visibility) {
@@ -247,7 +243,7 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
             margin: EdgeInsets.symmetric(vertical: 2.h),
             decoration: BoxDecoration(
               color: _highlightMessageId == message.id
-                  ? Colors.green.withOpacity(0.2)
+                  ? Colors.green.withValues(alpha: 0.2)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(8.r),
             ),

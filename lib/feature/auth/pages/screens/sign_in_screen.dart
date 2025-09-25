@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
-
-import 'package:telegram_copy/core/utils/widgets/custom_textfield.dart';
-import 'package:telegram_copy/core/utils/widgets/custom_button.dart';
 import 'package:telegram_copy/core/utils/validators.dart';
-import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
+import 'package:telegram_copy/core/utils/widgets/custom_button.dart';
+import 'package:telegram_copy/core/utils/widgets/custom_textfield.dart';
 import 'package:telegram_copy/feature/auth/domain/params/login_params.dart';
+import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
 
 class EmailAuthScreen extends StatefulWidget {
   const EmailAuthScreen({super.key});
@@ -66,12 +64,11 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(22.0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       _header(),
 
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       _textFieldSection(
                         context,
                         _emailController,
@@ -80,7 +77,7 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
                         _togglePasswordVisibility,
                       ),
 
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       _forgotPasswordSection(),
                     ],
                   ),
@@ -102,7 +99,7 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
             shadows: [
               Shadow(
                 color: Colors.black.withValues(alpha: 0.5),
-                offset: Offset(0, 0.5),
+                offset: const Offset(0, 0.5),
                 blurRadius: 5,
               ),
             ],
@@ -111,7 +108,7 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
             color: AppColors.primaryBlue,
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Text(
           'Welcome back',
 
@@ -119,21 +116,21 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
             shadows: [
               Shadow(
                 color: Colors.black.withValues(alpha: 0.5),
-                offset: Offset(0, 0.5),
+                offset: const Offset(0, 0.5),
                 blurRadius: 4,
               ),
             ],
           ),
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Text(
           "We are glad to see you again",
           style: AppTextStyle.getSubtitle().copyWith(
             shadows: [
               Shadow(
                 color: Colors.black.withValues(alpha: 0.5),
-                offset: Offset(0, 0.5),
+                offset: const Offset(0, 0.5),
                 blurRadius: 4,
               ),
             ],
@@ -154,7 +151,7 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
               shadows: [
                 Shadow(
                   color: Colors.black.withValues(alpha: 0.2),
-                  offset: Offset(0, 0.2),
+                  offset: const Offset(0, 0.2),
                   blurRadius: 4,
                 ),
               ],
@@ -167,12 +164,12 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
             context.push('/register');
           },
           child: Text(
-            'Don\'t have an account? Sign up',
+            "Don't have an account? Sign up",
             style: AppTextStyle.getRegularBlack().copyWith(
               shadows: [
                 Shadow(
                   color: Colors.black.withValues(alpha: 0.2),
-                  offset: Offset(0, 0.2),
+                  offset: const Offset(0, 0.2),
                   blurRadius: 4,
                 ),
               ],
@@ -197,9 +194,8 @@ Widget _textFieldSection(
         hintText: 'Enter your email',
         controller: emailController,
         labelText: 'Email',
-        isPassword: false,
       ),
-      SizedBox(height: 20),
+      const SizedBox(height: 20),
       CustomTextField(
         hintText: 'Enter your password',
         controller: passwordController,
@@ -208,18 +204,16 @@ Widget _textFieldSection(
         isPasswordVisible: isPasswordVisible,
         onTogglePasswordVisibility: togglePasswordVisibility,
       ),
-      SizedBox(height: 20),
+      const SizedBox(height: 20),
 
       BlocBuilder<AuthBloc, AuthBlocState>(
         builder: (context, state) {
           final isLoading = state is Loading;
 
           return CustomButton(
-            showAnimation: true,
             backgroundColor: AppColors.primaryBlue,
             textColor: Colors.white,
             height: 50,
-            hasShadow: true,
             width: double.infinity,
             borderRadius: 10,
             text: isLoading ? 'Signing in...' : 'Sign in',

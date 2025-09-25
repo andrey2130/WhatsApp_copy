@@ -9,7 +9,7 @@ class UserSettingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Platform.isAndroid
-        ? UserSettingScreenAndroid()
-        : UserSettingScreenIos();
+        ? const UserSettingScreenAndroid()
+        : const UserSettingScreenIos();
   }
 }

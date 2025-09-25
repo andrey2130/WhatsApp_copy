@@ -40,9 +40,9 @@ class _ChangeUserNameAndroidState extends State<ChangeUserNameAndroid> {
                 CustomAppBar(
                   leftWidget: IconButton(
                     onPressed: () => context.pop(),
-                    icon: Icon(Icons.arrow_back),
+                    icon: const Icon(Icons.arrow_back),
                   ),
-                  left2Widget: Text('Name'),
+                  left2Widget: const Text('Name'),
                 ),
                 Padding(
                   padding: EdgeInsets.all(16.w),
@@ -56,17 +56,17 @@ class _ChangeUserNameAndroidState extends State<ChangeUserNameAndroid> {
                           color: AppColors.primaryGreen,
                           width: 1.w,
                         ),
-                        sufixIcon: Icon(Icons.emoji_emotions_outlined),
+                        sufixIcon: const Icon(Icons.emoji_emotions_outlined),
                       ),
                       SizedBox(height: 16.h),
                       Text(
-                        'People will see this name if you intecact with them and they don\'t have you saved as a contact.',
+                        "People will see this name if you intecact with them and they don't have you saved as a contact.",
                         style: AppTextStyle.getFilterText(),
                       ),
                     ],
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: CustomButton(

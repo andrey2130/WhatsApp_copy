@@ -8,14 +8,8 @@ import 'package:telegram_copy/feature/chat_list/presentation/widgets/reply_messa
 
 class MessageInput extends StatelessWidget {
   const MessageInput({
-    super.key,
-    required this.messageController,
-    required this.focusNode,
-    required this.isReply,
+    required this.messageController, required this.focusNode, required this.isReply, required this.onClearReply, required this.onChanged, required this.onSubmit, super.key,
     this.replyToMessage,
-    required this.onClearReply,
-    required this.onChanged,
-    required this.onSubmit,
   });
 
   final TextEditingController messageController;
@@ -63,8 +57,8 @@ class MessageInput extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(22.r),
-                    border: Border.fromBorderSide(
-                      const BorderSide(color: Colors.black12),
+                    border: const Border.fromBorderSide(
+                      BorderSide(color: Colors.black12),
                     ),
                   ),
                   cursorColor: Colors.black,
@@ -81,8 +75,7 @@ class MessageInput extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 10.w),
-              messageController.text.isEmpty
-                  ? Row(
+              if (messageController.text.isEmpty) Row(
                       children: [
                         CupertinoButton(
                           padding: EdgeInsets.zero,
@@ -104,8 +97,7 @@ class MessageInput extends StatelessWidget {
                           ),
                         ),
                       ],
-                    )
-                  : CupertinoButton(
+                    ) else CupertinoButton(
                       padding: EdgeInsets.zero,
                       onPressed: () => onSubmit(messageController.text),
                       child: Container(

@@ -4,8 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:talker_flutter/talker_flutter.dart';
-
-import 'package:uuid/uuid.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_textfield.dart';
@@ -16,16 +14,13 @@ import 'package:telegram_copy/feature/chat_list/presentation/bloc/chats/chats_bl
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_buble.dart';
 import 'package:telegram_copy/feature/settings/presentation/bloc/settings_bloc.dart';
 import 'package:telegram_copy/injections.dart';
+import 'package:uuid/uuid.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class ChatScreenAndroid extends StatefulWidget {
   const ChatScreenAndroid({
-    super.key,
-    required this.userId,
-    required this.userName,
+    required this.userId, required this.userName, required this.conversationId, required this.receiverIds, super.key,
     this.avatarUrl,
-    required this.conversationId,
-    required this.receiverIds,
   });
   final String userId;
   final String userName;
@@ -75,7 +70,7 @@ class _ChatScreenAndroidState extends State<ChatScreenAndroid> {
             _scrollToBottom();
           },
           loading: () {
-            Center(child: CircularProgressIndicator.adaptive());
+            const Center(child: CircularProgressIndicator.adaptive());
           },
           error: (message) {
             ScaffoldMessenger.of(
@@ -85,7 +80,7 @@ class _ChatScreenAndroidState extends State<ChatScreenAndroid> {
           success: () {},
           orElse: () {
             getIt<Talker>().handle(
-              'ChatScreen unexpected state: ${state.toString()}',
+              'ChatScreen unexpected state: $state',
             );
           },
         );
@@ -117,13 +112,13 @@ class _ChatScreenAndroidState extends State<ChatScreenAndroid> {
     return CustomAppBar(
       leftWidget: IconButton(
         onPressed: () => context.pop(),
-        icon: Icon(Icons.arrow_back),
+        icon: const Icon(Icons.arrow_back),
       ),
       avatarWidget: CircleAvatar(
         backgroundImage: widget.avatarUrl != null
             ? NetworkImage(widget.avatarUrl!)
             : null,
-        child: widget.avatarUrl == null ? Icon(Icons.person) : null,
+        child: widget.avatarUrl == null ? const Icon(Icons.person) : null,
       ),
       left2Widget: Text(widget.userName),
     );
@@ -131,7 +126,7 @@ class _ChatScreenAndroidState extends State<ChatScreenAndroid> {
 
   Widget _buildBackground() {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/icons/facebook_icon.jpg'),
           fit: BoxFit.cover,
@@ -147,7 +142,7 @@ class _ChatScreenAndroidState extends State<ChatScreenAndroid> {
       loaded: (chats) => _buildMessagesList(),
       messagesLoaded: (messages) => _buildMessagesList(),
       chatWithMessages: (chats, messages) => _buildMessagesList(),
-      success: () => _buildMessagesList(),
+      success: _buildMessagesList,
       orElse: () => const SizedBox.shrink(),
     );
   }
@@ -156,7 +151,7 @@ class _ChatScreenAndroidState extends State<ChatScreenAndroid> {
     return BlocBuilder<ChatsBloc, ChatsState>(
       builder: (context, state) {
         return state.maybeWhen(
-          messagesLoaded: (messages) => _buildMessagesListView(messages),
+          messagesLoaded: _buildMessagesListView,
           chatWithMessages: (chats, messages) =>
               _buildMessagesListView(messages),
           success: () => _buildMessagesListView([]),
@@ -222,28 +217,28 @@ class _ChatScreenAndroidState extends State<ChatScreenAndroid> {
               child: CustomTextField(
                 controller: _messageController,
                 hintText: 'Message',
-                prefixIcon: Icon(Icons.emoji_emotions_outlined),
+                prefixIcon: const Icon(Icons.emoji_emotions_outlined),
                 sufixIcon: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
                       onPressed: () {},
-                      icon: Icon(Icons.attach_file),
+                      icon: const Icon(Icons.attach_file),
                       padding: EdgeInsets.zero,
-                      constraints: BoxConstraints(),
+                      constraints: const BoxConstraints(),
                     ),
                     IconButton(
                       onPressed: () {},
-                      icon: Icon(Icons.camera_alt),
+                      icon: const Icon(Icons.camera_alt),
                       padding: EdgeInsets.zero,
-                      constraints: BoxConstraints(),
+                      constraints: const BoxConstraints(),
                     ),
                   ],
                 ),
               ),
             ),
             SizedBox(width: 8.w),
-            Container(
+            DecoratedBox(
               decoration: BoxDecoration(
                 color: AppColors.primaryGreen,
                 borderRadius: BorderRadius.circular(28.r),
@@ -261,7 +256,7 @@ class _ChatScreenAndroidState extends State<ChatScreenAndroid> {
                       _messageController.text,
                       _messageController,
                     ),
-                    icon: Icon(Icons.send),
+                    icon: const Icon(Icons.send),
                   );
                 },
               ),

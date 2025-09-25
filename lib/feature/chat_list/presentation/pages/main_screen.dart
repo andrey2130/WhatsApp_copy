@@ -34,7 +34,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget _buildBottomNavBar() {
     return BottomNavigationBar(
       selectedItemColor: Colors.black,
-      selectedIconTheme: IconThemeData(color: Colors.black),
+      selectedIconTheme: const IconThemeData(color: Colors.black),
       currentIndex: _currentIndex,
       onTap: (index) {
         setState(() {

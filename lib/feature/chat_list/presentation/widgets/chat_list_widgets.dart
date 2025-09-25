@@ -13,7 +13,7 @@ class ChatListWidgets extends StatelessWidget {
   final int index;
   final ChatParams chat;
 
-  const ChatListWidgets({super.key, required this.index, required this.chat});
+  const ChatListWidgets({required this.index, required this.chat, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +40,7 @@ class ChatListWidgets extends StatelessWidget {
               extra: {
                 'name': getDisplayName(currentUserId),
                 'conversationId': chat.id,
+                'photoUrl': getReceiverPhotoUrl(currentUserId, chat),
 
                 'receiverIds': [getReceiverId(currentUserId)],
               },
@@ -100,7 +101,7 @@ class ChatListWidgets extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.only(left: 62.w),
-          child: Divider(
+          child: const Divider(
             height: 1,
             thickness: 0.5,
             color: AppColors.borderColor,
@@ -111,7 +112,7 @@ class ChatListWidgets extends StatelessWidget {
   }
 
   String getReceiverPhotoUrl(String currentUserId, ChatParams chat) {
-    if(currentUserId == chat.firstUserId) {
+    if (currentUserId == chat.firstUserId) {
       return chat.secondUserAvatar;
     } else {
       return chat.firstUserAvatar;

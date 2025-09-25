@@ -8,10 +8,8 @@ import 'package:telegram_copy/core/utils/widgets/user_avatar_widget.dart';
 class ChatNavigationBar extends StatelessWidget
     implements ObstructingPreferredSizeWidget {
   const ChatNavigationBar({
-    super.key,
-    required this.userName,
+    required this.userName, required this.onBack, super.key,
     this.avatarUrl,
-    required this.onBack,
   });
 
   final String userName;
@@ -27,7 +25,7 @@ class ChatNavigationBar extends StatelessWidget
     return CupertinoNavigationBar(
       backgroundColor: Colors.white,
       border: null,
-      padding: const EdgeInsetsDirectional.only(start: 0, end: 8),
+      padding: const EdgeInsetsDirectional.only(end: 8),
       leading: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onBack,

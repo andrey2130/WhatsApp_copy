@@ -127,28 +127,25 @@ class ChatDatasourceImpl implements ChatDatasource {
       for (final doc in chatsSnapshot.docs) {
         final data = doc.data();
         final unreadCount = await calculateUnreadCount(doc.id);
+        final participants = (data['participants'] as List<dynamic>?) ?? [];
 
         chatList.add(
           ChatParams(
             id: doc.id,
-            firstUserName: data['firstUserName'] ?? 'Unknown',
-            secondUserName: data['secondUserName'] ?? 'Unknown',
-            firstUserId:
-                (data['participants'] != null &&
-                    data['participants'].isNotEmpty)
-                ? data['participants'][0]
+            firstUserName: data['firstUserName'] as String? ?? 'Unknown',
+            secondUserName: data['secondUserName'] as String? ?? 'Unknown',
+            firstUserId: participants.isNotEmpty
+                ? participants[0] as String
                 : '',
-            secondUserId:
-                (data['participants'] != null &&
-                    data['participants'].length > 1)
-                ? data['participants'][1]
+            secondUserId: participants.length > 1
+                ? participants[1] as String
                 : '',
             createdAt: _parseTimestamp(data['createdAt']),
-            lastMessage: data['lastMessage'] ?? '',
+            lastMessage: data['lastMessage'] as String? ?? '',
             updatedAt: _parseTimestamp(data['updatedAt']),
-            firstUserAvatar: data['firstUserAvatar'] ?? '',
-            secondUserAvatar: data['secondUserAvatar'] ?? '',
-            unreadCount: unreadCount.fold((l) => {}, (r) => r),
+            firstUserAvatar: data['firstUserAvatar'] as String? ?? '',
+            secondUserAvatar: data['secondUserAvatar'] as String? ?? '',
+            unreadCount: unreadCount.fold((l) => <String, int>{}, (r) => r),
           ),
         );
       }
@@ -242,10 +239,18 @@ class ChatDatasourceImpl implements ChatDatasource {
 
       if (chatDoc.exists) {
         final data = chatDoc.data()!;
-        final unreadCount = Map<String, int>.from(data['unreadCount'] ?? {});
+        final unreadCountRaw =
+            data['unreadCount'] as Map<dynamic, dynamic>? ?? {};
+        final unreadCount = <String, int>{};
+        unreadCountRaw.forEach((key, value) {
+          // ignore: lines_longer_than_80_chars
+          unreadCount[key.toString()] = (value is int)
+              ? value
+              : int.tryParse(value.toString()) ?? 0;
+        });
         final currentCount = unreadCount[userId] ?? 0;
         final newCount = (currentCount + count)
-            .clamp(0, double.infinity)
+            .clamp(0, double.maxFinite)
             .toInt();
         unreadCount[userId] = newCount;
 
@@ -272,7 +277,10 @@ class ChatDatasourceImpl implements ChatDatasource {
       }
 
       final data = chatDoc.data()!;
-      final participants = List<String>.from(data['participants'] ?? []);
+      final participantsRaw = data['participants'];
+      final participants = (participantsRaw is Iterable)
+          ? List<String>.from(participantsRaw.map((e) => e.toString()))
+          : <String>[];
 
       if (participants.isEmpty) {
         return const Right({});
@@ -324,28 +332,25 @@ class ChatDatasourceImpl implements ChatDatasource {
           for (final doc in snapshot.docs) {
             final data = doc.data();
             final unreadCount = await calculateUnreadCount(doc.id);
+            final participants = (data['participants'] as List<dynamic>?) ?? [];
 
             chatList.add(
               ChatParams(
                 id: doc.id,
-                firstUserName: data['firstUserName'] ?? 'Unknown',
-                secondUserName: data['secondUserName'] ?? 'Unknown',
-                firstUserId:
-                    (data['participants'] != null &&
-                        data['participants'].isNotEmpty)
-                    ? data['participants'][0]
+                firstUserName: data['firstUserName'] as String? ?? 'Unknown',
+                secondUserName: data['secondUserName'] as String? ?? 'Unknown',
+                firstUserId: participants.isNotEmpty
+                    ? participants[0] as String
                     : '',
-                secondUserId:
-                    (data['participants'] != null &&
-                        data['participants'].length > 1)
-                    ? data['participants'][1]
+                secondUserId: participants.length > 1
+                    ? participants[1] as String
                     : '',
                 createdAt: _parseTimestamp(data['createdAt']),
-                lastMessage: data['lastMessage'] ?? '',
+                lastMessage: data['lastMessage'] as String? ?? '',
                 updatedAt: _parseTimestamp(data['updatedAt']),
-                unreadCount: unreadCount.fold((l) => {}, (r) => r),
-                firstUserAvatar: data['firstUserAvatar'] ?? '',
-                secondUserAvatar: data['secondUserAvatar'] ?? '',
+                firstUserAvatar: data['firstUserAvatar'] as String? ?? '',
+                secondUserAvatar: data['secondUserAvatar'] as String? ?? '',
+                unreadCount: unreadCount.fold((l) => <String, int>{}, (r) => r),
               ),
             );
           }

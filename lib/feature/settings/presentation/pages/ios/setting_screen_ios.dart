@@ -28,9 +28,7 @@ class _SettingScreenIosState extends State<SettingScreenIos> {
       backgroundColor: Colors.grey[200],
       body: SafeArea(
         child: BlocBuilder<SettingsBloc, SettingsState>(
-          builder: (BuildContext context, SettingsState state) {
-            return _buildMainContent(context, state);
-          },
+          builder: _buildMainContent,
         ),
       ),
     );
@@ -38,7 +36,7 @@ class _SettingScreenIosState extends State<SettingScreenIos> {
 
   Widget _buildMainContent(BuildContext context, SettingsState state) {
     if (state is Loading) {
-      return Center(child: CircularProgressIndicator.adaptive());
+      return const Center(child: CircularProgressIndicator.adaptive());
     }
 
     if (state is Failure) {
@@ -101,27 +99,27 @@ class _SettingScreenIosState extends State<SettingScreenIos> {
         backgroundColor: Colors.grey.shade200,
         children: [
           _buildSettingsTile(
-            icon: Icon(CupertinoIcons.person_circle),
+            icon: const Icon(CupertinoIcons.person_circle),
             title: 'Account',
             onTap: () {},
           ),
           _buildSettingsTile(
-            icon: Icon(CupertinoIcons.lock),
+            icon: const Icon(CupertinoIcons.lock),
             title: 'Privacy',
             onTap: () {},
           ),
           _buildSettingsTile(
-            icon: Icon(CupertinoIcons.chat_bubble),
+            icon: const Icon(CupertinoIcons.chat_bubble),
             title: 'Chats',
             onTap: () {},
           ),
           _buildSettingsTile(
-            icon: Icon(CupertinoIcons.bell),
+            icon: const Icon(CupertinoIcons.bell),
             title: 'Notifications',
             onTap: () {},
           ),
           _buildSettingsTile(
-            icon: Icon(CupertinoIcons.arrow_up_arrow_down),
+            icon: const Icon(CupertinoIcons.arrow_up_arrow_down),
             title: 'Storage and data',
             onTap: () {},
           ),
@@ -136,12 +134,12 @@ class _SettingScreenIosState extends State<SettingScreenIos> {
         backgroundColor: Colors.grey.shade200,
         children: [
           _buildSettingsTile(
-            icon: Icon(CupertinoIcons.info_circle),
+            icon: const Icon(CupertinoIcons.info_circle),
             title: 'Help',
             onTap: () {},
           ),
           _buildSettingsTile(
-            icon: Icon(CupertinoIcons.heart),
+            icon: const Icon(CupertinoIcons.heart),
             title: 'Invite a friend',
             onTap: () {},
           ),
@@ -160,7 +158,7 @@ class _SettingScreenIosState extends State<SettingScreenIos> {
         ),
         children: [
           _buildSettingsTile(
-            icon: Icon(CupertinoIcons.camera),
+            icon: const Icon(CupertinoIcons.camera),
             title: 'Open Instagram',
             onTap: () {},
           ),
@@ -174,7 +172,7 @@ class _SettingScreenIosState extends State<SettingScreenIos> {
             onTap: () {},
           ),
           _buildSettingsTile(
-            icon: Icon(CupertinoIcons.at),
+            icon: const Icon(CupertinoIcons.at),
             title: 'Open Threads',
             onTap: () {},
           ),
@@ -240,7 +238,7 @@ class _SettingScreenIosState extends State<SettingScreenIos> {
 
         borderRadius: BorderRadius.circular(100),
       ),
-      child: Icon(CupertinoIcons.qrcode, color: Colors.black),
+      child: const Icon(CupertinoIcons.qrcode, color: Colors.black),
     );
   }
 
@@ -252,7 +250,7 @@ class _SettingScreenIosState extends State<SettingScreenIos> {
         height: 24,
       ),
       title: Text('Avatar', style: AppTextStyle.getSettingsText()),
-      trailing: Icon(
+      trailing: const Icon(
         CupertinoIcons.chevron_right,
         size: 16,
         color: AppColors.iconGrey,
@@ -269,7 +267,7 @@ class _SettingScreenIosState extends State<SettingScreenIos> {
     return CupertinoListTile(
       leading: icon,
       title: Text(title, style: AppTextStyle.getSettingsText()),
-      trailing: Icon(
+      trailing: const Icon(
         CupertinoIcons.chevron_right,
         size: 16,
         color: AppColors.iconGrey,

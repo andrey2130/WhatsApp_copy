@@ -12,9 +12,8 @@ class UserListItem extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
 
   const UserListItem({
-    super.key,
+    required this.title, super.key,
     this.leading,
-    required this.title,
     this.subtitle,
     this.meta,
     this.badge,

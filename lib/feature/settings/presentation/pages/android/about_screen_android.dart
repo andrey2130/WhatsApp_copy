@@ -38,7 +38,7 @@ class _AboutScreenAndroidState extends State<AboutScreenAndroid> {
                 CustomAppBar(
                   leftWidget: IconButton(
                     onPressed: () => context.pop(),
-                    icon: Icon(Icons.arrow_back),
+                    icon: const Icon(Icons.arrow_back),
                   ),
                   left2Widget: Text(
                     'About',
@@ -53,10 +53,10 @@ class _AboutScreenAndroidState extends State<AboutScreenAndroid> {
                           break;
                       }
                     },
-                    icon: Icon(Icons.more_vert),
+                    icon: const Icon(Icons.more_vert),
                     itemBuilder: (BuildContext context) {
                       return [
-                        PopupMenuItem(onTap: () {}, child: Text('Delete All')),
+                        PopupMenuItem(onTap: () {}, child: const Text('Delete All')),
                       ];
                     },
                   ),
@@ -86,7 +86,7 @@ Widget _buildSelectAboutSection(BuildContext context) {
     'At the movies',
     'At work',
     'Battery about to die',
-    'Can\'t talk, WhatsApp only',
+    "Can't talk, WhatsApp only",
     'In a meeting',
     'At the gym',
     'Sleeping',
@@ -176,8 +176,8 @@ Widget _buildCurrentAboutSection(
                 ),
                 style: AppTextStyle.getRegularBlack(),
               ),
-              Spacer(),
-              Icon(Icons.edit_outlined, color: AppColors.primaryGreen),
+              const Spacer(),
+              const Icon(Icons.edit_outlined, color: AppColors.primaryGreen),
             ],
           ),
         ),
@@ -213,7 +213,7 @@ Widget _buildAboutSection(
               style: AppTextStyle.getRegularBlack(),
             ),
             SizedBox(width: 10.w),
-            Icon(Icons.emoji_emotions_outlined),
+            const Icon(Icons.emoji_emotions_outlined),
           ],
         ),
       ),
