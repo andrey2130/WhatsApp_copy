@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MessageParams {
 
- String get id; String get chatId; String get senderId; String get receiverId; String get senderName; String get receiverName; String get message; String get createdAt; String get updatedAt; String get firstUserAvatar; String get secondUserAvatar; bool get isRead; String? get replyToMessageId; String? get replyText;
+ String get id; String get chatId; String get senderId; String get receiverId; String get senderName; String get receiverName; String get message; String get createdAt; String get updatedAt; String get firstUserAvatar; String get secondUserAvatar; String? get replyToMessageId; String? get replyText; String? get imageUrl; bool get isRead;
 /// Create a copy of MessageParams
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $MessageParamsCopyWith<MessageParams> get copyWith => _$MessageParamsCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MessageParams&&(identical(other.id, id) || other.id == id)&&(identical(other.chatId, chatId) || other.chatId == chatId)&&(identical(other.senderId, senderId) || other.senderId == senderId)&&(identical(other.receiverId, receiverId) || other.receiverId == receiverId)&&(identical(other.senderName, senderName) || other.senderName == senderName)&&(identical(other.receiverName, receiverName) || other.receiverName == receiverName)&&(identical(other.message, message) || other.message == message)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.firstUserAvatar, firstUserAvatar) || other.firstUserAvatar == firstUserAvatar)&&(identical(other.secondUserAvatar, secondUserAvatar) || other.secondUserAvatar == secondUserAvatar)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.replyToMessageId, replyToMessageId) || other.replyToMessageId == replyToMessageId)&&(identical(other.replyText, replyText) || other.replyText == replyText));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MessageParams&&(identical(other.id, id) || other.id == id)&&(identical(other.chatId, chatId) || other.chatId == chatId)&&(identical(other.senderId, senderId) || other.senderId == senderId)&&(identical(other.receiverId, receiverId) || other.receiverId == receiverId)&&(identical(other.senderName, senderName) || other.senderName == senderName)&&(identical(other.receiverName, receiverName) || other.receiverName == receiverName)&&(identical(other.message, message) || other.message == message)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.firstUserAvatar, firstUserAvatar) || other.firstUserAvatar == firstUserAvatar)&&(identical(other.secondUserAvatar, secondUserAvatar) || other.secondUserAvatar == secondUserAvatar)&&(identical(other.replyToMessageId, replyToMessageId) || other.replyToMessageId == replyToMessageId)&&(identical(other.replyText, replyText) || other.replyText == replyText)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.isRead, isRead) || other.isRead == isRead));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,chatId,senderId,receiverId,senderName,receiverName,message,createdAt,updatedAt,firstUserAvatar,secondUserAvatar,isRead,replyToMessageId,replyText);
+int get hashCode => Object.hash(runtimeType,id,chatId,senderId,receiverId,senderName,receiverName,message,createdAt,updatedAt,firstUserAvatar,secondUserAvatar,replyToMessageId,replyText,imageUrl,isRead);
 
 @override
 String toString() {
-  return 'MessageParams(id: $id, chatId: $chatId, senderId: $senderId, receiverId: $receiverId, senderName: $senderName, receiverName: $receiverName, message: $message, createdAt: $createdAt, updatedAt: $updatedAt, firstUserAvatar: $firstUserAvatar, secondUserAvatar: $secondUserAvatar, isRead: $isRead, replyToMessageId: $replyToMessageId, replyText: $replyText)';
+  return 'MessageParams(id: $id, chatId: $chatId, senderId: $senderId, receiverId: $receiverId, senderName: $senderName, receiverName: $receiverName, message: $message, createdAt: $createdAt, updatedAt: $updatedAt, firstUserAvatar: $firstUserAvatar, secondUserAvatar: $secondUserAvatar, replyToMessageId: $replyToMessageId, replyText: $replyText, imageUrl: $imageUrl, isRead: $isRead)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $MessageParamsCopyWith<$Res>  {
   factory $MessageParamsCopyWith(MessageParams value, $Res Function(MessageParams) _then) = _$MessageParamsCopyWithImpl;
 @useResult
 $Res call({
- String id, String chatId, String senderId, String receiverId, String senderName, String receiverName, String message, String createdAt, String updatedAt, String firstUserAvatar, String secondUserAvatar, bool isRead, String? replyToMessageId, String? replyText
+ String id, String chatId, String senderId, String receiverId, String senderName, String receiverName, String message, String createdAt, String updatedAt, String firstUserAvatar, String secondUserAvatar, String? replyToMessageId, String? replyText, String? imageUrl, bool isRead
 });
 
 
@@ -65,7 +65,7 @@ class _$MessageParamsCopyWithImpl<$Res>
 
 /// Create a copy of MessageParams
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? chatId = null,Object? senderId = null,Object? receiverId = null,Object? senderName = null,Object? receiverName = null,Object? message = null,Object? createdAt = null,Object? updatedAt = null,Object? firstUserAvatar = null,Object? secondUserAvatar = null,Object? isRead = null,Object? replyToMessageId = freezed,Object? replyText = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? chatId = null,Object? senderId = null,Object? receiverId = null,Object? senderName = null,Object? receiverName = null,Object? message = null,Object? createdAt = null,Object? updatedAt = null,Object? firstUserAvatar = null,Object? secondUserAvatar = null,Object? replyToMessageId = freezed,Object? replyText = freezed,Object? imageUrl = freezed,Object? isRead = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,chatId: null == chatId ? _self.chatId : chatId // ignore: cast_nullable_to_non_nullable
@@ -78,10 +78,11 @@ as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: 
 as String,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as String,firstUserAvatar: null == firstUserAvatar ? _self.firstUserAvatar : firstUserAvatar // ignore: cast_nullable_to_non_nullable
 as String,secondUserAvatar: null == secondUserAvatar ? _self.secondUserAvatar : secondUserAvatar // ignore: cast_nullable_to_non_nullable
-as String,isRead: null == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable
-as bool,replyToMessageId: freezed == replyToMessageId ? _self.replyToMessageId : replyToMessageId // ignore: cast_nullable_to_non_nullable
+as String,replyToMessageId: freezed == replyToMessageId ? _self.replyToMessageId : replyToMessageId // ignore: cast_nullable_to_non_nullable
 as String?,replyText: freezed == replyText ? _self.replyText : replyText // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
+as String?,isRead: null == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -166,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String chatId,  String senderId,  String receiverId,  String senderName,  String receiverName,  String message,  String createdAt,  String updatedAt,  String firstUserAvatar,  String secondUserAvatar,  bool isRead,  String? replyToMessageId,  String? replyText)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String chatId,  String senderId,  String receiverId,  String senderName,  String receiverName,  String message,  String createdAt,  String updatedAt,  String firstUserAvatar,  String secondUserAvatar,  String? replyToMessageId,  String? replyText,  String? imageUrl,  bool isRead)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MessageParams() when $default != null:
-return $default(_that.id,_that.chatId,_that.senderId,_that.receiverId,_that.senderName,_that.receiverName,_that.message,_that.createdAt,_that.updatedAt,_that.firstUserAvatar,_that.secondUserAvatar,_that.isRead,_that.replyToMessageId,_that.replyText);case _:
+return $default(_that.id,_that.chatId,_that.senderId,_that.receiverId,_that.senderName,_that.receiverName,_that.message,_that.createdAt,_that.updatedAt,_that.firstUserAvatar,_that.secondUserAvatar,_that.replyToMessageId,_that.replyText,_that.imageUrl,_that.isRead);case _:
   return orElse();
 
 }
@@ -187,10 +188,10 @@ return $default(_that.id,_that.chatId,_that.senderId,_that.receiverId,_that.send
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String chatId,  String senderId,  String receiverId,  String senderName,  String receiverName,  String message,  String createdAt,  String updatedAt,  String firstUserAvatar,  String secondUserAvatar,  bool isRead,  String? replyToMessageId,  String? replyText)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String chatId,  String senderId,  String receiverId,  String senderName,  String receiverName,  String message,  String createdAt,  String updatedAt,  String firstUserAvatar,  String secondUserAvatar,  String? replyToMessageId,  String? replyText,  String? imageUrl,  bool isRead)  $default,) {final _that = this;
 switch (_that) {
 case _MessageParams():
-return $default(_that.id,_that.chatId,_that.senderId,_that.receiverId,_that.senderName,_that.receiverName,_that.message,_that.createdAt,_that.updatedAt,_that.firstUserAvatar,_that.secondUserAvatar,_that.isRead,_that.replyToMessageId,_that.replyText);case _:
+return $default(_that.id,_that.chatId,_that.senderId,_that.receiverId,_that.senderName,_that.receiverName,_that.message,_that.createdAt,_that.updatedAt,_that.firstUserAvatar,_that.secondUserAvatar,_that.replyToMessageId,_that.replyText,_that.imageUrl,_that.isRead);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -207,10 +208,10 @@ return $default(_that.id,_that.chatId,_that.senderId,_that.receiverId,_that.send
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String chatId,  String senderId,  String receiverId,  String senderName,  String receiverName,  String message,  String createdAt,  String updatedAt,  String firstUserAvatar,  String secondUserAvatar,  bool isRead,  String? replyToMessageId,  String? replyText)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String chatId,  String senderId,  String receiverId,  String senderName,  String receiverName,  String message,  String createdAt,  String updatedAt,  String firstUserAvatar,  String secondUserAvatar,  String? replyToMessageId,  String? replyText,  String? imageUrl,  bool isRead)?  $default,) {final _that = this;
 switch (_that) {
 case _MessageParams() when $default != null:
-return $default(_that.id,_that.chatId,_that.senderId,_that.receiverId,_that.senderName,_that.receiverName,_that.message,_that.createdAt,_that.updatedAt,_that.firstUserAvatar,_that.secondUserAvatar,_that.isRead,_that.replyToMessageId,_that.replyText);case _:
+return $default(_that.id,_that.chatId,_that.senderId,_that.receiverId,_that.senderName,_that.receiverName,_that.message,_that.createdAt,_that.updatedAt,_that.firstUserAvatar,_that.secondUserAvatar,_that.replyToMessageId,_that.replyText,_that.imageUrl,_that.isRead);case _:
   return null;
 
 }
@@ -222,7 +223,7 @@ return $default(_that.id,_that.chatId,_that.senderId,_that.receiverId,_that.send
 @JsonSerializable()
 
 class _MessageParams implements MessageParams {
-  const _MessageParams({required this.id, required this.chatId, required this.senderId, required this.receiverId, required this.senderName, required this.receiverName, required this.message, required this.createdAt, required this.updatedAt, required this.firstUserAvatar, required this.secondUserAvatar, this.isRead = false, this.replyToMessageId, this.replyText});
+  const _MessageParams({required this.id, required this.chatId, required this.senderId, required this.receiverId, required this.senderName, required this.receiverName, required this.message, required this.createdAt, required this.updatedAt, required this.firstUserAvatar, required this.secondUserAvatar, this.replyToMessageId, this.replyText, this.imageUrl, this.isRead = false});
   factory _MessageParams.fromJson(Map<String, dynamic> json) => _$MessageParamsFromJson(json);
 
 @override final  String id;
@@ -236,9 +237,10 @@ class _MessageParams implements MessageParams {
 @override final  String updatedAt;
 @override final  String firstUserAvatar;
 @override final  String secondUserAvatar;
-@override@JsonKey() final  bool isRead;
 @override final  String? replyToMessageId;
 @override final  String? replyText;
+@override final  String? imageUrl;
+@override@JsonKey() final  bool isRead;
 
 /// Create a copy of MessageParams
 /// with the given fields replaced by the non-null parameter values.
@@ -253,16 +255,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MessageParams&&(identical(other.id, id) || other.id == id)&&(identical(other.chatId, chatId) || other.chatId == chatId)&&(identical(other.senderId, senderId) || other.senderId == senderId)&&(identical(other.receiverId, receiverId) || other.receiverId == receiverId)&&(identical(other.senderName, senderName) || other.senderName == senderName)&&(identical(other.receiverName, receiverName) || other.receiverName == receiverName)&&(identical(other.message, message) || other.message == message)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.firstUserAvatar, firstUserAvatar) || other.firstUserAvatar == firstUserAvatar)&&(identical(other.secondUserAvatar, secondUserAvatar) || other.secondUserAvatar == secondUserAvatar)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.replyToMessageId, replyToMessageId) || other.replyToMessageId == replyToMessageId)&&(identical(other.replyText, replyText) || other.replyText == replyText));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MessageParams&&(identical(other.id, id) || other.id == id)&&(identical(other.chatId, chatId) || other.chatId == chatId)&&(identical(other.senderId, senderId) || other.senderId == senderId)&&(identical(other.receiverId, receiverId) || other.receiverId == receiverId)&&(identical(other.senderName, senderName) || other.senderName == senderName)&&(identical(other.receiverName, receiverName) || other.receiverName == receiverName)&&(identical(other.message, message) || other.message == message)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.firstUserAvatar, firstUserAvatar) || other.firstUserAvatar == firstUserAvatar)&&(identical(other.secondUserAvatar, secondUserAvatar) || other.secondUserAvatar == secondUserAvatar)&&(identical(other.replyToMessageId, replyToMessageId) || other.replyToMessageId == replyToMessageId)&&(identical(other.replyText, replyText) || other.replyText == replyText)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.isRead, isRead) || other.isRead == isRead));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,chatId,senderId,receiverId,senderName,receiverName,message,createdAt,updatedAt,firstUserAvatar,secondUserAvatar,isRead,replyToMessageId,replyText);
+int get hashCode => Object.hash(runtimeType,id,chatId,senderId,receiverId,senderName,receiverName,message,createdAt,updatedAt,firstUserAvatar,secondUserAvatar,replyToMessageId,replyText,imageUrl,isRead);
 
 @override
 String toString() {
-  return 'MessageParams(id: $id, chatId: $chatId, senderId: $senderId, receiverId: $receiverId, senderName: $senderName, receiverName: $receiverName, message: $message, createdAt: $createdAt, updatedAt: $updatedAt, firstUserAvatar: $firstUserAvatar, secondUserAvatar: $secondUserAvatar, isRead: $isRead, replyToMessageId: $replyToMessageId, replyText: $replyText)';
+  return 'MessageParams(id: $id, chatId: $chatId, senderId: $senderId, receiverId: $receiverId, senderName: $senderName, receiverName: $receiverName, message: $message, createdAt: $createdAt, updatedAt: $updatedAt, firstUserAvatar: $firstUserAvatar, secondUserAvatar: $secondUserAvatar, replyToMessageId: $replyToMessageId, replyText: $replyText, imageUrl: $imageUrl, isRead: $isRead)';
 }
 
 
@@ -273,7 +275,7 @@ abstract mixin class _$MessageParamsCopyWith<$Res> implements $MessageParamsCopy
   factory _$MessageParamsCopyWith(_MessageParams value, $Res Function(_MessageParams) _then) = __$MessageParamsCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String chatId, String senderId, String receiverId, String senderName, String receiverName, String message, String createdAt, String updatedAt, String firstUserAvatar, String secondUserAvatar, bool isRead, String? replyToMessageId, String? replyText
+ String id, String chatId, String senderId, String receiverId, String senderName, String receiverName, String message, String createdAt, String updatedAt, String firstUserAvatar, String secondUserAvatar, String? replyToMessageId, String? replyText, String? imageUrl, bool isRead
 });
 
 
@@ -290,7 +292,7 @@ class __$MessageParamsCopyWithImpl<$Res>
 
 /// Create a copy of MessageParams
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? chatId = null,Object? senderId = null,Object? receiverId = null,Object? senderName = null,Object? receiverName = null,Object? message = null,Object? createdAt = null,Object? updatedAt = null,Object? firstUserAvatar = null,Object? secondUserAvatar = null,Object? isRead = null,Object? replyToMessageId = freezed,Object? replyText = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? chatId = null,Object? senderId = null,Object? receiverId = null,Object? senderName = null,Object? receiverName = null,Object? message = null,Object? createdAt = null,Object? updatedAt = null,Object? firstUserAvatar = null,Object? secondUserAvatar = null,Object? replyToMessageId = freezed,Object? replyText = freezed,Object? imageUrl = freezed,Object? isRead = null,}) {
   return _then(_MessageParams(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,chatId: null == chatId ? _self.chatId : chatId // ignore: cast_nullable_to_non_nullable
@@ -303,10 +305,11 @@ as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: 
 as String,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as String,firstUserAvatar: null == firstUserAvatar ? _self.firstUserAvatar : firstUserAvatar // ignore: cast_nullable_to_non_nullable
 as String,secondUserAvatar: null == secondUserAvatar ? _self.secondUserAvatar : secondUserAvatar // ignore: cast_nullable_to_non_nullable
-as String,isRead: null == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable
-as bool,replyToMessageId: freezed == replyToMessageId ? _self.replyToMessageId : replyToMessageId // ignore: cast_nullable_to_non_nullable
+as String,replyToMessageId: freezed == replyToMessageId ? _self.replyToMessageId : replyToMessageId // ignore: cast_nullable_to_non_nullable
 as String?,replyText: freezed == replyText ? _self.replyText : replyText // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
+as String?,isRead: null == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

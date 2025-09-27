@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:talker_flutter/talker_flutter.dart';
@@ -14,9 +16,8 @@ import 'package:telegram_copy/injections.dart';
 class ChatRepoImpl implements ChatRepo {
   final ChatDatasource _chatDatasource;
 
-  ChatRepoImpl({
-    required ChatDatasource chatDatasource,
-  }) : _chatDatasource = chatDatasource;
+  ChatRepoImpl({required ChatDatasource chatDatasource})
+    : _chatDatasource = chatDatasource;
 
   @override
   Future<Either<Failure, CreateChatParams>> createChat(
@@ -142,5 +143,19 @@ class ChatRepoImpl implements ChatRepo {
   @override
   Stream<List<ChatParams>> watchChats(String currentUserId) {
     return _chatDatasource.watchChats(currentUserId);
+  }
+
+  @override
+  Future<Either<Failure, MessageParams>> sendPhoto(
+    MessageParams params,
+    Uint8List file,
+  ) async {
+    try {
+      final result = await _chatDatasource.sendPhoto(params, file);
+      return Right(result.fold((l) => throw Exception(l.message), (r) => r));
+    } catch (e) {
+      getIt<Talker>().handle(e);
+      return Left(Failure(message: e.toString()));
+    }
   }
 }

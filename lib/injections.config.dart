@@ -42,6 +42,7 @@ import 'feature/chat_list/domain/usecases/load_chat_messages_usecase.dart'
 import 'feature/chat_list/domain/usecases/load_chat_usecase.dart' as _i835;
 import 'feature/chat_list/domain/usecases/read_message.dart' as _i592;
 import 'feature/chat_list/domain/usecases/send_message_usecase.dart' as _i410;
+import 'feature/chat_list/domain/usecases/send_photo_usecase.dart' as _i854;
 import 'feature/chat_list/domain/usecases/watch_chats_usecase.dart' as _i566;
 import 'feature/chat_list/domain/usecases/watch_message_usecase.dart' as _i241;
 import 'feature/chat_list/presentation/bloc/chats/chats_bloc.dart' as _i322;
@@ -63,11 +64,14 @@ extension GetItInjectableX on _i174.GetIt {
     _i526.EnvironmentFilter? environmentFilter,
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
+    gh.factory<_i330.ChatDatasource>(
+      () => _i330.ChatDatasourceImpl(
+        gh<_i974.FirebaseFirestore>(),
+        gh<_i457.FirebaseStorage>(),
+      ),
+    );
     gh.factory<_i630.AuthService>(
       () => _i940.AuthServiceImpl(gh<_i59.FirebaseAuth>()),
-    );
-    gh.factory<_i330.ChatDatasource>(
-      () => _i330.ChatDatasourceImpl(gh<_i974.FirebaseFirestore>()),
     );
     gh.factory<_i1000.SettingsDatasource>(
       () => _i1000.SettingsDatasourceImpl(
@@ -88,6 +92,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i402.ChatRepo>(
       () => _i921.ChatRepoImpl(chatDatasource: gh<_i330.ChatDatasource>()),
+    );
+    gh.factory<_i854.SendPhotoUsecase>(
+      () => _i854.SendPhotoUsecase(gh<_i402.ChatRepo>()),
     );
     gh.factory<_i274.AuthDatasource>(
       () => _i274.AuthDatasourceImpl(
@@ -127,18 +134,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i902.GetUsersUsecase>(
       () => _i902.GetUsersUsecase(chatListRepo: gh<_i778.ChatListRepo>()),
     );
-    gh.factory<_i322.ChatsBloc>(
-      () => _i322.ChatsBloc(
-        loadChatsUsecase: gh<_i835.LoadChatsUsecase>(),
-        createChatUsecase: gh<_i773.CreateChatUsecase>(),
-        sendMessageUsecase: gh<_i410.SendMessageUsecase>(),
-        loadChatMessagesUsecase: gh<_i849.LoadChatMessagesUsecase>(),
-        watchChatsUsecase: gh<_i566.WatchChatsUsecase>(),
-        deleteMeesageUsecase: gh<_i6.DeleteMeesageUsecase>(),
-        watchMessageUsecase: gh<_i241.WatchMessageUsecase>(),
-        readMessageUsecase: gh<_i592.ReadMessageUsecase>(),
-      ),
-    );
     gh.factory<_i816.UpdateAboutUsecase>(
       () => _i816.UpdateAboutUsecase(settingsRepo: gh<_i920.SettingsRepo>()),
     );
@@ -153,6 +148,19 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i966.UploadAvatarUsecase>(
       () => _i966.UploadAvatarUsecase(gh<_i920.SettingsRepo>()),
+    );
+    gh.factory<_i322.ChatsBloc>(
+      () => _i322.ChatsBloc(
+        loadChatsUsecase: gh<_i835.LoadChatsUsecase>(),
+        createChatUsecase: gh<_i773.CreateChatUsecase>(),
+        sendMessageUsecase: gh<_i410.SendMessageUsecase>(),
+        loadChatMessagesUsecase: gh<_i849.LoadChatMessagesUsecase>(),
+        watchChatsUsecase: gh<_i566.WatchChatsUsecase>(),
+        deleteMeesageUsecase: gh<_i6.DeleteMeesageUsecase>(),
+        watchMessageUsecase: gh<_i241.WatchMessageUsecase>(),
+        readMessageUsecase: gh<_i592.ReadMessageUsecase>(),
+        sendPhotoUsecase: gh<_i854.SendPhotoUsecase>(),
+      ),
     );
     gh.factory<_i293.SettingsBloc>(
       () => _i293.SettingsBloc(

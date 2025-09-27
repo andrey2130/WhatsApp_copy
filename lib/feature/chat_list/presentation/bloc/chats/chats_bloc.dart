@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
@@ -12,6 +14,7 @@ import 'package:telegram_copy/feature/chat_list/domain/usecases/load_chat_messag
 import 'package:telegram_copy/feature/chat_list/domain/usecases/load_chat_usecase.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/read_message.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/send_message_usecase.dart';
+import 'package:telegram_copy/feature/chat_list/domain/usecases/send_photo_usecase.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/watch_chats_usecase.dart';
 import 'package:telegram_copy/feature/chat_list/domain/usecases/watch_message_usecase.dart';
 import 'package:telegram_copy/injections.dart';
@@ -30,6 +33,7 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
   final DeleteMeesageUsecase _deleteMeesageUsecase;
   final WatchMessageUsecase _watchMessageUsecase;
   final ReadMessageUsecase _readMessageUsecase;
+  final SendPhotoUsecase _sendPhotoUsecase;
 
   final Set<String> _readMessageIds = <String>{};
   ChatsBloc({
@@ -41,6 +45,7 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
     required DeleteMeesageUsecase deleteMeesageUsecase,
     required WatchMessageUsecase watchMessageUsecase,
     required ReadMessageUsecase readMessageUsecase,
+    required SendPhotoUsecase sendPhotoUsecase,
   }) : _loadChatsUsecase = loadChatsUsecase,
        _createChatUsecase = createChatUsecase,
        _sendMessageUsecase = sendMessageUsecase,
@@ -49,7 +54,7 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
        _deleteMeesageUsecase = deleteMeesageUsecase,
        _watchMessageUsecase = watchMessageUsecase,
        _readMessageUsecase = readMessageUsecase,
-
+       _sendPhotoUsecase = sendPhotoUsecase,
        super(const ChatsState.initial()) {
     on<LoadChats>(_onLoadChats);
     on<CreateChat>(_onCreateChat);
@@ -59,6 +64,7 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
     on<DeleteMessage>(_onDeleteMessage);
     on<WatchMessage>(_onWatchMessage);
     on<ReadMessage>(_onReadMessage);
+    on<SendPhoto>(_onSendPhoto);
   }
 
   int getTotalUnreadCount(List<ChatParams> chats, String currentUserId) {
@@ -266,6 +272,39 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
 
       await _readMessageUsecase(event.params);
       _readMessageIds.add(event.params.id);
+    } catch (e) {
+      getIt<Talker>().handle(e);
+      emit(ChatsState.error(e.toString()));
+    }
+  }
+
+  Future<void> _onSendPhoto(SendPhoto event, Emitter<ChatsState> emit) async {
+    try {
+      final result = await _sendPhotoUsecase(event.params, event.file);
+
+      result.fold((failure) => emit(ChatsState.error(failure.message)), (
+        updatedMessage,
+      ) {
+        final currentState = state;
+        currentState.maybeWhen(
+          messagesLoaded: (messages) {
+            final updatedMessages = List<MessageParams>.from(messages)
+              ..add(updatedMessage);
+            emit(ChatsState.messagesLoaded(updatedMessages));
+          },
+          chatWithMessages: (chats, messages) {
+            final updatedMessages = List<MessageParams>.from(messages)
+              ..add(updatedMessage);
+            emit(
+              ChatsState.chatWithMessages(
+                chats: chats,
+                messages: updatedMessages,
+              ),
+            );
+          },
+          orElse: () {},
+        );
+      });
     } catch (e) {
       getIt<Talker>().handle(e);
       emit(ChatsState.error(e.toString()));
