@@ -57,7 +57,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
           authState.maybeWhen(
             loading: () {},
             authenticated: (userId) {
-              context.read<ChatsBloc>().add(ChatsEvent.loadChats(userId));
+              context.read<ChatsBloc>().add(ChatsEvent.loadChats(userId, null));
               context.read<ChatsBloc>().add(ChatsEvent.watchChats(userId));
             },
             orElse: () {},

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ChatParams {
 
- String get id; String get firstUserName; String get secondUserName; String get firstUserId; String get secondUserId; String get createdAt; String get updatedAt; String get firstUserAvatar; String get secondUserAvatar; String? get lastMessage; Map<String, int> get unreadCount;
+ String get id; String get firstUserName; String get secondUserName; String get firstUserId; String get secondUserId; String get createdAt; String get updatedAt; String get firstUserAvatar; String get secondUserAvatar; String? get lastMessage; Map<String, int> get unreadCount; bool get isFavorite; bool get isGroup; List<String> get participants;
 /// Create a copy of ChatParams
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ChatParamsCopyWith<ChatParams> get copyWith => _$ChatParamsCopyWithImpl<ChatPar
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChatParams&&(identical(other.id, id) || other.id == id)&&(identical(other.firstUserName, firstUserName) || other.firstUserName == firstUserName)&&(identical(other.secondUserName, secondUserName) || other.secondUserName == secondUserName)&&(identical(other.firstUserId, firstUserId) || other.firstUserId == firstUserId)&&(identical(other.secondUserId, secondUserId) || other.secondUserId == secondUserId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.firstUserAvatar, firstUserAvatar) || other.firstUserAvatar == firstUserAvatar)&&(identical(other.secondUserAvatar, secondUserAvatar) || other.secondUserAvatar == secondUserAvatar)&&(identical(other.lastMessage, lastMessage) || other.lastMessage == lastMessage)&&const DeepCollectionEquality().equals(other.unreadCount, unreadCount));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChatParams&&(identical(other.id, id) || other.id == id)&&(identical(other.firstUserName, firstUserName) || other.firstUserName == firstUserName)&&(identical(other.secondUserName, secondUserName) || other.secondUserName == secondUserName)&&(identical(other.firstUserId, firstUserId) || other.firstUserId == firstUserId)&&(identical(other.secondUserId, secondUserId) || other.secondUserId == secondUserId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.firstUserAvatar, firstUserAvatar) || other.firstUserAvatar == firstUserAvatar)&&(identical(other.secondUserAvatar, secondUserAvatar) || other.secondUserAvatar == secondUserAvatar)&&(identical(other.lastMessage, lastMessage) || other.lastMessage == lastMessage)&&const DeepCollectionEquality().equals(other.unreadCount, unreadCount)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.isGroup, isGroup) || other.isGroup == isGroup)&&const DeepCollectionEquality().equals(other.participants, participants));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,firstUserName,secondUserName,firstUserId,secondUserId,createdAt,updatedAt,firstUserAvatar,secondUserAvatar,lastMessage,const DeepCollectionEquality().hash(unreadCount));
+int get hashCode => Object.hash(runtimeType,id,firstUserName,secondUserName,firstUserId,secondUserId,createdAt,updatedAt,firstUserAvatar,secondUserAvatar,lastMessage,const DeepCollectionEquality().hash(unreadCount),isFavorite,isGroup,const DeepCollectionEquality().hash(participants));
 
 @override
 String toString() {
-  return 'ChatParams(id: $id, firstUserName: $firstUserName, secondUserName: $secondUserName, firstUserId: $firstUserId, secondUserId: $secondUserId, createdAt: $createdAt, updatedAt: $updatedAt, firstUserAvatar: $firstUserAvatar, secondUserAvatar: $secondUserAvatar, lastMessage: $lastMessage, unreadCount: $unreadCount)';
+  return 'ChatParams(id: $id, firstUserName: $firstUserName, secondUserName: $secondUserName, firstUserId: $firstUserId, secondUserId: $secondUserId, createdAt: $createdAt, updatedAt: $updatedAt, firstUserAvatar: $firstUserAvatar, secondUserAvatar: $secondUserAvatar, lastMessage: $lastMessage, unreadCount: $unreadCount, isFavorite: $isFavorite, isGroup: $isGroup, participants: $participants)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ChatParamsCopyWith<$Res>  {
   factory $ChatParamsCopyWith(ChatParams value, $Res Function(ChatParams) _then) = _$ChatParamsCopyWithImpl;
 @useResult
 $Res call({
- String id, String firstUserName, String secondUserName, String firstUserId, String secondUserId, String createdAt, String updatedAt, String firstUserAvatar, String secondUserAvatar, String? lastMessage, Map<String, int> unreadCount
+ String id, String firstUserName, String secondUserName, String firstUserId, String secondUserId, String createdAt, String updatedAt, String firstUserAvatar, String secondUserAvatar, String? lastMessage, Map<String, int> unreadCount, bool isFavorite, bool isGroup, List<String> participants
 });
 
 
@@ -65,7 +65,7 @@ class _$ChatParamsCopyWithImpl<$Res>
 
 /// Create a copy of ChatParams
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? firstUserName = null,Object? secondUserName = null,Object? firstUserId = null,Object? secondUserId = null,Object? createdAt = null,Object? updatedAt = null,Object? firstUserAvatar = null,Object? secondUserAvatar = null,Object? lastMessage = freezed,Object? unreadCount = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? firstUserName = null,Object? secondUserName = null,Object? firstUserId = null,Object? secondUserId = null,Object? createdAt = null,Object? updatedAt = null,Object? firstUserAvatar = null,Object? secondUserAvatar = null,Object? lastMessage = freezed,Object? unreadCount = null,Object? isFavorite = null,Object? isGroup = null,Object? participants = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,firstUserName: null == firstUserName ? _self.firstUserName : firstUserName // ignore: cast_nullable_to_non_nullable
@@ -78,7 +78,10 @@ as String,firstUserAvatar: null == firstUserAvatar ? _self.firstUserAvatar : fir
 as String,secondUserAvatar: null == secondUserAvatar ? _self.secondUserAvatar : secondUserAvatar // ignore: cast_nullable_to_non_nullable
 as String,lastMessage: freezed == lastMessage ? _self.lastMessage : lastMessage // ignore: cast_nullable_to_non_nullable
 as String?,unreadCount: null == unreadCount ? _self.unreadCount : unreadCount // ignore: cast_nullable_to_non_nullable
-as Map<String, int>,
+as Map<String, int>,isFavorite: null == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
+as bool,isGroup: null == isGroup ? _self.isGroup : isGroup // ignore: cast_nullable_to_non_nullable
+as bool,participants: null == participants ? _self.participants : participants // ignore: cast_nullable_to_non_nullable
+as List<String>,
   ));
 }
 
@@ -163,10 +166,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String firstUserName,  String secondUserName,  String firstUserId,  String secondUserId,  String createdAt,  String updatedAt,  String firstUserAvatar,  String secondUserAvatar,  String? lastMessage,  Map<String, int> unreadCount)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String firstUserName,  String secondUserName,  String firstUserId,  String secondUserId,  String createdAt,  String updatedAt,  String firstUserAvatar,  String secondUserAvatar,  String? lastMessage,  Map<String, int> unreadCount,  bool isFavorite,  bool isGroup,  List<String> participants)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ChatParams() when $default != null:
-return $default(_that.id,_that.firstUserName,_that.secondUserName,_that.firstUserId,_that.secondUserId,_that.createdAt,_that.updatedAt,_that.firstUserAvatar,_that.secondUserAvatar,_that.lastMessage,_that.unreadCount);case _:
+return $default(_that.id,_that.firstUserName,_that.secondUserName,_that.firstUserId,_that.secondUserId,_that.createdAt,_that.updatedAt,_that.firstUserAvatar,_that.secondUserAvatar,_that.lastMessage,_that.unreadCount,_that.isFavorite,_that.isGroup,_that.participants);case _:
   return orElse();
 
 }
@@ -184,10 +187,10 @@ return $default(_that.id,_that.firstUserName,_that.secondUserName,_that.firstUse
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String firstUserName,  String secondUserName,  String firstUserId,  String secondUserId,  String createdAt,  String updatedAt,  String firstUserAvatar,  String secondUserAvatar,  String? lastMessage,  Map<String, int> unreadCount)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String firstUserName,  String secondUserName,  String firstUserId,  String secondUserId,  String createdAt,  String updatedAt,  String firstUserAvatar,  String secondUserAvatar,  String? lastMessage,  Map<String, int> unreadCount,  bool isFavorite,  bool isGroup,  List<String> participants)  $default,) {final _that = this;
 switch (_that) {
 case _ChatParams():
-return $default(_that.id,_that.firstUserName,_that.secondUserName,_that.firstUserId,_that.secondUserId,_that.createdAt,_that.updatedAt,_that.firstUserAvatar,_that.secondUserAvatar,_that.lastMessage,_that.unreadCount);case _:
+return $default(_that.id,_that.firstUserName,_that.secondUserName,_that.firstUserId,_that.secondUserId,_that.createdAt,_that.updatedAt,_that.firstUserAvatar,_that.secondUserAvatar,_that.lastMessage,_that.unreadCount,_that.isFavorite,_that.isGroup,_that.participants);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -204,10 +207,10 @@ return $default(_that.id,_that.firstUserName,_that.secondUserName,_that.firstUse
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String firstUserName,  String secondUserName,  String firstUserId,  String secondUserId,  String createdAt,  String updatedAt,  String firstUserAvatar,  String secondUserAvatar,  String? lastMessage,  Map<String, int> unreadCount)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String firstUserName,  String secondUserName,  String firstUserId,  String secondUserId,  String createdAt,  String updatedAt,  String firstUserAvatar,  String secondUserAvatar,  String? lastMessage,  Map<String, int> unreadCount,  bool isFavorite,  bool isGroup,  List<String> participants)?  $default,) {final _that = this;
 switch (_that) {
 case _ChatParams() when $default != null:
-return $default(_that.id,_that.firstUserName,_that.secondUserName,_that.firstUserId,_that.secondUserId,_that.createdAt,_that.updatedAt,_that.firstUserAvatar,_that.secondUserAvatar,_that.lastMessage,_that.unreadCount);case _:
+return $default(_that.id,_that.firstUserName,_that.secondUserName,_that.firstUserId,_that.secondUserId,_that.createdAt,_that.updatedAt,_that.firstUserAvatar,_that.secondUserAvatar,_that.lastMessage,_that.unreadCount,_that.isFavorite,_that.isGroup,_that.participants);case _:
   return null;
 
 }
@@ -219,7 +222,7 @@ return $default(_that.id,_that.firstUserName,_that.secondUserName,_that.firstUse
 @JsonSerializable()
 
 class _ChatParams implements ChatParams {
-  const _ChatParams({required this.id, required this.firstUserName, required this.secondUserName, required this.firstUserId, required this.secondUserId, required this.createdAt, required this.updatedAt, required this.firstUserAvatar, required this.secondUserAvatar, this.lastMessage, final  Map<String, int> unreadCount = const {}}): _unreadCount = unreadCount;
+  const _ChatParams({required this.id, required this.firstUserName, required this.secondUserName, required this.firstUserId, required this.secondUserId, required this.createdAt, required this.updatedAt, required this.firstUserAvatar, required this.secondUserAvatar, this.lastMessage, final  Map<String, int> unreadCount = const {}, this.isFavorite = false, this.isGroup = false, final  List<String> participants = const <String>[]}): _unreadCount = unreadCount,_participants = participants;
   factory _ChatParams.fromJson(Map<String, dynamic> json) => _$ChatParamsFromJson(json);
 
 @override final  String id;
@@ -239,6 +242,15 @@ class _ChatParams implements ChatParams {
   return EqualUnmodifiableMapView(_unreadCount);
 }
 
+@override@JsonKey() final  bool isFavorite;
+@override@JsonKey() final  bool isGroup;
+ final  List<String> _participants;
+@override@JsonKey() List<String> get participants {
+  if (_participants is EqualUnmodifiableListView) return _participants;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_participants);
+}
+
 
 /// Create a copy of ChatParams
 /// with the given fields replaced by the non-null parameter values.
@@ -253,16 +265,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChatParams&&(identical(other.id, id) || other.id == id)&&(identical(other.firstUserName, firstUserName) || other.firstUserName == firstUserName)&&(identical(other.secondUserName, secondUserName) || other.secondUserName == secondUserName)&&(identical(other.firstUserId, firstUserId) || other.firstUserId == firstUserId)&&(identical(other.secondUserId, secondUserId) || other.secondUserId == secondUserId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.firstUserAvatar, firstUserAvatar) || other.firstUserAvatar == firstUserAvatar)&&(identical(other.secondUserAvatar, secondUserAvatar) || other.secondUserAvatar == secondUserAvatar)&&(identical(other.lastMessage, lastMessage) || other.lastMessage == lastMessage)&&const DeepCollectionEquality().equals(other._unreadCount, _unreadCount));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChatParams&&(identical(other.id, id) || other.id == id)&&(identical(other.firstUserName, firstUserName) || other.firstUserName == firstUserName)&&(identical(other.secondUserName, secondUserName) || other.secondUserName == secondUserName)&&(identical(other.firstUserId, firstUserId) || other.firstUserId == firstUserId)&&(identical(other.secondUserId, secondUserId) || other.secondUserId == secondUserId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.firstUserAvatar, firstUserAvatar) || other.firstUserAvatar == firstUserAvatar)&&(identical(other.secondUserAvatar, secondUserAvatar) || other.secondUserAvatar == secondUserAvatar)&&(identical(other.lastMessage, lastMessage) || other.lastMessage == lastMessage)&&const DeepCollectionEquality().equals(other._unreadCount, _unreadCount)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.isGroup, isGroup) || other.isGroup == isGroup)&&const DeepCollectionEquality().equals(other._participants, _participants));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,firstUserName,secondUserName,firstUserId,secondUserId,createdAt,updatedAt,firstUserAvatar,secondUserAvatar,lastMessage,const DeepCollectionEquality().hash(_unreadCount));
+int get hashCode => Object.hash(runtimeType,id,firstUserName,secondUserName,firstUserId,secondUserId,createdAt,updatedAt,firstUserAvatar,secondUserAvatar,lastMessage,const DeepCollectionEquality().hash(_unreadCount),isFavorite,isGroup,const DeepCollectionEquality().hash(_participants));
 
 @override
 String toString() {
-  return 'ChatParams(id: $id, firstUserName: $firstUserName, secondUserName: $secondUserName, firstUserId: $firstUserId, secondUserId: $secondUserId, createdAt: $createdAt, updatedAt: $updatedAt, firstUserAvatar: $firstUserAvatar, secondUserAvatar: $secondUserAvatar, lastMessage: $lastMessage, unreadCount: $unreadCount)';
+  return 'ChatParams(id: $id, firstUserName: $firstUserName, secondUserName: $secondUserName, firstUserId: $firstUserId, secondUserId: $secondUserId, createdAt: $createdAt, updatedAt: $updatedAt, firstUserAvatar: $firstUserAvatar, secondUserAvatar: $secondUserAvatar, lastMessage: $lastMessage, unreadCount: $unreadCount, isFavorite: $isFavorite, isGroup: $isGroup, participants: $participants)';
 }
 
 
@@ -273,7 +285,7 @@ abstract mixin class _$ChatParamsCopyWith<$Res> implements $ChatParamsCopyWith<$
   factory _$ChatParamsCopyWith(_ChatParams value, $Res Function(_ChatParams) _then) = __$ChatParamsCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String firstUserName, String secondUserName, String firstUserId, String secondUserId, String createdAt, String updatedAt, String firstUserAvatar, String secondUserAvatar, String? lastMessage, Map<String, int> unreadCount
+ String id, String firstUserName, String secondUserName, String firstUserId, String secondUserId, String createdAt, String updatedAt, String firstUserAvatar, String secondUserAvatar, String? lastMessage, Map<String, int> unreadCount, bool isFavorite, bool isGroup, List<String> participants
 });
 
 
@@ -290,7 +302,7 @@ class __$ChatParamsCopyWithImpl<$Res>
 
 /// Create a copy of ChatParams
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? firstUserName = null,Object? secondUserName = null,Object? firstUserId = null,Object? secondUserId = null,Object? createdAt = null,Object? updatedAt = null,Object? firstUserAvatar = null,Object? secondUserAvatar = null,Object? lastMessage = freezed,Object? unreadCount = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? firstUserName = null,Object? secondUserName = null,Object? firstUserId = null,Object? secondUserId = null,Object? createdAt = null,Object? updatedAt = null,Object? firstUserAvatar = null,Object? secondUserAvatar = null,Object? lastMessage = freezed,Object? unreadCount = null,Object? isFavorite = null,Object? isGroup = null,Object? participants = null,}) {
   return _then(_ChatParams(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,firstUserName: null == firstUserName ? _self.firstUserName : firstUserName // ignore: cast_nullable_to_non_nullable
@@ -303,7 +315,10 @@ as String,firstUserAvatar: null == firstUserAvatar ? _self.firstUserAvatar : fir
 as String,secondUserAvatar: null == secondUserAvatar ? _self.secondUserAvatar : secondUserAvatar // ignore: cast_nullable_to_non_nullable
 as String,lastMessage: freezed == lastMessage ? _self.lastMessage : lastMessage // ignore: cast_nullable_to_non_nullable
 as String?,unreadCount: null == unreadCount ? _self._unreadCount : unreadCount // ignore: cast_nullable_to_non_nullable
-as Map<String, int>,
+as Map<String, int>,isFavorite: null == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
+as bool,isGroup: null == isGroup ? _self.isGroup : isGroup // ignore: cast_nullable_to_non_nullable
+as bool,participants: null == participants ? _self._participants : participants // ignore: cast_nullable_to_non_nullable
+as List<String>,
   ));
 }
 

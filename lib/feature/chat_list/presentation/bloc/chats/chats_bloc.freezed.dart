@@ -140,10 +140,10 @@ return readMessage(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String currentUserId)?  loadChats,TResult Function( CreateChatParams params)?  createChat,TResult Function( MessageParams params)?  sendMessage,TResult Function( String currentUserId)?  watchChats,TResult Function( String chatId)?  watchMessage,TResult Function( DeleteMessageParams params)?  deleteMessage,TResult Function( String chatId)?  loadChatMessages,TResult Function( MessageParams params)?  readMessage,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String currentUserId,  String? filter)?  loadChats,TResult Function( CreateChatParams params)?  createChat,TResult Function( MessageParams params)?  sendMessage,TResult Function( String currentUserId)?  watchChats,TResult Function( String chatId)?  watchMessage,TResult Function( DeleteMessageParams params)?  deleteMessage,TResult Function( String chatId)?  loadChatMessages,TResult Function( MessageParams params)?  readMessage,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case LoadChats() when loadChats != null:
-return loadChats(_that.currentUserId);case CreateChat() when createChat != null:
+return loadChats(_that.currentUserId,_that.filter);case CreateChat() when createChat != null:
 return createChat(_that.params);case SendMessage() when sendMessage != null:
 return sendMessage(_that.params);case WatchChats() when watchChats != null:
 return watchChats(_that.currentUserId);case WatchMessage() when watchMessage != null:
@@ -168,10 +168,10 @@ return readMessage(_that.params);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String currentUserId)  loadChats,required TResult Function( CreateChatParams params)  createChat,required TResult Function( MessageParams params)  sendMessage,required TResult Function( String currentUserId)  watchChats,required TResult Function( String chatId)  watchMessage,required TResult Function( DeleteMessageParams params)  deleteMessage,required TResult Function( String chatId)  loadChatMessages,required TResult Function( MessageParams params)  readMessage,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String currentUserId,  String? filter)  loadChats,required TResult Function( CreateChatParams params)  createChat,required TResult Function( MessageParams params)  sendMessage,required TResult Function( String currentUserId)  watchChats,required TResult Function( String chatId)  watchMessage,required TResult Function( DeleteMessageParams params)  deleteMessage,required TResult Function( String chatId)  loadChatMessages,required TResult Function( MessageParams params)  readMessage,}) {final _that = this;
 switch (_that) {
 case LoadChats():
-return loadChats(_that.currentUserId);case CreateChat():
+return loadChats(_that.currentUserId,_that.filter);case CreateChat():
 return createChat(_that.params);case SendMessage():
 return sendMessage(_that.params);case WatchChats():
 return watchChats(_that.currentUserId);case WatchMessage():
@@ -195,10 +195,10 @@ return readMessage(_that.params);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String currentUserId)?  loadChats,TResult? Function( CreateChatParams params)?  createChat,TResult? Function( MessageParams params)?  sendMessage,TResult? Function( String currentUserId)?  watchChats,TResult? Function( String chatId)?  watchMessage,TResult? Function( DeleteMessageParams params)?  deleteMessage,TResult? Function( String chatId)?  loadChatMessages,TResult? Function( MessageParams params)?  readMessage,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String currentUserId,  String? filter)?  loadChats,TResult? Function( CreateChatParams params)?  createChat,TResult? Function( MessageParams params)?  sendMessage,TResult? Function( String currentUserId)?  watchChats,TResult? Function( String chatId)?  watchMessage,TResult? Function( DeleteMessageParams params)?  deleteMessage,TResult? Function( String chatId)?  loadChatMessages,TResult? Function( MessageParams params)?  readMessage,}) {final _that = this;
 switch (_that) {
 case LoadChats() when loadChats != null:
-return loadChats(_that.currentUserId);case CreateChat() when createChat != null:
+return loadChats(_that.currentUserId,_that.filter);case CreateChat() when createChat != null:
 return createChat(_that.params);case SendMessage() when sendMessage != null:
 return sendMessage(_that.params);case WatchChats() when watchChats != null:
 return watchChats(_that.currentUserId);case WatchMessage() when watchMessage != null:
@@ -217,10 +217,11 @@ return readMessage(_that.params);case _:
 
 
 class LoadChats implements ChatsEvent {
-  const LoadChats(this.currentUserId);
+  const LoadChats(this.currentUserId, this.filter);
   
 
  final  String currentUserId;
+ final  String? filter;
 
 /// Create a copy of ChatsEvent
 /// with the given fields replaced by the non-null parameter values.
@@ -232,16 +233,16 @@ $LoadChatsCopyWith<LoadChats> get copyWith => _$LoadChatsCopyWithImpl<LoadChats>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoadChats&&(identical(other.currentUserId, currentUserId) || other.currentUserId == currentUserId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoadChats&&(identical(other.currentUserId, currentUserId) || other.currentUserId == currentUserId)&&(identical(other.filter, filter) || other.filter == filter));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,currentUserId);
+int get hashCode => Object.hash(runtimeType,currentUserId,filter);
 
 @override
 String toString() {
-  return 'ChatsEvent.loadChats(currentUserId: $currentUserId)';
+  return 'ChatsEvent.loadChats(currentUserId: $currentUserId, filter: $filter)';
 }
 
 
@@ -252,7 +253,7 @@ abstract mixin class $LoadChatsCopyWith<$Res> implements $ChatsEventCopyWith<$Re
   factory $LoadChatsCopyWith(LoadChats value, $Res Function(LoadChats) _then) = _$LoadChatsCopyWithImpl;
 @useResult
 $Res call({
- String currentUserId
+ String currentUserId, String? filter
 });
 
 
@@ -269,10 +270,11 @@ class _$LoadChatsCopyWithImpl<$Res>
 
 /// Create a copy of ChatsEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? currentUserId = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? currentUserId = null,Object? filter = freezed,}) {
   return _then(LoadChats(
 null == currentUserId ? _self.currentUserId : currentUserId // ignore: cast_nullable_to_non_nullable
-as String,
+as String,freezed == filter ? _self.filter : filter // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

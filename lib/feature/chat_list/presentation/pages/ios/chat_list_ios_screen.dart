@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
@@ -21,22 +20,30 @@ class IosScreen extends StatefulWidget {
 class _IosScreenState extends State<IosScreen> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
+  String _selectedFilter = 'All';
+
+  void _applyFilter(String filter, String currentUserId) {
+    setState(() {
+      _selectedFilter = filter;
+    });
+    context.read<ChatsBloc>().add(ChatsEvent.loadChats(currentUserId, filter));
+  }
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.read<AuthBloc>().state;
+    final currentUserId = authState.maybeWhen(
+      authenticated: (userId) => userId,
+      orElse: () => '',
+    );
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: RefreshIndicator.adaptive(
         onRefresh: () async {
           context.read<ChatsBloc>().add(
-            ChatsEvent.loadChats(
-              context.read<AuthBloc>().state.maybeWhen(
-                authenticated: (userId) => userId,
-                orElse: () => '',
-              ),
-            ),
+            ChatsEvent.loadChats(currentUserId, _selectedFilter),
           );
-
           context.read<UsersBloc>().add(const UsersEvent.loadUsers());
         },
         child: CustomScrollView(
@@ -64,7 +71,6 @@ class _IosScreenState extends State<IosScreen> {
               ),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 12)),
-
             SliverToBoxAdapter(
               child: CupertinoSearchTextField(
                 controller: _searchController,
@@ -72,8 +78,37 @@ class _IosScreenState extends State<IosScreen> {
               ),
             ),
             const SliverPadding(padding: EdgeInsets.only(top: 20)),
-            const SliverToBoxAdapter(
-              child: FilterWidgets(selectedFilter: 'All'),
+
+            /// 🔹 тут ми будуємо FilterWidgets і передаємо реальний unreadCount
+            BlocBuilder<ChatsBloc, ChatsState>(
+              builder: (context, state) {
+                return state.maybeWhen(
+                  loaded: (chats) {
+                    final unreadCount = chats.fold<int>(
+                      0,
+                      (sum, chat) =>
+                          sum + (chat.unreadCount[currentUserId] ?? 0),
+                    );
+
+                    return SliverToBoxAdapter(
+                      child: FilterWidgets(
+                        selectedFilter: _selectedFilter,
+                        onFilterSelected: (filter) =>
+                            _applyFilter(filter, currentUserId),
+                        unReadCount: unreadCount,
+                      ),
+                    );
+                  },
+                  orElse: () => SliverToBoxAdapter(
+                    child: FilterWidgets(
+                      selectedFilter: _selectedFilter,
+                      onFilterSelected: (filter) =>
+                          _applyFilter(filter, currentUserId),
+                      unReadCount: 0,
+                    ),
+                  ),
+                );
+              },
             ),
 
             BlocBuilder<ChatsBloc, ChatsState>(
@@ -109,16 +144,16 @@ class _IosScreenState extends State<IosScreen> {
             BlocBuilder<UsersBloc, UsersState>(
               builder: (context, state) {
                 return state.maybeWhen(
-                  loaded: (chats) => SliverList(
+                  loaded: (users) => SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) => SuggestUser(
                         index: index,
-                        uid: chats[index]['uid'] as String? ?? '',
-                        name: chats[index]['name'] as String? ?? '',
-                        bio: chats[index]['bio'] as String? ?? '',
-                        user: UserParams.fromJson(chats[index]),
+                        uid: users[index]['uid'] as String? ?? '',
+                        name: users[index]['name'] as String? ?? '',
+                        bio: users[index]['bio'] as String? ?? '',
+                        user: UserParams.fromJson(users[index]),
                       ),
-                      childCount: chats.length,
+                      childCount: users.length,
                     ),
                   ),
                   error: (message) => SliverToBoxAdapter(

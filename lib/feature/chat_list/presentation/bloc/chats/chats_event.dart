@@ -2,7 +2,7 @@ part of 'chats_bloc.dart';
 
 @freezed
 class ChatsEvent with _$ChatsEvent {
-  const factory ChatsEvent.loadChats(String currentUserId) = LoadChats;
+  const factory ChatsEvent.loadChats(String currentUserId, String? filter) = LoadChats;
 
   const factory ChatsEvent.createChat(CreateChatParams params) = CreateChat;
 
@@ -13,4 +13,5 @@ class ChatsEvent with _$ChatsEvent {
       DeleteMessage;
   const factory ChatsEvent.loadChatMessages(String chatId) = LoadChatMessages;
   const factory ChatsEvent.readMessage(MessageParams params) = ReadMessage;
+  
 }

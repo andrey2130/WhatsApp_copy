@@ -4,52 +4,39 @@ import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
 
 class FilterWidgets extends StatelessWidget {
-  const FilterWidgets({required this.selectedFilter, super.key});
   final String selectedFilter;
+  final int unReadCount;
+  final void Function(String) onFilterSelected;
+
+  const FilterWidgets({
+    required this.selectedFilter,
+    required this.onFilterSelected,
+    required this.unReadCount,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     final filters = [
       {'name': 'All', 'count': null},
-      {'name': 'Unread', 'count': 1},
+      {'name': 'Unread', 'count': unReadCount},
       {'name': 'Favorites', 'count': null},
       {'name': 'Groups', 'count': null},
     ];
 
     return SizedBox(
-      height: 32.h,
+      height: 32,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: filters.length + 1,
+        itemCount: filters.length,
         itemBuilder: (context, index) {
-          if (index == filters.length) {
-            return Padding(
-              padding: EdgeInsets.only(left: 8.w),
-              child: Container(
-                width: 32.w,
-                height: 32.h,
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.borderColor),
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16.r),
-                ),
-                child: IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.add, size: 20.sp),
-                  padding: EdgeInsets.zero,
-                ),
-              ),
-            );
-          }
-
           final filter = filters[index];
           final isSelected = selectedFilter == filter['name'];
           final count = filter['count'] as int?;
-
           return Padding(
             padding: EdgeInsets.only(left: 8.w),
             child: GestureDetector(
-              onTap: () {},
+              onTap: () => onFilterSelected(filter['name']! as String),
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
