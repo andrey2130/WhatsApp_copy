@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
+import 'package:telegram_copy/core/utils/image_picker.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
 import 'package:telegram_copy/core/utils/widgets/user_avatar_widget.dart';
 import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
@@ -89,14 +90,13 @@ class _UserSettingScreenIosState extends State<UserSettingScreenIos> {
     );
   }
 
-  Future<void> _pickAndUploadAvatar() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+  Future<void> _pickAndUploadAvatar({bool fromCamera = false}) async {
+    final source = fromCamera ? ImageSource.camera : ImageSource.gallery;
 
-    if (pickedFile != null) {
-      if (!mounted) return;
+    final filePath = await ImagePickerHelper.pickImagePath(source);
+    if (filePath != null && mounted) {
       context.read<SettingsBloc>().add(
-        SettingsEvent.uploadAvatar(filePath: pickedFile.path),
+        SettingsEvent.uploadAvatar(filePath: filePath),
       );
     }
   }

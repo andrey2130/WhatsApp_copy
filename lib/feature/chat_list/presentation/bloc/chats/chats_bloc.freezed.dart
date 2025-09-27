@@ -55,7 +55,7 @@ extension ChatsEventPatterns on ChatsEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( LoadChats value)?  loadChats,TResult Function( CreateChat value)?  createChat,TResult Function( SendMessage value)?  sendMessage,TResult Function( WatchChats value)?  watchChats,TResult Function( WatchMessage value)?  watchMessage,TResult Function( DeleteMessage value)?  deleteMessage,TResult Function( LoadChatMessages value)?  loadChatMessages,TResult Function( ReadMessage value)?  readMessage,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( LoadChats value)?  loadChats,TResult Function( CreateChat value)?  createChat,TResult Function( SendMessage value)?  sendMessage,TResult Function( WatchChats value)?  watchChats,TResult Function( WatchMessage value)?  watchMessage,TResult Function( DeleteMessage value)?  deleteMessage,TResult Function( LoadChatMessages value)?  loadChatMessages,TResult Function( ReadMessage value)?  readMessage,TResult Function( SendPhoto value)?  sendPhoto,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case LoadChats() when loadChats != null:
@@ -66,7 +66,8 @@ return watchChats(_that);case WatchMessage() when watchMessage != null:
 return watchMessage(_that);case DeleteMessage() when deleteMessage != null:
 return deleteMessage(_that);case LoadChatMessages() when loadChatMessages != null:
 return loadChatMessages(_that);case ReadMessage() when readMessage != null:
-return readMessage(_that);case _:
+return readMessage(_that);case SendPhoto() when sendPhoto != null:
+return sendPhoto(_that);case _:
   return orElse();
 
 }
@@ -84,7 +85,7 @@ return readMessage(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( LoadChats value)  loadChats,required TResult Function( CreateChat value)  createChat,required TResult Function( SendMessage value)  sendMessage,required TResult Function( WatchChats value)  watchChats,required TResult Function( WatchMessage value)  watchMessage,required TResult Function( DeleteMessage value)  deleteMessage,required TResult Function( LoadChatMessages value)  loadChatMessages,required TResult Function( ReadMessage value)  readMessage,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( LoadChats value)  loadChats,required TResult Function( CreateChat value)  createChat,required TResult Function( SendMessage value)  sendMessage,required TResult Function( WatchChats value)  watchChats,required TResult Function( WatchMessage value)  watchMessage,required TResult Function( DeleteMessage value)  deleteMessage,required TResult Function( LoadChatMessages value)  loadChatMessages,required TResult Function( ReadMessage value)  readMessage,required TResult Function( SendPhoto value)  sendPhoto,}){
 final _that = this;
 switch (_that) {
 case LoadChats():
@@ -95,7 +96,8 @@ return watchChats(_that);case WatchMessage():
 return watchMessage(_that);case DeleteMessage():
 return deleteMessage(_that);case LoadChatMessages():
 return loadChatMessages(_that);case ReadMessage():
-return readMessage(_that);case _:
+return readMessage(_that);case SendPhoto():
+return sendPhoto(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -112,7 +114,7 @@ return readMessage(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( LoadChats value)?  loadChats,TResult? Function( CreateChat value)?  createChat,TResult? Function( SendMessage value)?  sendMessage,TResult? Function( WatchChats value)?  watchChats,TResult? Function( WatchMessage value)?  watchMessage,TResult? Function( DeleteMessage value)?  deleteMessage,TResult? Function( LoadChatMessages value)?  loadChatMessages,TResult? Function( ReadMessage value)?  readMessage,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( LoadChats value)?  loadChats,TResult? Function( CreateChat value)?  createChat,TResult? Function( SendMessage value)?  sendMessage,TResult? Function( WatchChats value)?  watchChats,TResult? Function( WatchMessage value)?  watchMessage,TResult? Function( DeleteMessage value)?  deleteMessage,TResult? Function( LoadChatMessages value)?  loadChatMessages,TResult? Function( ReadMessage value)?  readMessage,TResult? Function( SendPhoto value)?  sendPhoto,}){
 final _that = this;
 switch (_that) {
 case LoadChats() when loadChats != null:
@@ -123,7 +125,8 @@ return watchChats(_that);case WatchMessage() when watchMessage != null:
 return watchMessage(_that);case DeleteMessage() when deleteMessage != null:
 return deleteMessage(_that);case LoadChatMessages() when loadChatMessages != null:
 return loadChatMessages(_that);case ReadMessage() when readMessage != null:
-return readMessage(_that);case _:
+return readMessage(_that);case SendPhoto() when sendPhoto != null:
+return sendPhoto(_that);case _:
   return null;
 
 }
@@ -140,7 +143,7 @@ return readMessage(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String currentUserId,  String? filter)?  loadChats,TResult Function( CreateChatParams params)?  createChat,TResult Function( MessageParams params)?  sendMessage,TResult Function( String currentUserId)?  watchChats,TResult Function( String chatId)?  watchMessage,TResult Function( DeleteMessageParams params)?  deleteMessage,TResult Function( String chatId)?  loadChatMessages,TResult Function( MessageParams params)?  readMessage,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String currentUserId,  String? filter)?  loadChats,TResult Function( CreateChatParams params)?  createChat,TResult Function( MessageParams params)?  sendMessage,TResult Function( String currentUserId)?  watchChats,TResult Function( String chatId)?  watchMessage,TResult Function( DeleteMessageParams params)?  deleteMessage,TResult Function( String chatId)?  loadChatMessages,TResult Function( MessageParams params)?  readMessage,TResult Function( MessageParams params,  Uint8List file)?  sendPhoto,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case LoadChats() when loadChats != null:
 return loadChats(_that.currentUserId,_that.filter);case CreateChat() when createChat != null:
@@ -150,7 +153,8 @@ return watchChats(_that.currentUserId);case WatchMessage() when watchMessage != 
 return watchMessage(_that.chatId);case DeleteMessage() when deleteMessage != null:
 return deleteMessage(_that.params);case LoadChatMessages() when loadChatMessages != null:
 return loadChatMessages(_that.chatId);case ReadMessage() when readMessage != null:
-return readMessage(_that.params);case _:
+return readMessage(_that.params);case SendPhoto() when sendPhoto != null:
+return sendPhoto(_that.params,_that.file);case _:
   return orElse();
 
 }
@@ -168,7 +172,7 @@ return readMessage(_that.params);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String currentUserId,  String? filter)  loadChats,required TResult Function( CreateChatParams params)  createChat,required TResult Function( MessageParams params)  sendMessage,required TResult Function( String currentUserId)  watchChats,required TResult Function( String chatId)  watchMessage,required TResult Function( DeleteMessageParams params)  deleteMessage,required TResult Function( String chatId)  loadChatMessages,required TResult Function( MessageParams params)  readMessage,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String currentUserId,  String? filter)  loadChats,required TResult Function( CreateChatParams params)  createChat,required TResult Function( MessageParams params)  sendMessage,required TResult Function( String currentUserId)  watchChats,required TResult Function( String chatId)  watchMessage,required TResult Function( DeleteMessageParams params)  deleteMessage,required TResult Function( String chatId)  loadChatMessages,required TResult Function( MessageParams params)  readMessage,required TResult Function( MessageParams params,  Uint8List file)  sendPhoto,}) {final _that = this;
 switch (_that) {
 case LoadChats():
 return loadChats(_that.currentUserId,_that.filter);case CreateChat():
@@ -178,7 +182,8 @@ return watchChats(_that.currentUserId);case WatchMessage():
 return watchMessage(_that.chatId);case DeleteMessage():
 return deleteMessage(_that.params);case LoadChatMessages():
 return loadChatMessages(_that.chatId);case ReadMessage():
-return readMessage(_that.params);case _:
+return readMessage(_that.params);case SendPhoto():
+return sendPhoto(_that.params,_that.file);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,7 +200,7 @@ return readMessage(_that.params);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String currentUserId,  String? filter)?  loadChats,TResult? Function( CreateChatParams params)?  createChat,TResult? Function( MessageParams params)?  sendMessage,TResult? Function( String currentUserId)?  watchChats,TResult? Function( String chatId)?  watchMessage,TResult? Function( DeleteMessageParams params)?  deleteMessage,TResult? Function( String chatId)?  loadChatMessages,TResult? Function( MessageParams params)?  readMessage,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String currentUserId,  String? filter)?  loadChats,TResult? Function( CreateChatParams params)?  createChat,TResult? Function( MessageParams params)?  sendMessage,TResult? Function( String currentUserId)?  watchChats,TResult? Function( String chatId)?  watchMessage,TResult? Function( DeleteMessageParams params)?  deleteMessage,TResult? Function( String chatId)?  loadChatMessages,TResult? Function( MessageParams params)?  readMessage,TResult? Function( MessageParams params,  Uint8List file)?  sendPhoto,}) {final _that = this;
 switch (_that) {
 case LoadChats() when loadChats != null:
 return loadChats(_that.currentUserId,_that.filter);case CreateChat() when createChat != null:
@@ -205,7 +210,8 @@ return watchChats(_that.currentUserId);case WatchMessage() when watchMessage != 
 return watchMessage(_that.chatId);case DeleteMessage() when deleteMessage != null:
 return deleteMessage(_that.params);case LoadChatMessages() when loadChatMessages != null:
 return loadChatMessages(_that.chatId);case ReadMessage() when readMessage != null:
-return readMessage(_that.params);case _:
+return readMessage(_that.params);case SendPhoto() when sendPhoto != null:
+return sendPhoto(_that.params,_that.file);case _:
   return null;
 
 }
@@ -764,6 +770,83 @@ class _$ReadMessageCopyWithImpl<$Res>
   return _then(ReadMessage(
 null == params ? _self.params : params // ignore: cast_nullable_to_non_nullable
 as MessageParams,
+  ));
+}
+
+/// Create a copy of ChatsEvent
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$MessageParamsCopyWith<$Res> get params {
+  
+  return $MessageParamsCopyWith<$Res>(_self.params, (value) {
+    return _then(_self.copyWith(params: value));
+  });
+}
+}
+
+/// @nodoc
+
+
+class SendPhoto implements ChatsEvent {
+  const SendPhoto(this.params, this.file);
+  
+
+ final  MessageParams params;
+ final  Uint8List file;
+
+/// Create a copy of ChatsEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SendPhotoCopyWith<SendPhoto> get copyWith => _$SendPhotoCopyWithImpl<SendPhoto>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SendPhoto&&(identical(other.params, params) || other.params == params)&&const DeepCollectionEquality().equals(other.file, file));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,params,const DeepCollectionEquality().hash(file));
+
+@override
+String toString() {
+  return 'ChatsEvent.sendPhoto(params: $params, file: $file)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SendPhotoCopyWith<$Res> implements $ChatsEventCopyWith<$Res> {
+  factory $SendPhotoCopyWith(SendPhoto value, $Res Function(SendPhoto) _then) = _$SendPhotoCopyWithImpl;
+@useResult
+$Res call({
+ MessageParams params, Uint8List file
+});
+
+
+$MessageParamsCopyWith<$Res> get params;
+
+}
+/// @nodoc
+class _$SendPhotoCopyWithImpl<$Res>
+    implements $SendPhotoCopyWith<$Res> {
+  _$SendPhotoCopyWithImpl(this._self, this._then);
+
+  final SendPhoto _self;
+  final $Res Function(SendPhoto) _then;
+
+/// Create a copy of ChatsEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? params = null,Object? file = null,}) {
+  return _then(SendPhoto(
+null == params ? _self.params : params // ignore: cast_nullable_to_non_nullable
+as MessageParams,null == file ? _self.file : file // ignore: cast_nullable_to_non_nullable
+as Uint8List,
   ));
 }
 

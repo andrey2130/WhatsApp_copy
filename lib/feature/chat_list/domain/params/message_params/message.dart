@@ -17,9 +17,10 @@ abstract class MessageParams with _$MessageParams {
     required String updatedAt,
     required String firstUserAvatar,
     required String secondUserAvatar,
-    @Default(false) bool isRead,
     String? replyToMessageId,
     String? replyText,
+    String? imageUrl,
+    @Default(false) bool isRead,
   }) = _MessageParams;
 
   factory MessageParams.fromJson(Map<String, dynamic> json) =>

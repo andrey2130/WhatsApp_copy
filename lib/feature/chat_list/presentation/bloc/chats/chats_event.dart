@@ -13,5 +13,5 @@ class ChatsEvent with _$ChatsEvent {
       DeleteMessage;
   const factory ChatsEvent.loadChatMessages(String chatId) = LoadChatMessages;
   const factory ChatsEvent.readMessage(MessageParams params) = ReadMessage;
-  
+  const factory ChatsEvent.sendPhoto(MessageParams params, Uint8List file) = SendPhoto;
 }

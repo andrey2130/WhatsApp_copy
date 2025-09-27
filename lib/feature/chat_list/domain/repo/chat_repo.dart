@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dartz/dartz.dart';
 import 'package:telegram_copy/core/error/failure.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/chat.dart';
@@ -20,6 +22,12 @@ abstract class ChatRepo {
     int count,
   );
   Future<Either<Failure, Map<String, int>>> calculateUnreadCount(String chatId);
+
+  Future<Either<Failure, MessageParams>> sendPhoto(
+    MessageParams params,
+    Uint8List file,
+  );
+
   Stream<List<MessageParams>> watchMessages(String chatId);
   Stream<List<ChatParams>> watchChats(String currentUserId);
 }

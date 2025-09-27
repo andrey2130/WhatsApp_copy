@@ -19,9 +19,10 @@ _MessageParams _$MessageParamsFromJson(Map<String, dynamic> json) =>
       updatedAt: json['updatedAt'] as String,
       firstUserAvatar: json['firstUserAvatar'] as String,
       secondUserAvatar: json['secondUserAvatar'] as String,
-      isRead: json['isRead'] as bool? ?? false,
       replyToMessageId: json['replyToMessageId'] as String?,
       replyText: json['replyText'] as String?,
+      imageUrl: json['imageUrl'] as String?,
+      isRead: json['isRead'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$MessageParamsToJson(_MessageParams instance) =>
@@ -37,7 +38,8 @@ Map<String, dynamic> _$MessageParamsToJson(_MessageParams instance) =>
       'updatedAt': instance.updatedAt,
       'firstUserAvatar': instance.firstUserAvatar,
       'secondUserAvatar': instance.secondUserAvatar,
-      'isRead': instance.isRead,
       'replyToMessageId': instance.replyToMessageId,
       'replyText': instance.replyText,
+      'imageUrl': instance.imageUrl,
+      'isRead': instance.isRead,
     };

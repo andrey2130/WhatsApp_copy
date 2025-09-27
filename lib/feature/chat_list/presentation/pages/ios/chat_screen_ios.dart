@@ -1,10 +1,14 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 import 'package:telegram_copy/core/utils/date_formatter.dart';
+import 'package:telegram_copy/core/utils/image_picker.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/chat.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params/delete_messaga.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params/message.dart';
@@ -162,6 +166,7 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
                           onChanged: (_) => setState(() {}),
                           onSubmit: (value) =>
                               _sendMessage(value, _messageController),
+                          onPressCamera: _pickAndSendPhoto,
                         ),
                       ),
                     ],
@@ -226,8 +231,9 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
           }
         }
         final key = _messageKeys.putIfAbsent(message.id, GlobalKey.new);
+
         return VisibilityDetector(
-          key: Key(message.id),
+          key: Key('visibility-${message.id}'), // звичайний Key, не GlobalKey
           onVisibilityChanged: (visibility) {
             if (visibility.visibleFraction == 1 &&
                 message.isRead != true &&
@@ -235,15 +241,14 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
               _readMessage(message);
             }
           },
-
           child: AnimatedContainer(
-            key: key,
+            key: key, // GlobalKey тут залишаємо, якщо потрібен
             duration: const Duration(milliseconds: 250),
             curve: Curves.easeInOut,
             margin: EdgeInsets.symmetric(vertical: 2.h),
             decoration: BoxDecoration(
               color: _highlightMessageId == message.id
-                  ? Colors.green.withValues(alpha: 0.2)
+                  ? Colors.green.withOpacity(0.2)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(8.r),
             ),
@@ -264,6 +269,7 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
               doubleTap: () {
                 _deleteMessage(message.id);
               },
+              imageUrl: message.imageUrl,
             ),
           ),
         );
@@ -292,6 +298,34 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
       success: (user) => user.photoUrl,
       orElse: () => '',
     );
+  }
+
+  Future<void> _pickAndSendPhoto({bool fromCamera = false}) async {
+    final source = fromCamera ? ImageSource.camera : ImageSource.gallery;
+
+    final filePath = await ImagePickerHelper.pickImagePath(source);
+
+    if (filePath != null && mounted) {
+      final fileBytes = await File(filePath).readAsBytes();
+
+      // Формуємо MessageParams для фото
+      final message = MessageParams(
+        id: const Uuid().v4(),
+        senderName: _getCurrentUserName(),
+        receiverName: widget.userName,
+        message: '', // тексту немає, тільки фото
+        firstUserAvatar: _getCurrentAvatar(),
+        secondUserAvatar: widget.avatarUrl ?? '',
+        senderId: widget.userId,
+        receiverId: widget.receiverIds.first,
+        chatId: widget.conversationId,
+        createdAt: DateTime.now().toIso8601String(),
+        updatedAt: DateTime.now().toIso8601String(),
+        imageUrl: filePath,
+      );
+
+      context.read<ChatsBloc>().add(ChatsEvent.sendPhoto(message, fileBytes));
+    }
   }
 
   void _sendMessage(String message, TextEditingController messageController) {

@@ -8,7 +8,14 @@ import 'package:telegram_copy/feature/chat_list/presentation/widgets/reply_messa
 
 class MessageInput extends StatelessWidget {
   const MessageInput({
-    required this.messageController, required this.focusNode, required this.isReply, required this.onClearReply, required this.onChanged, required this.onSubmit, super.key,
+    required this.messageController,
+    required this.focusNode,
+    required this.isReply,
+    required this.onClearReply,
+    required this.onChanged,
+    required this.onSubmit,
+    required this.onPressCamera,
+    super.key,
     this.replyToMessage,
   });
 
@@ -19,6 +26,7 @@ class MessageInput extends StatelessWidget {
   final VoidCallback onClearReply;
   final ValueChanged<String> onChanged;
   final ValueChanged<String> onSubmit;
+  final VoidCallback onPressCamera;
 
   @override
   Widget build(BuildContext context) {
@@ -75,42 +83,45 @@ class MessageInput extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 10.w),
-              if (messageController.text.isEmpty) Row(
-                      children: [
-                        CupertinoButton(
-                          padding: EdgeInsets.zero,
-                          onPressed: () {},
-                          child: const Icon(
-                            CupertinoIcons.camera,
-                            color: Colors.black,
-                            size: 22,
-                          ),
-                        ),
-                        SizedBox(width: 10.w),
-                        CupertinoButton(
-                          padding: EdgeInsets.zero,
-                          onPressed: () {},
-                          child: const Icon(
-                            CupertinoIcons.mic_solid,
-                            color: Colors.black,
-                            size: 22,
-                          ),
-                        ),
-                      ],
-                    ) else CupertinoButton(
+              if (messageController.text.isEmpty)
+                Row(
+                  children: [
+                    CupertinoButton(
                       padding: EdgeInsets.zero,
-                      onPressed: () => onSubmit(messageController.text),
-                      child: Container(
-                        width: 32.w,
-                        height: 32.w,
-                        decoration: const BoxDecoration(
-                          color: AppColors.buttonGreen,
-                          shape: BoxShape.circle,
-                        ),
-                        alignment: Alignment.center,
-                        child: SvgPicture.asset('assets/icons/send_icon.svg'),
+                      onPressed: onPressCamera,
+                      child: const Icon(
+                        CupertinoIcons.camera,
+                        color: Colors.black,
+                        size: 22,
                       ),
                     ),
+                    SizedBox(width: 10.w),
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {},
+                      child: const Icon(
+                        CupertinoIcons.mic_solid,
+                        color: Colors.black,
+                        size: 22,
+                      ),
+                    ),
+                  ],
+                )
+              else
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () => onSubmit(messageController.text),
+                  child: Container(
+                    width: 32.w,
+                    height: 32.w,
+                    decoration: const BoxDecoration(
+                      color: AppColors.buttonGreen,
+                      shape: BoxShape.circle,
+                    ),
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset('assets/icons/send_icon.svg'),
+                  ),
+                ),
             ],
           ),
         ],

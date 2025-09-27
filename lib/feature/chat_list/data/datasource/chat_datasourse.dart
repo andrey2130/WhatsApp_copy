@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 import 'package:telegram_copy/core/error/failure.dart';
@@ -24,6 +27,10 @@ abstract class ChatDatasource {
     int count,
   );
   Future<Either<Failure, Map<String, int>>> calculateUnreadCount(String chatId);
+  Future<Either<Failure, MessageParams>> sendPhoto(
+    MessageParams params,
+    Uint8List file,
+  );
   Stream<List<MessageParams>> watchMessages(String chatId);
   Stream<List<ChatParams>> watchChats(String currentUserId);
 }
@@ -31,8 +38,9 @@ abstract class ChatDatasource {
 @Injectable(as: ChatDatasource)
 class ChatDatasourceImpl implements ChatDatasource {
   final FirebaseFirestore _firestore;
+  final FirebaseStorage _storage;
 
-  ChatDatasourceImpl(this._firestore);
+  ChatDatasourceImpl(this._firestore, this._storage);
 
   @override
   Future<Either<Failure, CreateChatParams>> createChat(
@@ -60,8 +68,9 @@ class ChatDatasourceImpl implements ChatDatasource {
 
   @override
   Future<Either<Failure, MessageParams>> sendMessage(
-    MessageParams params,
-  ) async {
+    MessageParams params, {
+    Uint8List? file,
+  }) async {
     try {
       String chatId = params.chatId;
       final chatDoc = _firestore
@@ -79,23 +88,43 @@ class ChatDatasourceImpl implements ChatDatasource {
           'createdAt': FieldValue.serverTimestamp(),
           'updatedAt': FieldValue.serverTimestamp(),
         });
-        getIt<Talker>().info('New chat created with ID: $chatId');
       }
 
-      await chatDoc.collection('messages').doc(params.id).set(params.toJson());
+      String? imageUrl;
+      if (file != null) {
+        imageUrl = await _uploadImage(chatId, params.id, file);
+      }
+
+      final updatedParams = params.copyWith(chatId: chatId, imageUrl: imageUrl);
+
+      await chatDoc
+          .collection('messages')
+          .doc(updatedParams.id)
+          .set(updatedParams.toJson());
       await chatDoc.update({
-        'lastMessage': params.message,
+        'lastMessage': updatedParams.message.isNotEmpty
+            ? updatedParams.message
+            : (imageUrl != null ? "📷 Photo" : ""),
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
       await updateUnreadCount(chatId, params.receiverId, 1);
 
-      final updatedParams = params.copyWith(chatId: chatId);
       return Right(updatedParams);
     } catch (e) {
       getIt<Talker>().handle(e);
       return Left(Failure(message: e.toString()));
     }
+  }
+
+  Future<String> _uploadImage(
+    String chatId,
+    String messageId,
+    Uint8List fileBytes,
+  ) async {
+    final ref = _storage.ref().child('chats/$chatId/messages/$messageId.jpg');
+    await ref.putData(fileBytes, SettableMetadata(contentType: 'image/jpeg'));
+    return ref.getDownloadURL();
   }
 
   @override
@@ -308,5 +337,49 @@ class ChatDatasourceImpl implements ChatDatasource {
     if (timestamp is Timestamp) return timestamp.toDate().toIso8601String();
     if (timestamp is String) return timestamp;
     return DateTime.now().toIso8601String();
+  }
+
+  @override
+  Future<Either<Failure, MessageParams>> sendPhoto(
+    MessageParams params,
+    Uint8List file,
+  ) async {
+    try {
+      // Перевіряємо, чи чат існує
+      final chatRef = _firestore.collection('chats').doc(params.chatId);
+      final chatSnapshot = await chatRef.get();
+
+      if (!chatSnapshot.exists) {
+        await chatRef.set({
+          'participants': [params.senderId, params.receiverId],
+          'firstUserName': params.senderName,
+          'secondUserName': params.receiverName,
+          'firstUserAvatar': params.firstUserAvatar,
+          'secondUserAvatar': params.secondUserAvatar,
+          'createdAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+      }
+
+      final imageUrl = await _uploadImage(chatRef.id, params.id, file);
+      final updatedParams = params.copyWith(imageUrl: imageUrl, message: "");
+
+      await chatRef
+          .collection('messages')
+          .doc(updatedParams.id)
+          .set(updatedParams.toJson());
+
+      await chatRef.update({
+        'lastMessage': "📷 Photo",
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      await updateUnreadCount(chatRef.id, params.receiverId, 1);
+
+      return Right(updatedParams);
+    } catch (e) {
+      getIt<Talker>().handle(e);
+      return Left(Failure(message: e.toString()));
+    }
   }
 }
