@@ -64,7 +64,6 @@ class ChatDatasourceImpl implements ChatDatasource {
   ) async {
     try {
       String chatId = params.chatId;
-
       final chatDoc = _firestore
           .collection('chats')
           .doc(chatId.isEmpty ? null : chatId);
@@ -83,23 +82,15 @@ class ChatDatasourceImpl implements ChatDatasource {
         getIt<Talker>().info('New chat created with ID: $chatId');
       }
 
-      getIt<Talker>().info(
-        'Saving message with ID: ${params.id} to chat: $chatId',
-      );
       await chatDoc.collection('messages').doc(params.id).set(params.toJson());
-
       await chatDoc.update({
         'lastMessage': params.message,
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      // Update unread count for the receiver
       await updateUnreadCount(chatId, params.receiverId, 1);
 
-      getIt<Talker>().info('Message sent to chat $chatId: ${params.toJson()}');
-
       final updatedParams = params.copyWith(chatId: chatId);
-
       return Right(updatedParams);
     } catch (e) {
       getIt<Talker>().handle(e);
@@ -112,52 +103,30 @@ class ChatDatasourceImpl implements ChatDatasource {
     String currentUserId,
   ) async {
     try {
-      final chatsSnapshot = await _firestore
+      final snapshot = await _firestore
           .collection('chats')
           .where('participants', arrayContains: currentUserId)
+          .orderBy('updatedAt', descending: true)
           .get();
 
-      if (chatsSnapshot.docs.isEmpty) {
-        getIt<Talker>().info('No chats found for user $currentUserId');
-        return const Right([]);
-      }
+      if (snapshot.docs.isEmpty) return const Right([]);
 
-      final chatList = <ChatParams>[];
-
-      for (final doc in chatsSnapshot.docs) {
-        final data = doc.data();
-        final unreadCount = await calculateUnreadCount(doc.id);
-        final participants = (data['participants'] as List<dynamic>?) ?? [];
-
-        chatList.add(
-          ChatParams(
-            id: doc.id,
-            firstUserName: data['firstUserName'] as String? ?? 'Unknown',
-            secondUserName: data['secondUserName'] as String? ?? 'Unknown',
-            firstUserId: participants.isNotEmpty
-                ? participants[0] as String
-                : '',
-            secondUserId: participants.length > 1
-                ? participants[1] as String
-                : '',
-            createdAt: _parseTimestamp(data['createdAt']),
-            lastMessage: data['lastMessage'] as String? ?? '',
-            updatedAt: _parseTimestamp(data['updatedAt']),
-            firstUserAvatar: data['firstUserAvatar'] as String? ?? '',
-            secondUserAvatar: data['secondUserAvatar'] as String? ?? '',
-            unreadCount: unreadCount.fold((l) => <String, int>{}, (r) => r),
-          ),
-        );
-      }
-
-      getIt<Talker>().info(
-        'Loaded ${chatList.length} chats for $currentUserId',
-      );
+      final chatList = await _mapChatDocsToChatParams(snapshot);
       return Right(chatList);
     } catch (e) {
       getIt<Talker>().handle(e);
       return Left(Failure(message: e.toString()));
     }
+  }
+
+  @override
+  Stream<List<ChatParams>> watchChats(String currentUserId) {
+    return _firestore
+        .collection('chats')
+        .where('participants', arrayContains: currentUserId)
+        .orderBy('updatedAt', descending: true)
+        .snapshots()
+        .asyncMap(_mapChatDocsToChatParams);
   }
 
   @override
@@ -169,7 +138,7 @@ class ChatDatasourceImpl implements ChatDatasource {
           .collection('chats')
           .doc(chatId)
           .collection('messages')
-          .orderBy('createdAt', descending: false)
+          .orderBy('createdAt')
           .get();
 
       return Right(
@@ -182,26 +151,35 @@ class ChatDatasourceImpl implements ChatDatasource {
   }
 
   @override
+  Stream<List<MessageParams>> watchMessages(String chatId) {
+    return _firestore
+        .collection('chats')
+        .doc(chatId)
+        .collection('messages')
+        .orderBy('createdAt')
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((d) => MessageParams.fromJson(d.data()))
+              .toList(),
+        );
+  }
+
+  @override
   Future<Either<Failure, DeleteMessageParams>> deleteMessage(
     DeleteMessageParams params,
   ) async {
     try {
-      getIt<Talker>().info(
-        'Attempting to delete message ${params.messageId} from chat ${params.chatId}',
-      );
       await _firestore
           .collection('chats')
           .doc(params.chatId)
           .collection('messages')
           .doc(params.messageId)
           .delete();
-      getIt<Talker>().info(
-        'Message ${params.messageId} successfully deleted from Firestore',
-      );
       return Right(params);
-    } catch (e, st) {
-      getIt<Talker>().handle(e, st);
-      rethrow;
+    } catch (e) {
+      getIt<Talker>().handle(e);
+      return Left(Failure(message: e.toString()));
     }
   }
 
@@ -217,9 +195,7 @@ class ChatDatasourceImpl implements ChatDatasource {
           .doc(params.id)
           .update({'isRead': true});
 
-      // Update unread count for the receiver
       await updateUnreadCount(params.chatId, params.receiverId, -1);
-
       return Right(params);
     } catch (e) {
       getIt<Talker>().handle(e);
@@ -238,21 +214,17 @@ class ChatDatasourceImpl implements ChatDatasource {
       final chatDoc = await chatRef.get();
 
       if (chatDoc.exists) {
-        final data = chatDoc.data()!;
-        final unreadCountRaw =
-            data['unreadCount'] as Map<dynamic, dynamic>? ?? {};
-        final unreadCount = <String, int>{};
-        unreadCountRaw.forEach((key, value) {
-          // ignore: lines_longer_than_80_chars
-          unreadCount[key.toString()] = (value is int)
-              ? value
-              : int.tryParse(value.toString()) ?? 0;
-        });
-        final currentCount = unreadCount[userId] ?? 0;
-        final newCount = (currentCount + count)
+        final raw =
+            chatDoc.data()?['unreadCount'] as Map<dynamic, dynamic>? ?? {};
+        final unreadCount = raw.map(
+          (k, v) => MapEntry(
+            k.toString(),
+            (v is int) ? v : int.tryParse(v.toString()) ?? 0,
+          ),
+        );
+        unreadCount[userId] = ((unreadCount[userId] ?? 0) + count)
             .clamp(0, double.maxFinite)
             .toInt();
-        unreadCount[userId] = newCount;
 
         await chatRef.update({'unreadCount': unreadCount});
       }
@@ -269,24 +241,15 @@ class ChatDatasourceImpl implements ChatDatasource {
     String chatId,
   ) async {
     try {
-      final chatRef = _firestore.collection('chats').doc(chatId);
-      final chatDoc = await chatRef.get();
-
-      if (!chatDoc.exists) {
-        return const Right({});
-      }
+      final chatDoc = await _firestore.collection('chats').doc(chatId).get();
+      if (!chatDoc.exists) return const Right({});
 
       final data = chatDoc.data()!;
-      final participantsRaw = data['participants'];
-      final participants = (participantsRaw is Iterable)
-          ? List<String>.from(participantsRaw.map((e) => e.toString()))
-          : <String>[];
+      final participants = List<String>.from(
+        (data['participants'] as List<dynamic>? ?? []).map((e) => e.toString()),
+      );
+      if (participants.isEmpty) return const Right({});
 
-      if (participants.isEmpty) {
-        return const Right({});
-      }
-
-      // Get all unread messages for this chat
       final unreadMessages = await _firestore
           .collection('chats')
           .doc(chatId)
@@ -294,23 +257,13 @@ class ChatDatasourceImpl implements ChatDatasource {
           .where('isRead', isEqualTo: false)
           .get();
 
-      // Count unread messages per user
-      final Map<String, int> unreadCount = {};
-      for (final participant in participants) {
-        unreadCount[participant] = 0;
-      }
-
-      for (final doc in unreadMessages.docs) {
-        final messageData = doc.data();
-        final receiverId = messageData['receiverId'] as String?;
+      final unreadCount = {for (var p in participants) p: 0};
+      for (final msg in unreadMessages.docs) {
+        final receiverId = msg.data()['receiverId'] as String?;
         if (receiverId != null && unreadCount.containsKey(receiverId)) {
-          unreadCount[receiverId] = (unreadCount[receiverId] ?? 0) + 1;
+          unreadCount[receiverId] = unreadCount[receiverId]! + 1;
         }
       }
-
-      getIt<Talker>().info(
-        'Calculated unread count for chat $chatId: $unreadCount',
-      );
 
       return Right(unreadCount);
     } catch (e) {
@@ -319,73 +272,41 @@ class ChatDatasourceImpl implements ChatDatasource {
     }
   }
 
-  @override
-  Stream<List<ChatParams>> watchChats(String currentUserId) {
-    return _firestore
-        .collection('chats')
-        .where('participants', arrayContains: currentUserId)
-        .orderBy('updatedAt', descending: true)
-        .snapshots()
-        .asyncMap((snapshot) async {
-          final chatList = <ChatParams>[];
+  Future<List<ChatParams>> _mapChatDocsToChatParams(
+    QuerySnapshot<Map<String, dynamic>> snapshot,
+  ) async {
+    final chatList = <ChatParams>[];
 
-          for (final doc in snapshot.docs) {
-            final data = doc.data();
-            final unreadCount = await calculateUnreadCount(doc.id);
-            final participants = (data['participants'] as List<dynamic>?) ?? [];
+    for (final doc in snapshot.docs) {
+      final data = doc.data();
+      final unreadCount = await calculateUnreadCount(doc.id);
+      final participants = List<String>.from(
+        (data['participants'] as List<dynamic>? ?? []).map((e) => e.toString()),
+      );
 
-            chatList.add(
-              ChatParams(
-                id: doc.id,
-                firstUserName: data['firstUserName'] as String? ?? 'Unknown',
-                secondUserName: data['secondUserName'] as String? ?? 'Unknown',
-                firstUserId: participants.isNotEmpty
-                    ? participants[0] as String
-                    : '',
-                secondUserId: participants.length > 1
-                    ? participants[1] as String
-                    : '',
-                createdAt: _parseTimestamp(data['createdAt']),
-                lastMessage: data['lastMessage'] as String? ?? '',
-                updatedAt: _parseTimestamp(data['updatedAt']),
-                firstUserAvatar: data['firstUserAvatar'] as String? ?? '',
-                secondUserAvatar: data['secondUserAvatar'] as String? ?? '',
-                unreadCount: unreadCount.fold((l) => <String, int>{}, (r) => r),
-              ),
-            );
-          }
+      chatList.add(
+        ChatParams(
+          id: doc.id,
+          firstUserName: data['firstUserName'] as String? ?? 'Unknown',
+          secondUserName: data['secondUserName'] as String? ?? 'Unknown',
+          firstUserId: participants.isNotEmpty ? participants[0] : '',
+          secondUserId: participants.length > 1 ? participants[1] : '',
+          createdAt: _parseTimestamp(data['createdAt']),
+          lastMessage: data['lastMessage'] as String? ?? '',
+          updatedAt: _parseTimestamp(data['updatedAt']),
+          firstUserAvatar: data['firstUserAvatar'] as String? ?? '',
+          secondUserAvatar: data['secondUserAvatar'] as String? ?? '',
+          unreadCount: unreadCount.fold((l) => <String, int>{}, (r) => r),
+        ),
+      );
+    }
 
-          return chatList;
-        });
+    return chatList;
   }
 
   String _parseTimestamp(dynamic timestamp) {
-    try {
-      if (timestamp is Timestamp) {
-        return timestamp.toDate().toIso8601String();
-      } else if (timestamp is String) {
-        return timestamp;
-      } else {
-        return DateTime.now().toIso8601String();
-      }
-    } catch (e) {
-      getIt<Talker>().handle(e);
-      return DateTime.now().toIso8601String();
-    }
-  }
-
-  @override
-  Stream<List<MessageParams>> watchMessages(String chatId) {
-    return _firestore
-        .collection('chats')
-        .doc(chatId)
-        .collection('messages')
-        .orderBy('createdAt', descending: false)
-        .snapshots()
-        .map((snapshot) {
-          return snapshot.docs
-              .map((doc) => MessageParams.fromJson(doc.data()))
-              .toList();
-        });
+    if (timestamp is Timestamp) return timestamp.toDate().toIso8601String();
+    if (timestamp is String) return timestamp;
+    return DateTime.now().toIso8601String();
   }
 }

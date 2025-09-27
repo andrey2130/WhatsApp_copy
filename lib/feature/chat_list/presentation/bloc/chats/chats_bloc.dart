@@ -61,14 +61,48 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
     on<ReadMessage>(_onReadMessage);
   }
 
+  int getTotalUnreadCount(List<ChatParams> chats, String currentUserId) {
+    int total = 0;
+    for (final chat in chats) {
+      total += chat.unreadCount[currentUserId] ?? 0;
+    }
+    return total;
+  }
+
   Future<void> _onLoadChats(LoadChats event, Emitter<ChatsState> emit) async {
     emit(const ChatsState.loading());
     try {
       final chats = await _loadChatsUsecase(event.currentUserId);
-      emit(ChatsState.loaded(chats));
+      final filteredChats = _applyFilter(
+        chats,
+        event.filter,
+        event.currentUserId,
+      );
+      emit(ChatsState.loaded(filteredChats));
     } catch (e) {
       getIt<Talker>().handle(e);
       emit(ChatsState.error(e.toString()));
+    }
+  }
+
+  List<ChatParams> _applyFilter(
+    List<ChatParams> chats,
+    String? filter,
+    String currentUserId,
+  ) {
+    if (filter == null || filter == 'All') return chats;
+
+    switch (filter) {
+      case 'Unread':
+        return chats
+            .where((c) => (c.unreadCount[currentUserId] ?? 0) > 0)
+            .toList();
+      case 'Favorites':
+        return chats.where((c) => c.isFavorite).toList();
+      case 'Groups':
+        return chats.where((c) => c.isGroup).toList();
+      default:
+        return chats;
     }
   }
 

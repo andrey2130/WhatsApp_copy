@@ -22,6 +22,13 @@ _ChatParams _$ChatParamsFromJson(Map<String, dynamic> json) => _ChatParams(
         (k, e) => MapEntry(k, (e as num).toInt()),
       ) ??
       const {},
+  isFavorite: json['isFavorite'] as bool? ?? false,
+  isGroup: json['isGroup'] as bool? ?? false,
+  participants:
+      (json['participants'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList() ??
+      const <String>[],
 );
 
 Map<String, dynamic> _$ChatParamsToJson(_ChatParams instance) =>
@@ -37,4 +44,7 @@ Map<String, dynamic> _$ChatParamsToJson(_ChatParams instance) =>
       'secondUserAvatar': instance.secondUserAvatar,
       'lastMessage': instance.lastMessage,
       'unreadCount': instance.unreadCount,
+      'isFavorite': instance.isFavorite,
+      'isGroup': instance.isGroup,
+      'participants': instance.participants,
     };

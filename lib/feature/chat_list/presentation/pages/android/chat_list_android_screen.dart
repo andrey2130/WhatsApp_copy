@@ -1,13 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:telegram_copy/core/theme/text_style.dart';
-import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
-import 'package:telegram_copy/core/utils/widgets/custom_textfield.dart';
 import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/bloc/chats/chats_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/bloc/users/users_bloc.dart';
-import 'package:telegram_copy/feature/chat_list/presentation/widgets/chat_list_more_menu.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/chat_list_widgets.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/filter_widgets.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/suggest_user.dart';
@@ -23,66 +20,94 @@ class AndroidScreen extends StatefulWidget {
 class _AndroidScreenState extends State<AndroidScreen> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
+  String _selectedFilter = 'All';
+
+  void _applyFilter(String filter, String currentUserId) {
+    setState(() {
+      _selectedFilter = filter;
+    });
+    context.read<ChatsBloc>().add(ChatsEvent.loadChats(currentUserId, filter));
+  }
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.read<AuthBloc>().state;
+    final currentUserId = authState.maybeWhen(
+      authenticated: (userId) => userId,
+      orElse: () => '',
+    );
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: RefreshIndicator.adaptive(
         onRefresh: () async {
           context.read<ChatsBloc>().add(
-            ChatsEvent.loadChats(
-              context.read<AuthBloc>().state.maybeWhen(
-                authenticated: (userId) => userId,
-                orElse: () => '',
-              ),
-            ),
+            ChatsEvent.loadChats(currentUserId, _selectedFilter),
           );
+          context.read<UsersBloc>().add(const UsersEvent.loadUsers());
         },
         child: CustomScrollView(
           controller: _scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
-            SliverToBoxAdapter(
-              child: CustomAppBar(
-                leftWidget: Text(
-                  'WhatsApp',
-                  style: AppTextStyle.getBoldGreen(),
-                ),
-                rightWidget: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.camera_alt_outlined),
-                ),
-                right2Widget: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.search),
-                ),
-                right3Widget: ChatListMoreMenu(
-                  onSelected: (action) {
-                    switch (action) {
-                      case ChatListMoreAction.settings:
-                        context.push('/settings');
-                      case ChatListMoreAction.newGroup:
-                        break;
-                      case ChatListMoreAction.newBroadcast:
-                        break;
-                      case ChatListMoreAction.linkedDevices:
-                        break;
-                    }
-                  },
-                ),
+            CupertinoSliverNavigationBar(
+              backgroundColor: Colors.white,
+              leading: const Icon(CupertinoIcons.ellipsis),
+              largeTitle: const Text('Chats'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {},
+                    child: const Icon(CupertinoIcons.camera_fill),
+                  ),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {},
+                    child: const Icon(CupertinoIcons.add),
+                  ),
+                ],
               ),
             ),
+            const SliverToBoxAdapter(child: SizedBox(height: 12)),
             SliverToBoxAdapter(
-              child: CustomTextField(
-                radius: 26,
-                prefixIcon: const Icon(Icons.search),
+              child: CupertinoSearchTextField(
                 controller: _searchController,
-                hintText: 'Search...',
+                placeholder: 'Search...',
               ),
             ),
-            const SliverPadding(padding: EdgeInsets.only(top: 12)),
-            const SliverToBoxAdapter(child: FilterWidgets(selectedFilter: 'All')),
+            const SliverPadding(padding: EdgeInsets.only(top: 20)),
+
+            /// 🔹 тут ми будуємо FilterWidgets і передаємо реальний unreadCount
+            BlocBuilder<ChatsBloc, ChatsState>(
+              builder: (context, state) {
+                return state.maybeWhen(
+                  loaded: (chats) {
+                    final unreadCount = chats.fold<int>(
+                      0,
+                      (sum, chat) =>
+                          sum + (chat.unreadCount[currentUserId] ?? 0),
+                    );
+
+                    return SliverToBoxAdapter(
+                      child: FilterWidgets(
+                        selectedFilter: _selectedFilter,
+                        onFilterSelected: (filter) =>
+                            _applyFilter(filter, currentUserId),
+                        unReadCount: unreadCount,
+                      ),
+                    );
+                  },
+                  orElse: () => FilterWidgets(
+                    selectedFilter: _selectedFilter,
+                    onFilterSelected: (filter) =>
+                        _applyFilter(filter, currentUserId),
+                    unReadCount: 0,
+                  ),
+                );
+              },
+            ),
 
             BlocBuilder<ChatsBloc, ChatsState>(
               builder: (context, state) {
@@ -117,16 +142,16 @@ class _AndroidScreenState extends State<AndroidScreen> {
             BlocBuilder<UsersBloc, UsersState>(
               builder: (context, state) {
                 return state.maybeWhen(
-                  loaded: (chats) => SliverList(
+                  loaded: (users) => SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) => SuggestUser(
                         index: index,
-                        uid: chats[index]['uid'] as String? ?? '',
-                        name: chats[index]['name'] as String? ?? '',
-                        bio: chats[index]['bio'] as String? ?? '',
-                        user: UserParams.fromJson(chats[index]),
+                        uid: users[index]['uid'] as String? ?? '',
+                        name: users[index]['name'] as String? ?? '',
+                        bio: users[index]['bio'] as String? ?? '',
+                        user: UserParams.fromJson(users[index]),
                       ),
-                      childCount: chats.length,
+                      childCount: users.length,
                     ),
                   ),
                   error: (message) => SliverToBoxAdapter(
