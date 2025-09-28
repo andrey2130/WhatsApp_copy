@@ -106,41 +106,54 @@ class MessageBuble extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             if (imageUrl != null)
-                              Container(
-                                margin: EdgeInsets.only(bottom: 8.h),
-                                height: 200.h,
-                                width: 250.w, // Fixed width for images
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.r),
-                                  child: Image.network(
-                                    imageUrl!,
-                                    fit: BoxFit.cover,
-                                    loadingBuilder:
-                                        (context, child, loadingProgress) {
-                                          if (loadingProgress == null)
-                                            return child;
-                                          return Container(
-                                            height: 200.h,
-                                            width: 250.w,
-                                            color: Colors.grey[200],
-                                            child: const Center(
-                                              child:
-                                                  CircularProgressIndicator.adaptive(),
-                                            ),
-                                          );
-                                        },
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            Container(
-                                              height: 200.h,
-                                              width: 250.w,
-                                              color: Colors.grey[200],
-                                              child: const Center(
-                                                child: Icon(Icons.error),
-                                              ),
-                                            ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 8.h),
+                                    height: 200.h,
+                                    width: 250.w, // Fixed width for images
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8.r),
+                                      child: Image.network(
+                                        imageUrl!,
+                                        fit: BoxFit.cover,
+                                        loadingBuilder:
+                                            (context, child, loadingProgress) {
+                                              if (loadingProgress == null) {
+                                                return child;
+                                              }
+                                              return Container(
+                                                height: 200.h,
+                                                width: 250.w,
+                                                color: Colors.grey[200],
+                                                child: const Center(
+                                                  child:
+                                                      CircularProgressIndicator.adaptive(),
+                                                ),
+                                              );
+                                            },
+                                        errorBuilder:
+                                            (context, error, stackTrace) =>
+                                                Container(
+                                                  height: 200.h,
+                                                  width: 250.w,
+                                                  color: Colors.grey[200],
+                                                  child: const Center(
+                                                    child: Icon(Icons.error),
+                                                  ),
+                                                ),
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  Text(
+                                    time ?? '',
+                                    style: TextStyle(
+                                      fontSize: 11.sp,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
                               ),
 
                             if (message.isNotEmpty && !(isReply ?? false))
