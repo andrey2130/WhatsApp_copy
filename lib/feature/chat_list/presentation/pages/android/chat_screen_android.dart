@@ -3,23 +3,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:talker_flutter/talker_flutter.dart';
 import 'package:telegram_copy/core/theme/app_colors.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_bar.dart';
 import 'package:telegram_copy/core/utils/widgets/custom_textfield.dart';
 import 'package:telegram_copy/feature/auth/pages/bloc/bloc/auth_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params/delete_messaga.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params/message.dart';
-import 'package:telegram_copy/feature/chat_list/presentation/bloc/chats/chats_bloc.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/bloc/chat_screen/chat_screen_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_buble.dart';
 import 'package:telegram_copy/feature/settings/presentation/bloc/settings_bloc.dart';
-import 'package:telegram_copy/injections.dart';
 import 'package:uuid/uuid.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class ChatScreenAndroid extends StatefulWidget {
   const ChatScreenAndroid({
-    required this.userId, required this.userName, required this.conversationId, required this.receiverIds, super.key,
+    required this.userId,
+    required this.userName,
+    required this.conversationId,
+    required this.receiverIds,
+    super.key,
     this.avatarUrl,
   });
   final String userId;
@@ -35,15 +37,16 @@ class ChatScreenAndroid extends StatefulWidget {
 class _ChatScreenAndroidState extends State<ChatScreenAndroid> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
+  bool _hasScrolledToBottom = false;
 
   @override
   void initState() {
     super.initState();
-    context.read<ChatsBloc>().add(
-      ChatsEvent.loadChatMessages(widget.conversationId),
+    context.read<ChatScreenBloc>().add(
+      ChatScreenEvent.loadMessages(widget.conversationId),
     );
-    context.read<ChatsBloc>().add(
-      ChatsEvent.watchMessage(widget.conversationId),
+    context.read<ChatScreenBloc>().add(
+      ChatScreenEvent.watchMessages(widget.conversationId),
     );
     context.read<SettingsBloc>().add(const SettingsEvent.loadRequested());
   }
@@ -57,31 +60,25 @@ class _ChatScreenAndroidState extends State<ChatScreenAndroid> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ChatsBloc, ChatsState>(
+    return BlocConsumer<ChatScreenBloc, ChatScreenState>(
       listener: (context, state) {
-        state.maybeWhen(
-          loaded: (chats) {
-            _scrollToBottom();
-          },
-          messagesLoaded: (messages) {
-            _scrollToBottom();
-          },
-          chatWithMessages: (chats, messages) {
-            _scrollToBottom();
-          },
-          loading: () {
-            const Center(child: CircularProgressIndicator.adaptive());
-          },
+        state.when(
+          initial: () {},
+          loading: () {},
+          loaded:
+              (
+                messages,
+                isReplyMode,
+                replyToMessage,
+                isScrollingToMessage,
+                highlightedMessageId,
+              ) {
+                // Не скролити автоматично в listener - це створює конфлікт
+              },
           error: (message) {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text('Error: $message')));
-          },
-          success: () {},
-          orElse: () {
-            getIt<Talker>().handle(
-              'ChatScreen unexpected state: $state',
-            );
           },
         );
       },
@@ -135,38 +132,31 @@ class _ChatScreenAndroidState extends State<ChatScreenAndroid> {
     );
   }
 
-  Widget _buildMessagesContent(ChatsState state) {
-    return state.maybeWhen(
+  Widget _buildMessagesContent(ChatScreenState state) {
+    return state.when(
+      initial: () => const SizedBox.shrink(),
       loading: () => const Center(child: CircularProgressIndicator.adaptive()),
+      loaded:
+          (
+            messages,
+            isReplyMode,
+            replyToMessage,
+            isScrollingToMessage,
+            highlightedMessageId,
+          ) => _buildMessagesList(messages),
       error: (message) => Center(child: Text(message)),
-      loaded: (chats) => _buildMessagesList(),
-      messagesLoaded: (messages) => _buildMessagesList(),
-      chatWithMessages: (chats, messages) => _buildMessagesList(),
-      success: _buildMessagesList,
-      orElse: () => const SizedBox.shrink(),
     );
   }
 
-  Widget _buildMessagesList() {
-    return BlocBuilder<ChatsBloc, ChatsState>(
-      builder: (context, state) {
-        return state.maybeWhen(
-          messagesLoaded: _buildMessagesListView,
-          chatWithMessages: (chats, messages) =>
-              _buildMessagesListView(messages),
-          success: () => _buildMessagesListView([]),
-          loading: () => const SizedBox.shrink(),
-          error: (message) => const SizedBox.shrink(),
-          orElse: () => const SizedBox.shrink(),
-        );
-      },
-    );
+  Widget _buildMessagesList(List<MessageParams> messages) {
+    return _buildMessagesListView(messages);
   }
 
   Widget _buildMessagesListView(List<MessageParams> messages) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (messages.isNotEmpty) {
+      if (messages.isNotEmpty && !_hasScrolledToBottom) {
         _scrollToBottom();
+        _hasScrolledToBottom = true;
       }
     });
 
@@ -174,6 +164,8 @@ class _ChatScreenAndroidState extends State<ChatScreenAndroid> {
       controller: _scrollController,
       padding: EdgeInsets.only(top: 16.h, bottom: 80.h, left: 8.w, right: 8.w),
       itemCount: messages.length,
+      shrinkWrap: false,
+      physics: const ClampingScrollPhysics(),
       itemBuilder: (context, index) {
         final message = messages[index];
         final isMe = message.senderId == widget.userId;
@@ -270,8 +262,8 @@ class _ChatScreenAndroidState extends State<ChatScreenAndroid> {
   void _sendMessage(String message, TextEditingController messageController) {
     if (message.trim().isEmpty) return;
 
-    context.read<ChatsBloc>().add(
-      ChatsEvent.sendMessage(
+    context.read<ChatScreenBloc>().add(
+      ChatScreenEvent.sendMessage(
         MessageParams(
           id: const Uuid().v4(),
           senderName: _getCurrentUserName(),
@@ -290,6 +282,7 @@ class _ChatScreenAndroidState extends State<ChatScreenAndroid> {
 
     messageController.clear();
     _scrollToBottom();
+    _hasScrolledToBottom = true; // Позначити що скролили до нового повідомлення
   }
 
   void _scrollToBottom() {
@@ -311,8 +304,8 @@ class _ChatScreenAndroidState extends State<ChatScreenAndroid> {
   }
 
   void _deleteMessage(String messageId) {
-    context.read<ChatsBloc>().add(
-      ChatsEvent.deleteMessage(
+    context.read<ChatScreenBloc>().add(
+      ChatScreenEvent.deleteMessage(
         DeleteMessageParams(
           messageId: messageId,
           chatId: widget.conversationId,
@@ -338,6 +331,6 @@ class _ChatScreenAndroidState extends State<ChatScreenAndroid> {
   }
 
   void _readMessage(MessageParams message) {
-    context.read<ChatsBloc>().add(ChatsEvent.readMessage(message));
+    context.read<ChatScreenBloc>().add(ChatScreenEvent.readMessage(message));
   }
 }

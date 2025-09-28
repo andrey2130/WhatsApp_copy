@@ -44,6 +44,7 @@ dependencies:
   solid_lints: ^0.3.1
   uuid: ^4.5.1
   intl: ^0.20.2
+  stipop_sdk: ^0.2.3
   
   
 

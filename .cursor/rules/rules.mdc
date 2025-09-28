@@ -5,7 +5,7 @@ Architecture & Structure
 	•	Domain Layer: Contains business logic (UseCase, Entities).
 	•	Data Layer: Implements data sources (Firebase, Firestore, API, local storage) via Repositories and DataSources.
 	•	Presentation Layer: UI widgets, screens, state management (Bloc/Cubit).
-	•	Bloc / Cubit: All state management goes through flutter_bloc; UI should be “dumb” and only render state.
+	•	Bloc : All state management goes through flutter_bloc; UI should be “dumb” and only render state.
 	•	Navigation: Use only go_router for routing, avoid direct Navigator calls.
 
 Principles
