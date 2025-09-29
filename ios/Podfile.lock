@@ -1396,6 +1396,10 @@ PODS:
   - RecaptchaInterop (101.0.0)
   - share_plus (0.0.1):
     - Flutter
+  - Stipop (0.3.0)
+  - stipop_sdk (0.2.2):
+    - Flutter
+    - Stipop (= 0.3.0)
 
 DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
@@ -1406,6 +1410,7 @@ DEPENDENCIES:
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
+  - stipop_sdk (from `.symlinks/plugins/stipop_sdk/ios`)
 
 SPEC REPOS:
   trunk:
@@ -1429,6 +1434,7 @@ SPEC REPOS:
     - leveldb-library
     - nanopb
     - RecaptchaInterop
+    - Stipop
 
 EXTERNAL SOURCES:
   cloud_firestore:
@@ -1447,6 +1453,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   share_plus:
     :path: ".symlinks/plugins/share_plus/ios"
+  stipop_sdk:
+    :path: ".symlinks/plugins/stipop_sdk/ios"
 
 SPEC CHECKSUMS:
   abseil: a05cc83bf02079535e17169a73c5be5ba47f714b
@@ -1477,6 +1485,8 @@ SPEC CHECKSUMS:
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
   share_plus: 8b6f8b3447e494cca5317c8c3073de39b3600d1f
+  Stipop: 52fbf336c3a89d13a28d0dd2b756ecab1579bd7f
+  stipop_sdk: 91513bfbfbd0075e0ed267f374ab4394c584539e
 
 PODFILE CHECKSUM: 53a6aebc29ccee84c41f92f409fc20cd4ca011f1
 

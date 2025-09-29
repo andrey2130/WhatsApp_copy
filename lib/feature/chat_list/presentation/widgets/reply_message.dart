@@ -8,7 +8,9 @@ class ReplyMessageWidget extends StatefulWidget {
   final MessageParams message;
   final VoidCallback onTap;
   const ReplyMessageWidget({
-    required this.message, required this.onTap, super.key,
+    required this.message,
+    required this.onTap,
+    super.key,
   });
 
   @override
@@ -55,7 +57,20 @@ class _ReplyMessageWidgetState extends State<ReplyMessageWidget> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(height: 2.h),
+                    if (widget.message.imageUrl != null)
+                      Container(
+                        width: 40.r,
+                        height: 40.r,
+
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.r),
+                          image: DecorationImage(
+                            image: NetworkImage(widget.message.imageUrl!),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+
                     Text(
                       widget.message.message,
                       softWrap: true,

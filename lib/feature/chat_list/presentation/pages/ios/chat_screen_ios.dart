@@ -3,23 +3,18 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:talker_flutter/talker_flutter.dart';
-import 'package:telegram_copy/core/utils/date_formatter.dart';
 import 'package:telegram_copy/core/utils/image_picker.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/chat_params/chat.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params/delete_messaga.dart';
 import 'package:telegram_copy/feature/chat_list/domain/params/message_params/message.dart';
-import 'package:telegram_copy/feature/chat_list/presentation/bloc/chats/chats_bloc.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/bloc/chat_screen/chat_screen_bloc.dart';
 import 'package:telegram_copy/feature/chat_list/presentation/widgets/chat_navigation_bar.dart';
-import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_buble.dart';
-import 'package:telegram_copy/feature/chat_list/presentation/widgets/message_input.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/widgets/chat_screen/chat_input_widget.dart';
+import 'package:telegram_copy/feature/chat_list/presentation/widgets/chat_screen/chat_messages_list.dart';
 import 'package:telegram_copy/feature/settings/presentation/bloc/settings_bloc.dart';
-import 'package:telegram_copy/injections.dart';
 import 'package:uuid/uuid.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
 class ChatScreenIos extends StatefulWidget {
   const ChatScreenIos({
@@ -46,27 +41,16 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
   final FocusNode _focusNode = FocusNode();
   final Map<String, GlobalKey> _messageKeys = {};
 
-  bool _isReply = false;
-  MessageParams? _replyToMessage;
-  String? _highlightMessageId;
-  bool _suppressAutoScroll = false;
-  static const double _autoScrollThreshold = 120.0;
-
-  bool _isNearBottom() {
-    if (!_scrollController.hasClients) return true;
-    final max = _scrollController.position.maxScrollExtent;
-    final offset = _scrollController.offset;
-    return (max - offset) <= _autoScrollThreshold;
-  }
+  bool _hasScrolledToBottom = false;
 
   @override
   void initState() {
     super.initState();
-    context.read<ChatsBloc>().add(
-      ChatsEvent.loadChatMessages(widget.conversationId),
+    context.read<ChatScreenBloc>().add(
+      ChatScreenEvent.loadMessages(widget.conversationId),
     );
-    context.read<ChatsBloc>().add(
-      ChatsEvent.watchMessage(widget.conversationId),
+    context.read<ChatScreenBloc>().add(
+      ChatScreenEvent.watchMessages(widget.conversationId),
     );
     context.read<SettingsBloc>().add(const SettingsEvent.loadRequested());
   }
@@ -81,37 +65,25 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ChatsBloc, ChatsState>(
+    return BlocConsumer<ChatScreenBloc, ChatScreenState>(
       listener: (context, state) {
-        state.maybeWhen(
-          loaded: (chats) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _scrollToBottom();
-            });
-          },
-          messagesLoaded: (messages) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _scrollToBottom();
-            });
-            _suppressAutoScroll = false;
-          },
-          chatWithMessages: (chats, messages) {
-            if (!_suppressAutoScroll && _isNearBottom()) {
-              _scrollToBottom();
-            }
-          },
-
+        state.when(
+          initial: () {},
+          loading: () {},
+          loaded:
+              (
+                messages,
+                isReplyMode,
+                replyToMessage,
+                isScrollingToMessage,
+                highlightedMessageId,
+              ) {
+                // Не скролити автоматично в listener - це створює конфлікт
+              },
           error: (message) {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text('Error: $message')));
-          },
-          loading: () => const Center(
-            child: Center(child: CircularProgressIndicator.adaptive()),
-          ),
-          success: () {},
-          orElse: () {
-            getIt<Talker>().handle('ChatScreen unexpected state: $state');
           },
         );
       },
@@ -135,38 +107,47 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
                             fit: BoxFit.cover,
                           ),
                         ),
-                        child: state.maybeWhen(
+                        child: state.when(
+                          initial: () => const SizedBox.shrink(),
                           loading: () => const Center(
                             child: CircularProgressIndicator.adaptive(),
                           ),
+                          loaded:
+                              (
+                                messages,
+                                isReplyMode,
+                                replyToMessage,
+                                isScrollingToMessage,
+                                highlightedMessageId,
+                              ) => ChatMessagesList(
+                                messages: messages,
+                                currentUserId: widget.userId,
+                                scrollController: _scrollController,
+                                messageKeys: _messageKeys,
+                                highlightedMessageId: highlightedMessageId,
+                                onReplyMessage: _replyMessage,
+                                onDeleteMessage: _deleteMessage,
+                                onReadMessage: _readMessage,
+                                onScrollToMessage: _scrollToMessage,
+                                hasScrolledToBottom: _hasScrolledToBottom,
+                                onFirstScroll: () {
+                                  setState(() {
+                                    _hasScrolledToBottom = true;
+                                  });
+                                },
+                              ),
                           error: (message) => Center(child: Text(message)),
-                          loaded: (chats) => _buildMessagesListView([]),
-                          messagesLoaded: _buildMessagesListView,
-                          chatWithMessages: (chats, messages) =>
-                              _buildMessagesListView(messages),
-                          success: () => _buildMessagesListView([]),
-                          orElse: () => const SizedBox.shrink(),
                         ),
                       ),
                       Positioned(
                         bottom: 0,
                         left: 0,
                         right: 0,
-                        child: MessageInput(
+                        child: ChatInputWidget(
                           messageController: _messageController,
                           focusNode: _focusNode,
-                          isReply: _isReply,
-                          replyToMessage: _replyToMessage,
-                          onClearReply: () {
-                            setState(() {
-                              _isReply = false;
-                              _replyToMessage = null;
-                            });
-                          },
-                          onChanged: (_) => setState(() {}),
-                          onSubmit: (value) =>
-                              _sendMessage(value, _messageController),
-                          onPressCamera: _pickAndSendPhoto,
+                          onSendMessage: _sendMessage,
+                          onPickPhoto: _pickAndSendPhoto,
                         ),
                       ),
                     ],
@@ -184,105 +165,27 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
     final key = _messageKeys[id];
     final ctx = key?.currentContext;
     if (ctx != null) {
-      _suppressAutoScroll = true;
       Scrollable.ensureVisible(
         ctx,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
         alignment: 0.5,
       ).then((_) {
-        setState(() {
-          _highlightMessageId = id;
-        });
+        context.read<ChatScreenBloc>().add(ChatScreenEvent.scrollToMessage(id));
         Future.delayed(const Duration(milliseconds: 900), () {
-          if (mounted && _highlightMessageId == id) {
-            setState(() {
-              _highlightMessageId = null;
-              _suppressAutoScroll = false;
-            });
+          if (mounted) {
+            context.read<ChatScreenBloc>().add(
+              const ChatScreenEvent.clearHighlight(),
+            );
           }
         });
       });
     }
   }
 
-  Widget _buildMessagesListView(List<MessageParams> messages) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_suppressAutoScroll && messages.isNotEmpty && _isNearBottom()) {
-        _scrollToBottom();
-      }
-    });
-
-    return ListView.builder(
-      controller: _scrollController,
-      padding: EdgeInsets.only(top: 16.h, bottom: 80.h, left: 8.w, right: 8.w),
-      itemCount: messages.length,
-      itemBuilder: (context, index) {
-        final message = messages[index];
-        final isMe = message.senderId == widget.userId;
-        MessageParams? replyAuthor;
-        if (message.replyToMessageId != null) {
-          try {
-            replyAuthor = messages.firstWhere(
-              (m) => m.id == message.replyToMessageId,
-            );
-          } catch (_) {
-            replyAuthor = null;
-          }
-        }
-        final key = _messageKeys.putIfAbsent(message.id, GlobalKey.new);
-
-        return VisibilityDetector(
-          key: Key('visibility-${message.id}'), // звичайний Key, не GlobalKey
-          onVisibilityChanged: (visibility) {
-            if (visibility.visibleFraction == 1 &&
-                message.isRead != true &&
-                message.senderId != widget.userId) {
-              _readMessage(message);
-            }
-          },
-          child: AnimatedContainer(
-            key: key, // GlobalKey тут залишаємо, якщо потрібен
-            duration: const Duration(milliseconds: 250),
-            curve: Curves.easeInOut,
-            margin: EdgeInsets.symmetric(vertical: 2.h),
-            decoration: BoxDecoration(
-              color: _highlightMessageId == message.id
-                  ? Colors.green.withOpacity(0.2)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(8.r),
-            ),
-            child: MessageBuble(
-              swipe: (details) => _replyMessage(message),
-              onTapReply: message.replyToMessageId != null
-                  ? () => _scrollToMessage(message.replyToMessageId!)
-                  : null,
-              id: message.id,
-              messageId: message.id,
-              message: message.message,
-              isMe: isMe,
-              time: DateFormatter.timeHm(message.createdAt),
-              isRead: message.isRead,
-              isReply: message.replyToMessageId != null,
-              replyAuthor: replyAuthor,
-              repliedText: message.replyText,
-              doubleTap: () {
-                _deleteMessage(message.id);
-              },
-              imageUrl: message.imageUrl,
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   void _replyMessage(MessageParams message) {
-    setState(() {
-      _isReply = true;
-      _replyToMessage = message;
-      _focusNode.requestFocus();
-    });
+    context.read<ChatScreenBloc>().add(ChatScreenEvent.setReplyMode(message));
+    _focusNode.requestFocus();
   }
 
   String getReceiverPhotoUrl(String currentUserId, ChatParams chat) {
@@ -308,12 +211,11 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
     if (filePath != null && mounted) {
       final fileBytes = await File(filePath).readAsBytes();
 
-      // Формуємо MessageParams для фото
       final message = MessageParams(
         id: const Uuid().v4(),
         senderName: _getCurrentUserName(),
         receiverName: widget.userName,
-        message: '', // тексту немає, тільки фото
+        message: '', 
         firstUserAvatar: _getCurrentAvatar(),
         secondUserAvatar: widget.avatarUrl ?? '',
         senderId: widget.userId,
@@ -323,16 +225,20 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
         updatedAt: DateTime.now().toIso8601String(),
         imageUrl: filePath,
       );
-
-      context.read<ChatsBloc>().add(ChatsEvent.sendPhoto(message, fileBytes));
+      if (!mounted) return;
+      context.read<ChatScreenBloc>().add(
+        ChatScreenEvent.sendPhoto(message, fileBytes),
+      );
     }
   }
 
-  void _sendMessage(String message, TextEditingController messageController) {
+  void _sendMessage(String message) {
     if (message.trim().isEmpty) return;
 
-    context.read<ChatsBloc>().add(
-      ChatsEvent.sendMessage(
+    final currentState = context.read<ChatScreenBloc>().state;
+
+    context.read<ChatScreenBloc>().add(
+      ChatScreenEvent.sendMessage(
         MessageParams(
           id: const Uuid().v4(),
           senderName: _getCurrentUserName(),
@@ -343,18 +249,38 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
           senderId: widget.userId,
           receiverId: widget.receiverIds.first,
           chatId: widget.conversationId,
+          replyToMessageId: currentState.maybeWhen(
+            loaded:
+                (
+                  messages,
+                  isReplyMode,
+                  replyToMessage,
+                  isScrollingToMessage,
+                  highlightedMessageId,
+                ) => replyToMessage?.id,
+            orElse: () => null,
+          ),
+          replyText: currentState.maybeWhen(
+            loaded:
+                (
+                  messages,
+                  isReplyMode,
+                  replyToMessage,
+                  isScrollingToMessage,
+                  highlightedMessageId,
+                ) => replyToMessage?.message,
+            orElse: () => null,
+          ),
           createdAt: DateTime.now().toIso8601String(),
           updatedAt: DateTime.now().toIso8601String(),
         ),
       ),
     );
 
-    messageController.clear();
-    setState(() {
-      _isReply = false;
-      _replyToMessage = null;
-    });
+    _messageController.clear();
+    context.read<ChatScreenBloc>().add(const ChatScreenEvent.clearReplyMode());
     _scrollToBottom();
+    _hasScrolledToBottom = true; // Позначити що скролили до нового повідомлення
   }
 
   void _scrollToBottom() {
@@ -372,8 +298,8 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
   }
 
   void _deleteMessage(String messageId) {
-    context.read<ChatsBloc>().add(
-      ChatsEvent.deleteMessage(
+    context.read<ChatScreenBloc>().add(
+      ChatScreenEvent.deleteMessage(
         DeleteMessageParams(
           messageId: messageId,
           chatId: widget.conversationId,
@@ -384,7 +310,7 @@ class _ChatScreenIosState extends State<ChatScreenIos> {
   }
 
   void _readMessage(MessageParams message) {
-    context.read<ChatsBloc>().add(ChatsEvent.readMessage(message));
+    context.read<ChatScreenBloc>().add(ChatScreenEvent.readMessage(message));
   }
 
   String _getCurrentUserName() {
